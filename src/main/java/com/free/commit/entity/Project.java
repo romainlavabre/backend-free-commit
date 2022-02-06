@@ -34,6 +34,10 @@ public class Project {
 
     private Integer keepNumberBuild;
 
+    @ManyToOne( cascade = {CascadeType.PERSIST} )
+    @JoinColumn( name = "repository_credential_id" )
+    private Credential repositoryCredential;
+
     @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Secret > secrets;
 
@@ -135,6 +139,18 @@ public class Project {
 
     public Project setKeepNumberBuild( Integer keepNumberBuild ) {
         this.keepNumberBuild = keepNumberBuild;
+
+        return this;
+    }
+
+
+    public Credential getRepositoryCredential() {
+        return repositoryCredential;
+    }
+
+
+    public Project setRepositoryCredential( Credential repositoryCredential ) {
+        this.repositoryCredential = repositoryCredential;
 
         return this;
     }
