@@ -1,5 +1,8 @@
 package com.free.commit.entity;
 
+import com.free.commit.api.json.annotation.Group;
+import com.free.commit.api.json.annotation.Json;
+import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
@@ -11,10 +14,18 @@ import javax.persistence.*;
 @Entity
 public class Credential {
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( nullable = false )
     private String name;
 
