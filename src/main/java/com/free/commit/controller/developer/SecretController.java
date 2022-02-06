@@ -33,7 +33,7 @@ public class SecretController {
     public ResponseEntity< Map< String, Object > > getSecret( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
-        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.DEVELOPER ) );
     }
 
 
@@ -41,6 +41,6 @@ public class SecretController {
     public ResponseEntity< List< Map< String, Object > > > getAllSecrets() {
         List< Secret > secrets = secretRepository.findAll();
 
-        return ResponseEntity.ok( Encoder.encode( secrets, GroupType.ADMIN ) );
+        return ResponseEntity.ok( Encoder.encode( secrets, GroupType.DEVELOPER ) );
     }
 }
