@@ -2,14 +2,28 @@ package com.free.commit.entity;
 
 import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
+import com.free.commit.api.json.annotation.JsonPut;
+import com.free.commit.api.json.annotation.Row;
 import com.free.commit.api.security.User;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.configuration.json.put.PutUserRoles;
+import com.free.commit.configuration.json.put.PutUserUsername;
 
 import javax.persistence.*;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@JsonPut( groups = {
+        @Group( name = GroupType.ADMIN, row = {
+                @Row( key = "username", handler = PutUserUsername.class ),
+                @Row( key = "roles", handler = PutUserRoles.class )
+        } ),
+        @Group( name = GroupType.DEVELOPER, row = {
+                @Row( key = "username", handler = PutUserUsername.class ),
+                @Row( key = "roles", handler = PutUserRoles.class )
+        } )
+} )
 @Entity
 public class Developer {
 
