@@ -16,4 +16,5 @@ public interface Variable {
     String MAIL_FROM              = "mail.from";
     String DEFAULT_ADMIN_USERNAME = "default.admin.username";
     String DEFAULT_ADMIN_PASSWORD = "default.admin.password";
+    String ENCRYPTION_KEY         = "encryption.key";
 }

@@ -1,6 +1,7 @@
 package com.free.commit.controller.admin;
 
 import com.free.commit.api.crud.Create;
+import com.free.commit.api.crud.Delete;
 import com.free.commit.api.crud.Update;
 import com.free.commit.api.json.Encoder;
 import com.free.commit.api.request.Request;
@@ -24,6 +25,7 @@ public class SecretController {
     protected final Create< Secret >   createSecret;
     protected final Update< Secret >   updateSecretName;
     protected final Update< Secret >   updateSecretValue;
+    protected final Delete< Secret >   deleteSecret;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
     protected final SecretRepository   secretRepository;
@@ -33,12 +35,14 @@ public class SecretController {
             Create< Secret > createSecret,
             Update< Secret > updateSecretName,
             Update< Secret > updateSecretValue,
+            Delete< Secret > deleteSecret,
             DataStorageHandler dataStorageHandler,
             Request request,
             SecretRepository secretRepository ) {
         this.createSecret       = createSecret;
         this.updateSecretName   = updateSecretName;
         this.updateSecretValue  = updateSecretValue;
+        this.deleteSecret       = deleteSecret;
         this.dataStorageHandler = dataStorageHandler;
         this.request            = request;
         this.secretRepository   = secretRepository;
@@ -77,6 +81,19 @@ public class SecretController {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretValue.update( request, secret );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @DeleteMapping( path = "/secrets/{id:[0-9]+}" )
+    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id ) {
+        Secret secret = secretRepository.findOrFail( id );
+
+        deleteSecret.delete( request, secret );
 
         dataStorageHandler.save();
 
