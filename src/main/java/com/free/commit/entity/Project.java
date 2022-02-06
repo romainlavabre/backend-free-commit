@@ -72,6 +72,13 @@ public class Project {
     }
 
 
+    public Project setDescription( String description ) {
+        this.description = description;
+
+        return this;
+    }
+
+
     public String getRepository() {
         return repository;
     }

@@ -48,4 +48,13 @@ public class Cast {
 
         return null;
     }
+
+
+    public static Integer getInteger( Object object ) {
+        if ( object != null ) {
+            return Integer.valueOf( object.toString() );
+        }
+
+        return null;
+    }
 }
