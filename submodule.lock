@@ -1,0 +1,47 @@
+{
+  "Container": {
+    "tag": "1.0.0"
+  },
+  "Environment": {
+    "tag": "1.0.0"
+  },
+  "Event": {
+    "tag": "1.0.0"
+  },
+  "History": {
+    "tag": "1.0.0"
+  },
+  "Json": {
+    "tag": "2.0.0"
+  },
+  "Mail": {
+    "tag": "1.0.0"
+  },
+  "Pagination": {
+    "tag": "1.0.1"
+  },
+  "Pdf": {
+    "tag": "1.0.0"
+  },
+  "Request": {
+    "tag": "1.0.0"
+  },
+  "Crud": {
+    "tag": "1.0.0"
+  },
+  "Rest": {
+    "tag": "1.0.0"
+  },
+  "Security": {
+    "tag": "1.0.0"
+  },
+  "Sms": {
+    "tag": "1.0.0"
+  },
+  "Template": {
+    "tag": "1.0.0"
+  },
+  "Upload": {
+    "tag": "1.0.0"
+  }
+}
