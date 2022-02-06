@@ -2,6 +2,7 @@ package com.free.commit.module.developer;
 
 import com.free.commit.api.history.HistoryHandler;
 import com.free.commit.api.request.Request;
+import com.free.commit.api.security.PasswordEncoder;
 import com.free.commit.api.security.User;
 import com.free.commit.entity.Developer;
 import com.free.commit.parameter.DeveloperParameter;
@@ -18,13 +19,16 @@ public class Create implements com.free.commit.api.crud.Create< Developer > {
 
     protected final DeveloperRepository developerRepository;
     protected final HistoryHandler      historyHandler;
+    protected final PasswordEncoder     passwordEncoder;
 
 
     public Create(
             DeveloperRepository developerRepository,
-            HistoryHandler historyHandler ) {
+            HistoryHandler historyHandler,
+            PasswordEncoder passwordEncoder ) {
         this.developerRepository = developerRepository;
         this.historyHandler      = historyHandler;
+        this.passwordEncoder     = passwordEncoder;
     }
 
 
@@ -38,7 +42,7 @@ public class Create implements com.free.commit.api.crud.Create< Developer > {
 
         User user = new User();
         user.setUsername( username );
-        user.setPassword( password );
+        user.setPassword( passwordEncoder.encode( password ) );
         user.setEnabled( true );
 
         for ( Object role : roles ) {
