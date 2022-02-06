@@ -1,5 +1,8 @@
 package com.free.commit.entity;
 
+import com.free.commit.api.json.annotation.Group;
+import com.free.commit.api.json.annotation.Json;
+import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
@@ -13,34 +16,74 @@ import java.util.List;
 @Entity
 public class Project {
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( nullable = false )
     private String name;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( columnDefinition = "TEXT" )
     private String description;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( nullable = false )
     private String repository;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( nullable = false )
     private String branch;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( name = "spec_file_path", nullable = false )
     private String specFilePath;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     private Integer keepNumberBuild;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToOne( cascade = {CascadeType.PERSIST} )
     @JoinColumn( name = "repository_credential_id" )
     private Credential repositoryCredential;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Secret > secrets;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Build > builds;
 
