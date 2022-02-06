@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11.0.14
 ARG USER_HOST
 ARG UID_HOST
 RUN apt-get update \
@@ -12,4 +12,4 @@ RUN groupadd -r "${USER_HOST}" \
     && chgrp ${USER_HOST} /var/tmp/pdf-builder
 USER "${USER_HOST}"
 WORKDIR app
-ENTRYPOINT ["./mvnw","spring-boot:run","-Dspring-boot.run.profiles=local", "-Dspring-boot.run.arguments=\"--spring.cloud.bootstrap.enabled=true\""]
+ENTRYPOINT ["./mvnw","spring-boot:run","-Dspring-boot.run.profiles=local"]

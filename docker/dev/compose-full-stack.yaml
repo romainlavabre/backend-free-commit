@@ -1,0 +1,97 @@
+version: '3.2'
+
+services:
+    reverse-proxy:
+        build:
+            context: .
+            dockerfile: traefik.dockerfile
+        ports:
+            - 80:80
+        networks:
+            - reverse-proxy
+            - api
+        volumes:
+            - ${PWD}/treafik:/etc/traefik/
+            - /var/run/docker.sock:/var/run/docker.sock
+        restart: always
+        container_name: reverse-proxy
+
+    api:
+        build:
+            context: '../../'
+            dockerfile: docker/dev/api.dockerfile
+            args:
+                USER_HOST: ${USER_HOST}
+                UID_HOST: ${UID_HOST}
+        environment:
+            DATASOURCE_URL: ${DATASOURCE_URL}
+            DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+            DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+            DATASOURCE_DIALECT: ${DATASOURCE_DIALECT}
+            MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+            MAILGUN_FROM: ${MAILGUN_FROM}
+            MAILGUN_PRIVATE_KEY: ${MAILGUN_PRIVATE_KEY}
+            TWILIO_SID: ${TWILIO_SID}
+            TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+            TWILIO_FROM: ${TWILIO_FROM}
+            JWT_SECRET: ${JWT_SECRET}
+            JWT_LIFE_TIME: ${JWT_LIFE_TIME}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=api"
+            - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+            - "traefik.http.middlewares.api-replace-prefix.stripprefix.prefixes=/api"
+            - "traefik.http.routers.api.middlewares=api-replace-prefix@docker"
+            - "traefik.http.routers.api.entrypoints=web"
+            - "traefik.http.routers.api.tls=false"
+            - "traefik.http.services.api.loadbalancer.server.port=8080"
+        networks:
+            - api
+            - database
+        volumes:
+            - ${PWD}/../../:/app
+        restart: always
+        container_name: api
+
+    database:
+        build:
+            context: .
+            dockerfile: database.dockerfile
+        environment:
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_ROOT_PASSWORD: ${DATASOURCE_USERNAME}
+            MYSQL_DATABASE: free-commit
+        networks:
+            - database
+        volumes:
+            - ${VOLUME}/database:/var/lib/mysql
+        restart: on-failure
+        container_name: database
+
+    client-database:
+        build:
+            context: ${PWD}/client-database
+            dockerfile: adminer.dockerfile
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=client-database"
+            - "traefik.http.routers.client-database.rule=PathPrefix(`/database`, `/client-database-resource`)"
+            - "traefik.http.routers.client-database.entrypoints=web"
+            - "traefik.http.routers.client-database.tls=false"
+            - "traefik.http.services.client-database.loadbalancer.server.port=8080"
+        networks:
+            - client-database
+            - database
+        restart: always
+        container_name: client-database
+
+
+networks:
+    api:
+        name: api
+    reverse-proxy:
+        name: reverse-proxy
+    database:
+        name: database
+    client-database:
+        name: client-database

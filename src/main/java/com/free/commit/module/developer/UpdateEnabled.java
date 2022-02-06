@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service( "updateDeveloperUsername" )
+@Service( "updateDeveloperEnabled" )
 public class UpdateEnabled implements Update< Developer > {
 
     protected final DeveloperRepository developerRepository;

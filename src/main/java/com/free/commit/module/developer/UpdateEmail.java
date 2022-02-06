@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service( "updateDeveloperGithubUsername" )
+@Service( "updateDeveloperEmail" )
 public class UpdateEmail implements Update< Developer > {
 
     protected final DeveloperRepository developerRepository;
@@ -34,7 +34,7 @@ public class UpdateEmail implements Update< Developer > {
         developer.setEmail( email );
 
         historyHandler.update( developer, DeveloperProperty.EMAIL );
-        
+
         developerRepository.persist( developer );
     }
 }

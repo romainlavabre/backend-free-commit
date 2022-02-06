@@ -35,5 +35,4 @@ build/
 ### Submodule manager ###
 /.submodule-trash
 
-/src/main/resources/application-dev.properties
-/src/main/resources/application-prod.properties
+/docker/dev/.env
