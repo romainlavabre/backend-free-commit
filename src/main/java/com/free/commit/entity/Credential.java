@@ -4,6 +4,7 @@ import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.response.Message;
+import com.free.commit.entity.encrypt.EncryptField;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Credential {
     @Column( nullable = false )
     private String name;
 
+    @Convert( converter = EncryptField.class )
     @Column( name = "ssh_key", nullable = false, columnDefinition = "TEXT" )
     private String sshKey;
 
