@@ -68,6 +68,9 @@ Maven dependency
 
 ### Versions
 
+##### 1.0.1
+ADD PasswordEncoder.class
+
 ##### 1.0.0
 
 INITIAL

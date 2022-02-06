@@ -43,7 +43,8 @@ public class User {
 
 
     public User() {
-        this.roles = new HashSet<>();
+        roles  = new HashSet<>();
+        enable = true;
     }
 
 
@@ -63,7 +64,7 @@ public class User {
 
 
     public void setPassword( final String password ) {
-        this.password = "{bcrypt}" + password;
+        this.password = password;
     }
 
 

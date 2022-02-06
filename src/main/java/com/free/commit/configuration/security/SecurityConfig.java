@@ -60,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers( SecurityConfig.WHITE_ENDPOINT ).permitAll()
-                .antMatchers( "/**" ).access( "hasRole('ROLE_ADMIN')" )
+                .antMatchers( "/admin/**" ).access( "hasRole('ROLE_ADMIN')" )
+                .antMatchers( "/developer/**" ).access( "hasRole('ROLE_DEVELOPER')" )
                 .anyRequest().authenticated();
 
         http

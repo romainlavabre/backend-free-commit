@@ -37,6 +37,8 @@ services:
             TWILIO_FROM: ${TWILIO_FROM}
             JWT_SECRET: ${JWT_SECRET}
             JWT_LIFE_TIME: ${JWT_LIFE_TIME}
+            DEFAULT_ADMIN_USERNAME: ${DEFAULT_ADMIN_USERNAME}
+            DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=api"
