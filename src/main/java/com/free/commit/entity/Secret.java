@@ -17,7 +17,8 @@ public class Secret {
     @Column( nullable = false )
     private String name;
 
-    private boolean encrypt;
+    @Column( nullable = false, columnDefinition = "TEXT" )
+    private String value;
 
     @ManyToOne( cascade = {CascadeType.PERSIST} )
     @JoinColumn( name = "project_id" )
@@ -38,29 +39,29 @@ public class Secret {
         if ( name == null || name.isBlank() ) {
             throw new HttpUnprocessableEntityException( Message.SECRET_NAME_REQUIRED );
         }
-        
+
         this.name = name;
 
         return this;
     }
 
 
-    public boolean isEncrypt() {
-        return encrypt;
+    public String getValue() {
+        return value;
     }
 
 
-    public Secret setEncrypt( Boolean encrypt ) {
-        if ( encrypt == null ) {
-            throw new HttpUnprocessableEntityException( Message.SECRET_ENCRYPT_REQUIRED );
+    public Secret setValue( String value ) {
+        if ( value == null || value.isBlank() ) {
+            throw new HttpUnprocessableEntityException( Message.SECRET_VALUE_REQUIRED );
         }
 
-        this.encrypt = encrypt;
+        this.value = value;
 
         return this;
     }
 
-
+    
     public Project getProject() {
         return project;
     }
