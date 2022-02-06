@@ -61,7 +61,7 @@ public class Secret {
         return this;
     }
 
-    
+
     public Project getProject() {
         return project;
     }
@@ -69,6 +69,10 @@ public class Secret {
 
     public Secret setProject( Project project ) {
         this.project = project;
+
+        if ( !project.getSecrets().contains( this ) ) {
+            project.addSecret( this );
+        }
 
         return this;
     }
