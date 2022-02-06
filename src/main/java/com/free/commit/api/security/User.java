@@ -28,7 +28,7 @@ public class User {
     @Json( groups = {
             @Group
     } )
-    @Column( nullable = false )
+    @Column( nullable = false, unique = true )
     private String username;
 
     @Column( nullable = false )

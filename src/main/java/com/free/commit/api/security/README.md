@@ -68,6 +68,10 @@ Maven dependency
 
 ### Versions
 
+
+##### 1.0.2
+FIX User.username non unique
+
 ##### 1.0.1
 ADD PasswordEncoder.class
 
