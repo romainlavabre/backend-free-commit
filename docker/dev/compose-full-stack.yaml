@@ -10,8 +10,9 @@ services:
         networks:
             - reverse-proxy
             - api
+            - client-database
         volumes:
-            - ${PWD}/treafik:/etc/traefik/
+            - ${PWD}/traefik:/etc/traefik/
             - /var/run/docker.sock:/var/run/docker.sock
         restart: always
         container_name: reverse-proxy
