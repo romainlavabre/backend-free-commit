@@ -8,6 +8,7 @@ import com.free.commit.api.storage.data.DataStorageHandler;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.Developer;
 import com.free.commit.repository.DeveloperRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,7 +64,9 @@ public class DeveloperController {
 
         dataStorageHandler.save();
 
-        return ResponseEntity.ok( Encoder.encode( developer, GroupType.ADMIN ) );
+        return ResponseEntity
+                .status( HttpStatus.CREATED )
+                .body( Encoder.encode( developer, GroupType.ADMIN ) );
     }
 
 

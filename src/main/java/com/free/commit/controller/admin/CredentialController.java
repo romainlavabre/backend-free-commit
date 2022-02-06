@@ -9,6 +9,7 @@ import com.free.commit.api.storage.data.DataStorageHandler;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.Credential;
 import com.free.commit.repository.CredentialRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +59,9 @@ public class CredentialController {
 
         dataStorageHandler.save();
 
-        return ResponseEntity.ok( Encoder.encode( credential, GroupType.ADMIN ) );
+        return ResponseEntity
+                .status( HttpStatus.CREATED )
+                .body( Encoder.encode( credential, GroupType.ADMIN ) );
     }
 
 
@@ -96,7 +99,7 @@ public class CredentialController {
         deleteCredential.delete( request, credential );
 
         dataStorageHandler.save();
-        
+
         return ResponseEntity.noContent().build();
     }
 }

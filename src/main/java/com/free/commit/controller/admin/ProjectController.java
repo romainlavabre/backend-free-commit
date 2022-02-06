@@ -9,6 +9,7 @@ import com.free.commit.api.storage.data.DataStorageHandler;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.Project;
 import com.free.commit.repository.ProjectRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +70,9 @@ public class ProjectController {
 
         dataStorageHandler.save();
 
-        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
+        return ResponseEntity
+                .status( HttpStatus.CREATED )
+                .body( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
