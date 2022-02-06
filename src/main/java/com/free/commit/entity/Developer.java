@@ -17,6 +17,8 @@ public class Developer {
     @Column( name = "github_username" )
     private String githubUsername;
 
+    private String email;
+
     @OneToOne( cascade = {CascadeType.PERSIST} )
     @JoinColumn( name = "user_id", unique = true, nullable = false )
     private User user;
@@ -34,6 +36,18 @@ public class Developer {
 
     public Developer setGithubUsername( String githubUsername ) {
         this.githubUsername = githubUsername;
+
+        return this;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public Developer setEmail( String email ) {
+        this.email = email;
 
         return this;
     }
