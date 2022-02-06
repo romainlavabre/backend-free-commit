@@ -6,6 +6,7 @@ import com.free.commit.api.security.User;
 import com.free.commit.api.security.UserRepository;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.security.Role;
+import com.free.commit.entity.Developer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -50,7 +51,11 @@ public class DefaultAdmin {
             user.addRole( Role.ADMIN );
             user.addRole( Role.DEVELOPER );
 
+            Developer developer = new Developer();
+            developer.setUser( user );
+
             entityManager.persist( user );
+            entityManager.persist( developer );
             entityManager.flush();
 
             logger.info( "Admin " + user.getUsername() + " was created" );
