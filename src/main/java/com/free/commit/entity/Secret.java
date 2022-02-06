@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class Secret {
 
     @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
     @Column( nullable = false )

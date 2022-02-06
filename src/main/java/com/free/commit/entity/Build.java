@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 public class Build {
 
     @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
     private final ZonedDateTime createdAt;
