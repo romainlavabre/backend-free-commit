@@ -48,6 +48,7 @@ public class DefaultAdmin {
             user.setUsername( environment.getEnv( Variable.DEFAULT_ADMIN_USERNAME ) );
             user.setPassword( passwordEncoder.encode( environment.getEnv( Variable.DEFAULT_ADMIN_PASSWORD ) ) );
             user.addRole( Role.ADMIN );
+            user.addRole( Role.DEVELOPER );
 
             entityManager.persist( user );
             entityManager.flush();
