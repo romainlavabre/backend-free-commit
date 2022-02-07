@@ -87,10 +87,19 @@ public class Project {
     @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Build > builds;
 
+    @ManyToMany()
+    @JoinTable(
+            name = "project_developer",
+            joinColumns = @JoinColumn( name = "project_id", referencedColumnName = "id" ),
+            inverseJoinColumns = @JoinColumn( name = "developer_id", referencedColumnName = "id" )
+    )
+    private final List< Developer > developers;
+
 
     public Project() {
-        secrets = new ArrayList<>();
-        builds  = new ArrayList<>();
+        secrets    = new ArrayList<>();
+        builds     = new ArrayList<>();
+        developers = new ArrayList<>();
     }
 
 
@@ -244,6 +253,32 @@ public class Project {
 
     public Project removeBuild( Build build ) {
         builds.remove( build );
+
+        return this;
+    }
+
+
+    public List< Developer > getDevelopers() {
+        return developers;
+    }
+
+
+    public Project addDeveloper( Developer developer ) {
+        if ( !developers.contains( developer ) ) {
+            developers.add( developer );
+
+            if ( !developer.getProjects().contains( this ) ) {
+                developer.addProject( this );
+            }
+        }
+
+
+        return this;
+    }
+
+
+    public Project removeDeveloper( Developer developer ) {
+        developers.remove( developer );
 
         return this;
     }

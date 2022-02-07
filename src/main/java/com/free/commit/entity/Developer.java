@@ -10,6 +10,8 @@ import com.free.commit.configuration.json.put.PutUserRoles;
 import com.free.commit.configuration.json.put.PutUserUsername;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -56,6 +58,14 @@ public class Developer {
     @JoinColumn( name = "user_id", unique = true, nullable = false )
     private User user;
 
+    @ManyToMany( mappedBy = "developers" )
+    private final List< Project > projects;
+
+
+    public Developer() {
+        projects = new ArrayList<>();
+    }
+
 
     public long getId() {
         return id;
@@ -93,6 +103,31 @@ public class Developer {
 
     public Developer setUser( User user ) {
         this.user = user;
+
+        return this;
+    }
+
+
+    public List< Project > getProjects() {
+        return projects;
+    }
+
+
+    public Developer addProject( Project project ) {
+        if ( !projects.contains( project ) ) {
+            projects.add( project );
+
+            if ( !project.getDevelopers().contains( this ) ) {
+                project.addDeveloper( this );
+            }
+        }
+
+        return this;
+    }
+
+
+    public Developer removeProject( Project project ) {
+        projects.remove( project );
 
         return this;
     }
