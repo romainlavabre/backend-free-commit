@@ -11,4 +11,5 @@ public interface DeveloperParameter {
     String GITHUB_USERNAME = PREFIX + "github_username";
     String EMAIL           = PREFIX + "email";
     String ENABLED         = PREFIX + "enabled";
+    String PROJECTS_ID     = PREFIX + "projects_id";
 }

@@ -11,4 +11,5 @@ public interface ProjectParameter {
     String BRANCH            = PREFIX + "branch";
     String SPEC_FILE_PATH    = PREFIX + "spec_file_path";
     String KEEP_NUMBER_BUILD = PREFIX + "keep_number_build";
+    String DEVELOPERS_ID     = PREFIX + "developers_id";
 }

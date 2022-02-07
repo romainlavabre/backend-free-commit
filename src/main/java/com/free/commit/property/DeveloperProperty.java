@@ -6,4 +6,5 @@ package com.free.commit.property;
 public interface DeveloperProperty {
     String EMAIL           = "email";
     String GITHUB_USERNAME = "githubUsername";
+    String PROJECTS        = "projects";
 }

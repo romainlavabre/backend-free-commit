@@ -10,4 +10,5 @@ public interface ProjectProperty {
     String BRANCH            = "branch";
     String SPEC_FILE_PATH    = "specFilePath";
     String KEEP_NUMBER_BUILD = "keepNumberBuild";
+    String DEVELOPERS        = "developers";
 }
