@@ -58,6 +58,10 @@ public class Developer {
     @JoinColumn( name = "user_id", unique = true, nullable = false )
     private User user;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToMany( mappedBy = "developers" )
     private final List< Project > projects;
 

@@ -87,6 +87,10 @@ public class Project {
     @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Build > builds;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToMany()
     @JoinTable(
             name = "project_developer",
