@@ -28,6 +28,8 @@ public class DeveloperController {
     protected final Update< Developer > updateDeveloperGithubUsername;
     protected final Update< Developer > updateDeveloperUsername;
     protected final Update< Developer > updateDeveloperPassword;
+    protected final Update< Developer > updateDeveloperRoles;
+    protected final Update< Developer > updateDeveloperProjects;
     protected final DeveloperRepository developerRepository;
     protected final DataStorageHandler  dataStorageHandler;
     protected final Request             request;
@@ -40,6 +42,8 @@ public class DeveloperController {
             Update< Developer > updateDeveloperGithubUsername,
             Update< Developer > updateDeveloperUsername,
             Update< Developer > updateDeveloperPassword,
+            Update< Developer > updateDeveloperRoles,
+            Update< Developer > updateDeveloperProjects,
             DeveloperRepository developerRepository,
             DataStorageHandler dataStorageHandler,
             Request request ) {
@@ -49,6 +53,8 @@ public class DeveloperController {
         this.updateDeveloperGithubUsername = updateDeveloperGithubUsername;
         this.updateDeveloperUsername       = updateDeveloperUsername;
         this.updateDeveloperPassword       = updateDeveloperPassword;
+        this.updateDeveloperRoles          = updateDeveloperRoles;
+        this.updateDeveloperProjects       = updateDeveloperProjects;
         this.developerRepository           = developerRepository;
         this.dataStorageHandler            = dataStorageHandler;
         this.request                       = request;
@@ -128,6 +134,32 @@ public class DeveloperController {
         Developer developer = developerRepository.findOrFail( id );
 
         updateDeveloperPassword.update( request, developer );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/developers/{id:[0-9]+}/roles" )
+    public ResponseEntity< Void > updateRoles( @PathVariable( "id" ) long id ) {
+        Developer developer = developerRepository.findOrFail( id );
+
+        updateDeveloperRoles.update( request, developer );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/developers/{id:[0-9]+}/projects" )
+    public ResponseEntity< Void > updateProjects( @PathVariable( "id" ) long id ) {
+        Developer developer = developerRepository.findOrFail( id );
+
+        updateDeveloperProjects.update( request, developer );
 
         dataStorageHandler.save();
 
