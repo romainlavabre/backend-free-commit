@@ -71,7 +71,7 @@ public class DeveloperController {
 
 
     @Transactional
-    @PatchMapping( path = "/developers/{id:[0-9]+]}/email" )
+    @PatchMapping( path = "/developers/{id:[0-9]+}/email" )
     public ResponseEntity< Void > updateEmail( @PathVariable( "id" ) long id ) {
         Developer developer = developerRepository.findOrFail( id );
 
@@ -84,7 +84,7 @@ public class DeveloperController {
 
 
     @Transactional
-    @PatchMapping( path = "/developers/{id:[0-9]+]}/enabled" )
+    @PatchMapping( path = "/developers/{id:[0-9]+}/enabled" )
     public ResponseEntity< Void > updateEnabled( @PathVariable( "id" ) long id ) {
         Developer developer = developerRepository.findOrFail( id );
 
@@ -97,7 +97,7 @@ public class DeveloperController {
 
 
     @Transactional
-    @PatchMapping( path = "/developers/{id:[0-9]+]}/github_username" )
+    @PatchMapping( path = "/developers/{id:[0-9]+}/github_username" )
     public ResponseEntity< Void > updateGithubUsername( @PathVariable( "id" ) long id ) {
         Developer developer = developerRepository.findOrFail( id );
 
@@ -110,7 +110,7 @@ public class DeveloperController {
 
 
     @Transactional
-    @PatchMapping( path = "/developers/{id:[0-9]+]}/username" )
+    @PatchMapping( path = "/developers/{id:[0-9]+}/username" )
     public ResponseEntity< Void > updateUsername( @PathVariable( "id" ) long id ) {
         Developer developer = developerRepository.findOrFail( id );
 
@@ -123,7 +123,7 @@ public class DeveloperController {
 
 
     @Transactional
-    @PatchMapping( path = "/developers/{id:[0-9]+]}/password" )
+    @PatchMapping( path = "/developers/{id:[0-9]+}/password" )
     public ResponseEntity< Void > updatePassword( @PathVariable( "id" ) long id ) {
         Developer developer = developerRepository.findOrFail( id );
 

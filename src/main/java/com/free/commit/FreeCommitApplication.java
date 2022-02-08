@@ -27,7 +27,7 @@ public class FreeCommitApplication {
                 final String origins = environment.getEnv( "request.allowed-origin" );
 
                 registry.addMapping( pattern )
-                        .allowedMethods( "GET", "POST", "PUT", "DELETE", "OPTIONS" )
+                        .allowedMethods( "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" )
                         .allowedOrigins( origins )
                         .exposedHeaders( "Location", "Authorization" );
             }
