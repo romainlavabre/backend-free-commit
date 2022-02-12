@@ -6,7 +6,7 @@ package com.free.commit.util;
 public class Cast {
 
     public static Long getLong( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Long.valueOf( object.toString() );
         }
 
@@ -15,7 +15,7 @@ public class Cast {
 
 
     public static Short getShort( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Short.valueOf( object.toString() );
         }
 
@@ -24,7 +24,7 @@ public class Cast {
 
 
     public static Byte getByte( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Byte.valueOf( object.toString() );
         }
 
@@ -33,7 +33,7 @@ public class Cast {
 
 
     public static Double getDouble( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Double.valueOf( object.toString() );
         }
 
@@ -42,7 +42,7 @@ public class Cast {
 
 
     public static Boolean getBoolean( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Boolean.valueOf( object.toString() );
         }
 
@@ -51,7 +51,7 @@ public class Cast {
 
 
     public static Integer getInteger( Object object ) {
-        if ( object != null ) {
+        if ( object != null && !object.toString().isBlank() ) {
             return Integer.valueOf( object.toString() );
         }
 

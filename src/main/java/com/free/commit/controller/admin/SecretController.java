@@ -26,6 +26,7 @@ public class SecretController {
     protected final Create< Secret >   createSecret;
     protected final Update< Secret >   updateSecretName;
     protected final Update< Secret >   updateSecretValue;
+    protected final Update< Secret >   updateSecretProject;
     protected final Delete< Secret >   deleteSecret;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -36,17 +37,19 @@ public class SecretController {
             Create< Secret > createSecret,
             Update< Secret > updateSecretName,
             Update< Secret > updateSecretValue,
+            Update< Secret > updateSecretProject,
             Delete< Secret > deleteSecret,
             DataStorageHandler dataStorageHandler,
             Request request,
             SecretRepository secretRepository ) {
-        this.createSecret       = createSecret;
-        this.updateSecretName   = updateSecretName;
-        this.updateSecretValue  = updateSecretValue;
-        this.deleteSecret       = deleteSecret;
-        this.dataStorageHandler = dataStorageHandler;
-        this.request            = request;
-        this.secretRepository   = secretRepository;
+        this.createSecret        = createSecret;
+        this.updateSecretName    = updateSecretName;
+        this.updateSecretValue   = updateSecretValue;
+        this.updateSecretProject = updateSecretProject;
+        this.deleteSecret        = deleteSecret;
+        this.dataStorageHandler  = dataStorageHandler;
+        this.request             = request;
+        this.secretRepository    = secretRepository;
     }
 
 
@@ -84,6 +87,19 @@ public class SecretController {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretValue.update( request, secret );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/secrets/{id:[0-9]+}/project" )
+    public ResponseEntity< Void > updateProject( @PathVariable( "id" ) long id ) {
+        Secret secret = secretRepository.findOrFail( id );
+
+        updateSecretProject.update( request, secret );
 
         dataStorageHandler.save();
 

@@ -88,7 +88,7 @@ public class Secret {
     public Secret setProject( Project project ) {
         this.project = project;
 
-        if ( !project.getSecrets().contains( this ) ) {
+        if ( project != null && !project.getSecrets().contains( this ) ) {
             project.addSecret( this );
         }
 
