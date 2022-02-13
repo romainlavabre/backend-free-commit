@@ -1,10 +1,11 @@
 package com.free.commit.repository;
 
 import com.free.commit.entity.Secret;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.free.commit.repository.jpa.SecretJpa;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -12,10 +13,20 @@ import javax.persistence.EntityManager;
 @Service
 public class SecretRepositoryImpl extends AbstractRepository< Secret > implements SecretRepository {
 
+    protected final SecretJpa secretJpa;
+
+
     public SecretRepositoryImpl(
             EntityManager entityManager,
-            JpaRepository< Secret, Long > jpaRepository ) {
-        super( entityManager, jpaRepository );
+            SecretJpa secretJpa ) {
+        super( entityManager, secretJpa );
+        this.secretJpa = secretJpa;
+    }
+
+
+    @Override
+    public List< Secret > findAllWithGlobalScope() {
+        return secretJpa.findAllByProjectIsNull();
     }
 
 
