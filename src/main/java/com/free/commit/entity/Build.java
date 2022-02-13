@@ -14,6 +14,15 @@ public class Build {
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
+    @Column( columnDefinition = "TEXT" )
+    private String output;
+
+    @Column( name = "exit_code", nullable = false )
+    private int exitCode;
+
+    @Column( name = "exit_message" )
+    private String exitMessage;
+
     private final ZonedDateTime createdAt;
 
     @ManyToOne( cascade = {CascadeType.PERSIST} )
@@ -28,6 +37,18 @@ public class Build {
 
     public long getId() {
         return id;
+    }
+
+
+    public String getOutput() {
+        return output;
+    }
+
+
+    public Build addOutputLine( String line ) {
+        output += "\n" + line;
+
+        return this;
     }
 
 
