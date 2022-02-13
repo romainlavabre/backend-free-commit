@@ -63,8 +63,8 @@ public class Executor {
             active = false;
             return;
         } catch ( Throwable e ) {
-            build.addOutputLine( e.getMessage() );
-            build.setExitCode( -1 )
+            build.addOutputLine( e.getMessage() )
+                 .setExitCode( -1 )
                  .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) );
             active = false;
             return;
@@ -77,7 +77,7 @@ public class Executor {
         try {
             Files.createDirectory( buildSpace );
             Files.createFile( entrypoint );
-            Files.write( entrypoint, getFileContent( specFile ) );
+            Files.write( entrypoint, getEntryPointContent( specFile ) );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
@@ -157,7 +157,7 @@ public class Executor {
     }
 
 
-    protected byte[] getFileContent( SpecFile specFile ) {
+    protected byte[] getEntryPointContent( SpecFile specFile ) {
         StringJoiner content = new StringJoiner( "\n" );
 
         content.add( "#!/bin/sh" )
@@ -227,7 +227,7 @@ public class Executor {
         }
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock" );
-        
+
         stringJoiner.add( run.toString() );
 
 

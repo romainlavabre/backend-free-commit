@@ -1,5 +1,6 @@
 package com.free.commit.controller.developer;
 
+import com.free.commit.api.json.Encoder;
 import com.free.commit.build.BuildManager;
 import com.free.commit.entity.Project;
 import com.free.commit.repository.CredentialRepository;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +36,18 @@ public class BuildController {
     }
 
 
+    @GetMapping( path = "/builds/queueds" )
+    public ResponseEntity< List< Map< String, Object > > > getQueueds() {
+        return ResponseEntity.ok( Encoder.encode( buildManager.getQueueds() ) );
+    }
+
+
+    @GetMapping( path = "/builds/executeds" )
+    public ResponseEntity< List< Map< String, Object > > > getExecuteds() {
+        return ResponseEntity.ok( Encoder.encode( buildManager.getExecuteds() ) );
+    }
+
+
     @PostMapping( path = "/builds/{id:[0-9]+}" )
     public ResponseEntity< Map< String, Object > > build( @PathVariable( "id" ) long id ) {
         Project project = new Project();
@@ -43,12 +57,10 @@ public class BuildController {
                .setSpecFilePath( "/.free-commit/deploy.yaml" )
                .setRepositoryCredential( credentialRepository.findOrFail( 2L ) );
 
-        String executorId = buildManager.launch( project );
+        BuildManager.Queued queued = buildManager.launch( project );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )
-                .body( Map.of(
-                        "executor_id", executorId
-                ) );
+                .body( Encoder.encode( queued ) );
     }
 }
