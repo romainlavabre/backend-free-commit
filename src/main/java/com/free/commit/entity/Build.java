@@ -18,7 +18,7 @@ public class Build {
     private String output;
 
     @Column( name = "exit_code", nullable = false )
-    private int exitCode;
+    private Integer exitCode;
 
     @Column( name = "exit_message" )
     private String exitMessage;
@@ -52,6 +52,34 @@ public class Build {
     }
 
 
+    public Integer getExitCode() {
+        return exitCode;
+    }
+
+
+    public Build setExitCode( Integer exitCode ) {
+        this.exitCode = exitCode;
+
+        addExitCode();
+        
+        return this;
+    }
+
+
+    public String getExitMessage() {
+        return exitMessage;
+    }
+
+
+    public Build setExitMessage( String exitMessage ) {
+        this.exitMessage = exitMessage;
+
+        addExitCode();
+
+        return this;
+    }
+
+
     public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
@@ -70,5 +98,12 @@ public class Build {
         }
 
         return this;
+    }
+
+
+    protected void addExitCode() {
+        if ( exitCode != null && exitMessage != null ) {
+            addOutputLine( "Exit with code " + exitCode + " and message " + exitMessage );
+        }
     }
 }

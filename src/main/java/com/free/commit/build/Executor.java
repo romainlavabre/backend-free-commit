@@ -1,10 +1,16 @@
 package com.free.commit.build;
 
+import com.free.commit.build.exception.BuildException;
+import com.free.commit.build.exception.SpecFileNotFoundException;
+import com.free.commit.build.exception.SpecFileNotReadableException;
+import com.free.commit.build.parser.SpecFile;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.repository.BuildRepository;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +28,7 @@ public class Executor {
 
     private         Build           build;
     private         Project         project;
+    private         boolean         active = true;
     protected final BuildRepository buildRepository;
 
 
@@ -35,6 +42,23 @@ public class Executor {
         this.build   = build;
 
         initRepository();
+
+        SpecFile specFile;
+
+        try {
+            specFile = getSpecFile();
+        } catch ( BuildException e ) {
+            build.setExitCode( e.getCode() )
+                 .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) );
+            active = false;
+            return;
+        } catch ( Throwable e ) {
+            build.addOutputLine( e.getMessage() );
+            build.setExitCode( -1 )
+                 .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) );
+            active = false;
+            return;
+        }
     }
 
 
@@ -48,6 +72,28 @@ public class Executor {
     }
 
 
+    public boolean isActive() {
+        return active;
+    }
+
+
+    protected SpecFile getSpecFile()
+            throws BuildException {
+        Path path = Path.of( "/ci/repository/" + project.getName() + "/" + project.getSpecFilePath().replaceFirst( "/", "" ) );
+
+        if ( Files.exists( path ) ) {
+            Yaml yaml = new Yaml( new Constructor( SpecFile.class ) );
+            try {
+                return yaml.load( Files.readString( path ) );
+            } catch ( IOException e ) {
+                throw new SpecFileNotReadableException();
+            }
+        }
+
+        throw new SpecFileNotFoundException();
+    }
+
+
     protected void initRepository() {
         try {
 
@@ -56,12 +102,20 @@ public class Executor {
             Process process = Runtime.getRuntime()
                                      .exec( cmdline );
 
-            BufferedReader reader = new BufferedReader(
+            BufferedReader readerIn = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
 
-            String line;
-            while ( (line = reader.readLine()) != null ) {
-                build.addOutputLine( line );
+            BufferedReader readerErr = new BufferedReader(
+                    new InputStreamReader( process.getErrorStream() ) );
+
+            String lineIn;
+            while ( (lineIn = readerIn.readLine()) != null ) {
+                build.addOutputLine( lineIn );
+            }
+
+            String lineErr;
+            while ( (lineErr = readerErr.readLine()) != null ) {
+                build.addOutputLine( lineErr );
             }
 
             process.waitFor();
@@ -79,14 +133,15 @@ public class Executor {
 
         stringJoiner.add( "eval `ssh-agent`" )
                     .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                    .add( "cd /ci" );
+                    .add( "cd /ci/repository" )
+                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
 
-        if ( !Files.exists( Path.of( "/ci/" + project.getName() ) ) ) {
-            stringJoiner.add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" )
-                        .add( "git clone " + project.getRepository() + " " + project.getName() );
+        if ( !Files.exists( Path.of( "/ci/repository/" + project.getName() ) ) ) {
+            stringJoiner.add( "git clone " + project.getRepository() + " " + project.getName() );
         }
 
-        stringJoiner.add( "cd " + project.getName() )
+        stringJoiner.add( "cd /ci/repository/" + project.getName() )
+                    .add( "git fetch --all" )
                     .add( "git checkout " + project.getBranch() )
                     .add( "git pull origin " + project.getBranch() );
 

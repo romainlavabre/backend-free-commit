@@ -12,6 +12,8 @@ public class ExitMessageMapper {
     static {
         MAPPER = new HashMap<>();
 
+        MAPPER.put( -1, "Unknown error" );
         MAPPER.put( 1000, "Spec file not found" );
+        MAPPER.put( 1001, "Spec file not readable" );
     }
 }

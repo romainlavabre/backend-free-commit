@@ -10,6 +10,8 @@ RUN apt-get update \
          focal stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y \
     && mkdir /ci
+    && mkdir /ci/repository
+    && mkdir /ci/build
 
 WORKDIR app
 ENTRYPOINT ["./mvnw","spring-boot:run","-Dspring-boot.run.profiles=local"]

@@ -127,6 +127,12 @@
             <artifactId>velocity</artifactId>
             <version>1.7</version>
         </dependency>
+        <!-- YAML -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.30</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

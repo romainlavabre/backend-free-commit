@@ -37,10 +37,10 @@ public class BuildController {
     @PostMapping( path = "/builds/{id:[0-9]+}" )
     public ResponseEntity< Map< String, Object > > build( @PathVariable( "id" ) long id ) {
         Project project = new Project();
-        project.setBranch( "develop" )
+        project.setBranch( "cicd/test" )
                .setRepository( "git@github.com:fairfair-cloud/service-emergency.git" )
                .setName( "service-emergency-dev" )
-               .setSpecFilePath( "/deploy.yaml" )
+               .setSpecFilePath( "/.free-commit/deploy.yaml" )
                .setRepositoryCredential( credentialRepository.findOrFail( 2L ) );
 
         String executorId = buildManager.launch( project );
