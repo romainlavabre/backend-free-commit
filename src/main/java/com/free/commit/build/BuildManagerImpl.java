@@ -117,7 +117,23 @@ public class BuildManagerImpl implements BuildManager {
             Iterator< Queued > queuedIterator = queueds.iterator();
 
             while ( queuedIterator.hasNext() && executeds.size() < 2 ) {
-                Queued   queued   = queuedIterator.next();
+                Queued queued = queuedIterator.next();
+
+                if ( !queued.getProject().isAllowConcurrentExecution() ) {
+                    boolean found = false;
+
+                    for ( Executed executed : executeds ) {
+                        if ( executed.getProject().getId() == queued.getProject().getId() ) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if ( found ) {
+                        continue;
+                    }
+                }
+
                 Executor executor = applicationContext.getBean( Executor.class );
 
                 executeds.add( new Executed( queued.getProject(), queued.getBuild(), queued.getExecutorId(), executor ) );
