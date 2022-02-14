@@ -1,5 +1,9 @@
 package com.free.commit.entity;
 
+import com.free.commit.api.json.annotation.Group;
+import com.free.commit.api.json.annotation.Json;
+import com.free.commit.configuration.json.GroupType;
+
 import javax.persistence.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,21 +14,39 @@ import java.time.ZonedDateTime;
 @Entity
 public class Build {
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private long id;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( columnDefinition = "TEXT" )
     private String output;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( name = "exit_code", nullable = false )
     private Integer exitCode;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @Column( name = "exit_message" )
     private String exitMessage;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     private final ZonedDateTime createdAt;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToOne( cascade = {CascadeType.PERSIST} )
     @JoinColumn( name = "project_id", nullable = false )
     private Project project;
@@ -61,7 +83,7 @@ public class Build {
         this.exitCode = exitCode;
 
         addExitCode();
-        
+
         return this;
     }
 

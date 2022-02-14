@@ -2,8 +2,11 @@ package com.free.commit.controller.developer;
 
 import com.free.commit.api.json.Encoder;
 import com.free.commit.build.BuildManager;
+import com.free.commit.configuration.json.GroupType;
+import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.repository.CredentialRepository;
+import com.free.commit.repository.ProjectRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +23,25 @@ public class BuildController {
 
     protected final BuildManager         buildManager;
     protected final CredentialRepository credentialRepository;
+    protected final ProjectRepository    projectRepository;
 
 
     public BuildController(
             BuildManager buildManager,
-            CredentialRepository credentialRepository ) {
+            CredentialRepository credentialRepository,
+            ProjectRepository projectRepository ) {
         this.buildManager         = buildManager;
         this.credentialRepository = credentialRepository;
+        this.projectRepository    = projectRepository;
+    }
+
+
+    @GetMapping( path = "/builds/by/project/{id:[0-9]+}" )
+    public ResponseEntity< List< Map< String, Object > > > getAllBuildsByProject( @PathVariable( "id" ) long id ) {
+        Project       project = projectRepository.findOrFail( id );
+        List< Build > builds  = project.getBuilds();
+
+        return ResponseEntity.ok( Encoder.encode( builds, GroupType.DEVELOPER ) );
     }
 
 
