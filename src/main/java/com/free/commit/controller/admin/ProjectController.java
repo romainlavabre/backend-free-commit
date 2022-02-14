@@ -29,6 +29,7 @@ public class ProjectController {
     protected final Update< Project >  updateProjectBranch;
     protected final Update< Project >  updateProjectSpecFilePath;
     protected final Update< Project >  updateProjectKeepNumberBuild;
+    protected final Update< Project >  updateProjectAllowConcurrentExecution;
     protected final Delete< Project >  deleteProject;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -43,21 +44,23 @@ public class ProjectController {
             Update< Project > updateProjectBranch,
             Update< Project > updateProjectSpecFilePath,
             Update< Project > updateProjectKeepNumberBuild,
+            Update< Project > updateProjectAllowConcurrentExecution,
             Delete< Project > deleteProject,
             DataStorageHandler dataStorageHandler,
             Request request,
             ProjectRepository projectRepository ) {
-        this.createProject                = createProject;
-        this.updateProjectName            = updateProjectName;
-        this.updateProjectDescription     = updateProjectDescription;
-        this.updateProjectRepository      = updateProjectRepository;
-        this.updateProjectBranch          = updateProjectBranch;
-        this.updateProjectSpecFilePath    = updateProjectSpecFilePath;
-        this.updateProjectKeepNumberBuild = updateProjectKeepNumberBuild;
-        this.deleteProject                = deleteProject;
-        this.dataStorageHandler           = dataStorageHandler;
-        this.request                      = request;
-        this.projectRepository            = projectRepository;
+        this.createProject                         = createProject;
+        this.updateProjectName                     = updateProjectName;
+        this.updateProjectDescription              = updateProjectDescription;
+        this.updateProjectRepository               = updateProjectRepository;
+        this.updateProjectBranch                   = updateProjectBranch;
+        this.updateProjectSpecFilePath             = updateProjectSpecFilePath;
+        this.updateProjectKeepNumberBuild          = updateProjectKeepNumberBuild;
+        this.updateProjectAllowConcurrentExecution = updateProjectAllowConcurrentExecution;
+        this.deleteProject                         = deleteProject;
+        this.dataStorageHandler                    = dataStorageHandler;
+        this.request                               = request;
+        this.projectRepository                     = projectRepository;
     }
 
 
@@ -147,6 +150,19 @@ public class ProjectController {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectKeepNumberBuild.update( request, project );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/projects/{id:[0-9]+}/allow_concurrent_execution" )
+    public ResponseEntity< Void > updateAllowConcurrentExecution( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        updateProjectAllowConcurrentExecution.update( request, project );
 
         dataStorageHandler.save();
 

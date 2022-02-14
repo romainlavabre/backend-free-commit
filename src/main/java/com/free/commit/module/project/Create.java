@@ -28,19 +28,21 @@ public class Create implements com.free.commit.api.crud.Create< Project > {
 
     @Override
     public void create( Request request, Project project ) {
-        String  name            = ( String ) request.getParameter( ProjectParameter.NAME );
-        String  description     = ( String ) request.getParameter( ProjectParameter.DESCRIPTION );
-        String  repository      = ( String ) request.getParameter( ProjectParameter.REPOSITORY );
-        String  branch          = ( String ) request.getParameter( ProjectParameter.BRANCH );
-        String  specFilePath    = ( String ) request.getParameter( ProjectParameter.SPEC_FILE_PATH );
-        Integer keepNumberBuild = Cast.getInteger( request.getParameter( ProjectParameter.KEEP_NUMBER_BUILD ) );
+        String  name                     = ( String ) request.getParameter( ProjectParameter.NAME );
+        String  description              = ( String ) request.getParameter( ProjectParameter.DESCRIPTION );
+        String  repository               = ( String ) request.getParameter( ProjectParameter.REPOSITORY );
+        String  branch                   = ( String ) request.getParameter( ProjectParameter.BRANCH );
+        String  specFilePath             = ( String ) request.getParameter( ProjectParameter.SPEC_FILE_PATH );
+        Integer keepNumberBuild          = Cast.getInteger( request.getParameter( ProjectParameter.KEEP_NUMBER_BUILD ) );
+        Boolean allowConcurrentExecution = Cast.getBoolean( request.getParameter( ProjectParameter.ALLOW_CONCURRENT_EXECUTION ) );
 
         project.setName( name )
                .setDescription( description )
                .setRepository( repository )
                .setBranch( branch )
                .setSpecFilePath( specFilePath )
-               .setKeepNumberBuild( keepNumberBuild );
+               .setKeepNumberBuild( keepNumberBuild )
+               .setAllowConcurrentExecution( allowConcurrentExecution );
 
         historyHandler.create( project );
 

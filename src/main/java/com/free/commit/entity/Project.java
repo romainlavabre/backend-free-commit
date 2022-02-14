@@ -69,6 +69,13 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
+    @Column( name = "allow_concurrent_execution", nullable = false )
+    private boolean allowConcurrentExecution;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToOne( cascade = {CascadeType.PERSIST} )
     @JoinColumn( name = "repository_credential_id" )
     private Credential repositoryCredential;
@@ -195,6 +202,22 @@ public class Project {
 
     public Project setKeepNumberBuild( Integer keepNumberBuild ) {
         this.keepNumberBuild = keepNumberBuild;
+
+        return this;
+    }
+
+
+    public boolean isAllowConcurrentExecution() {
+        return allowConcurrentExecution;
+    }
+
+
+    public Project setAllowConcurrentExecution( Boolean allowConcurrentExecution ) {
+        if ( allowConcurrentExecution == null ) {
+            throw new HttpUnprocessableEntityException( Message.PROJECT_ALLOW_CONCURRENT_EXECUTION_REQUIRED );
+        }
+        
+        this.allowConcurrentExecution = allowConcurrentExecution;
 
         return this;
     }
