@@ -91,7 +91,7 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project", fetch = FetchType.EAGER )
+    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
     private final List< Build > builds;
 
     @Json( groups = {

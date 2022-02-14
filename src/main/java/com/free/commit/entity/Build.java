@@ -3,6 +3,7 @@ package com.free.commit.entity;
 import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.entity.converter.OutputConverter;
 
 import javax.persistence.*;
 import java.time.ZoneId;
@@ -24,7 +25,8 @@ public class Build {
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER )
     } )
-    @Column( columnDefinition = "TEXT" )
+    @Convert( converter = OutputConverter.class )
+    @Column( columnDefinition = "LONGTEXT" )
     private String output;
 
     @Json( groups = {

@@ -5,6 +5,7 @@ import com.free.commit.build.BuildManager;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
+import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.CredentialRepository;
 import com.free.commit.repository.ProjectRepository;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,18 @@ public class BuildController {
     protected final BuildManager         buildManager;
     protected final CredentialRepository credentialRepository;
     protected final ProjectRepository    projectRepository;
+    protected final BuildRepository      buildRepository;
 
 
     public BuildController(
             BuildManager buildManager,
             CredentialRepository credentialRepository,
-            ProjectRepository projectRepository ) {
+            ProjectRepository projectRepository,
+            BuildRepository buildRepository ) {
         this.buildManager         = buildManager;
         this.credentialRepository = credentialRepository;
         this.projectRepository    = projectRepository;
+        this.buildRepository      = buildRepository;
     }
 
 
@@ -42,6 +46,14 @@ public class BuildController {
         List< Build > builds  = project.getBuilds();
 
         return ResponseEntity.ok( Encoder.encode( builds, GroupType.DEVELOPER ) );
+    }
+
+
+    @GetMapping( path = "/builds/{id:[0-9]+}" )
+    public ResponseEntity< Map< String, Object > > getBuild( @PathVariable( "id" ) long id ) {
+        Build build = buildRepository.findOrFail( id );
+
+        return ResponseEntity.ok( Encoder.encode( build, GroupType.DEVELOPER ) );
     }
 
 

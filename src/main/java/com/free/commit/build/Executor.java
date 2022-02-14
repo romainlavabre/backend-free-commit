@@ -57,9 +57,8 @@ public class Executor {
 
     @Transactional
     public void execute( Project project, Build build ) {
-        this.project = project;
+        this.project = projectRepository.findOrFail( project.getId() );
         this.build   = build;
-        build.setProject( projectRepository.findOrFail( project.getId() ) );
 
 
         initRepository();
@@ -70,14 +69,16 @@ public class Executor {
             specFile = getSpecFile();
         } catch ( BuildException e ) {
             build.setExitCode( e.getCode() )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) );
+                 .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) )
+                 .setProject( this.project );
             active = false;
             entityManager.persist( build );
             return;
         } catch ( Throwable e ) {
             build.addOutputLine( e.getMessage() )
                  .setExitCode( -1 )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) );
+                 .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) )
+                 .setProject( this.project );
             active = false;
             entityManager.persist( build );
             return;
@@ -173,7 +174,8 @@ public class Executor {
             int exitCode = process.waitFor();
 
             build.setExitCode( exitCode )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( exitCode ) );
+                 .setExitMessage( ExitMessageMapper.MAPPER.get( exitCode ) )
+                 .setProject( this.project );
         } catch ( IOException | InterruptedException e ) {
             e.printStackTrace();
         }

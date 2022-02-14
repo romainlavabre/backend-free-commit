@@ -36,7 +36,11 @@ public class UpdateRepositoryCredential implements Update< Project > {
     public void update( Request request, Project project ) {
         Long repositoryCredentialId = Cast.getLong( request.getParameter( ProjectParameter.REPOSITORY_CREDENTIAL ) );
 
-        project.setRepositoryCredential( credentialRepository.findOrFail( repositoryCredentialId ) );
+        if ( repositoryCredentialId != null ) {
+            project.setRepositoryCredential( credentialRepository.findOrFail( repositoryCredentialId ) );
+        } else {
+            project.setRepositoryCredential( null );
+        }
 
         historyHandler.update( project, ProjectProperty.REPOSITORY_CREDENTIAL );
 
