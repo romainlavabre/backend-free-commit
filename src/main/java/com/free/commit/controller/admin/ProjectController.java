@@ -190,7 +190,7 @@ public class ProjectController {
 
 
     @Transactional
-    @PatchMapping( path = "/projects/{id:[0-9]+}/repository_credential_id" )
+    @PatchMapping( path = "/projects/{id:[0-9]+}/repository_credential" )
     public ResponseEntity< Void > updateRepositoryCredential( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
