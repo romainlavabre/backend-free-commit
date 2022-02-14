@@ -14,4 +14,5 @@ public interface ProjectParameter {
     String DEVELOPERS                 = PREFIX + "developers_id";
     String ALLOW_CONCURRENT_EXECUTION = PREFIX + "allow_concurrent_execution";
     String SECRETS                    = PREFIX + "secrets_id";
+    String REPOSITORY_CREDENTIAL      = PREFIX + "repository_credential_id";
 }

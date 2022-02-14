@@ -12,4 +12,5 @@ public interface ProjectProperty {
     String KEEP_NUMBER_BUILD          = "keepNumberBuild";
     String DEVELOPERS                 = "developers";
     String ALLOW_CONCURRENT_EXECUTION = "allowConcurrentExecution";
+    String REPOSITORY_CREDENTIAL      = "repositoryCredential";
 }

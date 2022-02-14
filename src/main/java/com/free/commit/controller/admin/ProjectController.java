@@ -31,6 +31,7 @@ public class ProjectController {
     protected final Update< Project >  updateProjectKeepNumberBuild;
     protected final Update< Project >  updateProjectAllowConcurrentExecution;
     protected final Update< Project >  updateProjectDevelopers;
+    protected final Update< Project >  updateProjectRepositoryCredential;
     protected final Delete< Project >  deleteProject;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -47,6 +48,7 @@ public class ProjectController {
             Update< Project > updateProjectKeepNumberBuild,
             Update< Project > updateProjectAllowConcurrentExecution,
             Update< Project > updateProjectDevelopers,
+            Update< Project > updateProjectRepositoryCredential,
             Delete< Project > deleteProject,
             DataStorageHandler dataStorageHandler,
             Request request,
@@ -60,6 +62,7 @@ public class ProjectController {
         this.updateProjectKeepNumberBuild          = updateProjectKeepNumberBuild;
         this.updateProjectAllowConcurrentExecution = updateProjectAllowConcurrentExecution;
         this.updateProjectDevelopers               = updateProjectDevelopers;
+        this.updateProjectRepositoryCredential     = updateProjectRepositoryCredential;
         this.deleteProject                         = deleteProject;
         this.dataStorageHandler                    = dataStorageHandler;
         this.request                               = request;
@@ -179,6 +182,19 @@ public class ProjectController {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectDevelopers.update( request, project );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/projects/{id:[0-9]+}/repository_credential_id" )
+    public ResponseEntity< Void > updateRepositoryCredential( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        updateProjectRepositoryCredential.update( request, project );
 
         dataStorageHandler.save();
 

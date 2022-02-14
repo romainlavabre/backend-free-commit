@@ -24,6 +24,9 @@ public interface BuildManager {
     List< Executed > getExecuteds();
 
 
+    void kill( String executorId );
+
+
     class Executed {
         @Json( groups = {
                 @Group

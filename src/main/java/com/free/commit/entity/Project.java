@@ -91,7 +91,7 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
+    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project", fetch = FetchType.EAGER )
     private final List< Build > builds;
 
     @Json( groups = {
@@ -216,7 +216,7 @@ public class Project {
         if ( allowConcurrentExecution == null ) {
             throw new HttpUnprocessableEntityException( Message.PROJECT_ALLOW_CONCURRENT_EXECUTION_REQUIRED );
         }
-        
+
         this.allowConcurrentExecution = allowConcurrentExecution;
 
         return this;

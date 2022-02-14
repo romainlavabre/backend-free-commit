@@ -83,19 +83,35 @@ public class BuildManagerImpl implements BuildManager {
     }
 
 
+    @Override
+    public void kill( String executorId ) {
+        Executor executor = null;
+
+        Iterator< Executed > executedIterator = executeds.iterator();
+
+        while ( executedIterator.hasNext() ) {
+            Executed executed = executedIterator.next();
+
+            if ( executed.getExecutorId().equals( executorId ) ) {
+                executor = executed.getExecutor();
+            }
+        }
+
+        if ( executor != null ) {
+            executor.kill();
+            return;
+        }
+
+        throw new HttpNotFoundException( Message.EXECUTOR_NOT_FOUND );
+    }
+
+
     protected void process() {
-        CronTrigger cronTrigger = new CronTrigger( "*/10 * * * * *" );
+        CronTrigger cronTrigger = new CronTrigger( "*/5 * * * * *" );
 
         threadPoolTaskScheduler.schedule( () -> {
-            Iterator< Executed > executedIterator = executeds.iterator();
 
-            while ( executedIterator.hasNext() ) {
-                Executed executed = executedIterator.next();
-
-                if ( !executed.getExecutor().isActive() ) {
-                    executeds.remove( executed );
-                }
-            }
+            executeds.removeIf( executed -> !executed.getExecutor().isActive() );
 
 
             Iterator< Queued > queuedIterator = queueds.iterator();
@@ -108,7 +124,7 @@ public class BuildManagerImpl implements BuildManager {
 
                 executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild() ) );
 
-                queueds.remove( queued );
+                queuedIterator.remove();
             }
         }, cronTrigger );
     }

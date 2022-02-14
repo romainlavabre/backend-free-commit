@@ -65,17 +65,20 @@ public class BuildController {
 
     @PostMapping( path = "/builds/{id:[0-9]+}" )
     public ResponseEntity< Map< String, Object > > build( @PathVariable( "id" ) long id ) {
-        Project project = new Project();
-        project.setBranch( "cicd/test" )
-               .setRepository( "git@github.com:fairfair-cloud/service-emergency.git" )
-               .setName( "service-emergency-dev" )
-               .setSpecFilePath( "/.free-commit/deploy.yaml" )
-               .setRepositoryCredential( credentialRepository.findOrFail( 2L ) );
+        Project project = projectRepository.findOrFail( id );
 
         BuildManager.Queued queued = buildManager.launch( project );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )
                 .body( Encoder.encode( queued ) );
+    }
+
+
+    @DeleteMapping( path = "/builds/kill/{executorId}" )
+    public ResponseEntity< Map< String, Object > > build( @PathVariable( "executorId" ) String executorId ) {
+        buildManager.kill( executorId );
+
+        return ResponseEntity.noContent().build();
     }
 }

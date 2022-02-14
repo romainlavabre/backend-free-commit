@@ -9,12 +9,14 @@ import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
 import com.free.commit.repository.BuildRepository;
+import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,18 +33,25 @@ import java.util.UUID;
 @Scope( "prototype" )
 public class Executor {
 
-    private         Build            build;
-    private         Project          project;
-    private         boolean          active = true;
-    protected final BuildRepository  buildRepository;
-    protected final SecretRepository secretRepository;
+    private         Build             build;
+    private         Project           project;
+    private         boolean           active = true;
+    private         Process           currentProcess;
+    protected final BuildRepository   buildRepository;
+    protected final SecretRepository  secretRepository;
+    protected final ProjectRepository projectRepository;
+    protected final EntityManager     entityManager;
 
 
     public Executor(
             BuildRepository buildRepository,
-            SecretRepository secretRepository ) {
-        this.buildRepository  = buildRepository;
-        this.secretRepository = secretRepository;
+            SecretRepository secretRepository,
+            ProjectRepository projectRepository,
+            EntityManager entityManager ) {
+        this.buildRepository   = buildRepository;
+        this.secretRepository  = secretRepository;
+        this.projectRepository = projectRepository;
+        this.entityManager     = entityManager;
     }
 
 
@@ -50,6 +59,8 @@ public class Executor {
     public void execute( Project project, Build build ) {
         this.project = project;
         this.build   = build;
+        build.setProject( projectRepository.findOrFail( project.getId() ) );
+
 
         initRepository();
 
@@ -61,12 +72,14 @@ public class Executor {
             build.setExitCode( e.getCode() )
                  .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) );
             active = false;
+            entityManager.persist( build );
             return;
         } catch ( Throwable e ) {
             build.addOutputLine( e.getMessage() )
                  .setExitCode( -1 )
                  .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) );
             active = false;
+            entityManager.persist( build );
             return;
         }
 
@@ -85,9 +98,8 @@ public class Executor {
         createDockerFile( specFile, buildSpace );
 
         launchContainer( buildSpace, directoryId );
+        entityManager.persist( build );
         active = false;
-
-        buildRepository.persist( build );
     }
 
 
@@ -98,6 +110,15 @@ public class Executor {
 
     public Project getProject() {
         return project;
+    }
+
+
+    public void kill() {
+        if ( currentProcess != null ) {
+            currentProcess.destroy();
+        }
+
+        active = false;
     }
 
 
@@ -130,6 +151,8 @@ public class Executor {
         try {
             Process process = Runtime.getRuntime()
                                      .exec( getLaunchContainerCommandLine( buildSpace, buildSpaceId ) );
+
+            currentProcess = process;
 
             BufferedReader readerIn = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
@@ -205,17 +228,22 @@ public class Executor {
 
         String imageName = UUID.randomUUID().toString();
 
-        stringJoiner.add( "cd /ci/build/" + buildSpaceId )
-                    .add( "eval `ssh-agent`" )
-                    .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" )
-                    .add( "git clone " + project.getRepository() + " app" )
+        stringJoiner.add( "cd /ci/build/" + buildSpaceId );
+
+        if ( project.getRepositoryCredential() != null ) {
+            stringJoiner.add( "eval `ssh-agent`" )
+                        .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
+                        .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+        }
+
+        stringJoiner.add( "git clone " + project.getRepository() + " app" )
                     .add( "cd app" )
                     .add( "git fetch --all" )
                     .add( "git checkout " + project.getBranch() )
                     .add( "git pull origin " + project.getBranch() )
                     .add( "cd .." )
                     .add( "docker build -t " + imageName + " ." );
+
         StringBuilder run = new StringBuilder( "docker run " + imageName + " " );
 
         for ( Secret secret : project.getSecrets() ) {
@@ -244,6 +272,8 @@ public class Executor {
 
             Process process = Runtime.getRuntime()
                                      .exec( cmdline );
+
+            currentProcess = process;
 
             BufferedReader readerIn = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
@@ -274,10 +304,12 @@ public class Executor {
         cmdline[ 1 ] = "-c";
         StringJoiner stringJoiner = new StringJoiner( " && " );
 
-        stringJoiner.add( "eval `ssh-agent`" )
-                    .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                    .add( "cd /ci/repository" )
-                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+        if ( project.getRepositoryCredential() != null ) {
+            stringJoiner.add( "eval `ssh-agent`" )
+                        .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
+                        .add( "cd /ci/repository" )
+                        .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+        }
 
         if ( !Files.exists( Path.of( "/ci/repository/" + project.getName() ) ) ) {
             stringJoiner.add( "git clone " + project.getRepository() + " " + project.getName() );
