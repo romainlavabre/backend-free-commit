@@ -87,7 +87,7 @@ public class Executor {
         launchContainer( buildSpace, directoryId );
         active = false;
 
-        //buildRepository.persist( build );
+        buildRepository.persist( build );
     }
 
 

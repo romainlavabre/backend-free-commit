@@ -42,7 +42,14 @@ public class Build {
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER )
     } )
+    @Column( name = "created_at", nullable = false )
     private final ZonedDateTime createdAt;
+
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
+    @Column( name = "completed_at", nullable = false )
+    private ZonedDateTime completedAt;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER )
@@ -82,6 +89,7 @@ public class Build {
     public Build setExitCode( Integer exitCode ) {
         this.exitCode = exitCode;
 
+        initCompletedAt();
         addExitCode();
 
         return this;
@@ -107,6 +115,11 @@ public class Build {
     }
 
 
+    public ZonedDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+
     public Project getProject() {
         return project;
     }
@@ -120,6 +133,11 @@ public class Build {
         }
 
         return this;
+    }
+
+
+    protected void initCompletedAt() {
+        completedAt = ZonedDateTime.now( ZoneId.of( "UTC" ) );
     }
 
 
