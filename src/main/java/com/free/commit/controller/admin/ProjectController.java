@@ -30,6 +30,7 @@ public class ProjectController {
     protected final Update< Project >  updateProjectSpecFilePath;
     protected final Update< Project >  updateProjectKeepNumberBuild;
     protected final Update< Project >  updateProjectAllowConcurrentExecution;
+    protected final Update< Project >  updateProjectDevelopers;
     protected final Delete< Project >  deleteProject;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -45,6 +46,7 @@ public class ProjectController {
             Update< Project > updateProjectSpecFilePath,
             Update< Project > updateProjectKeepNumberBuild,
             Update< Project > updateProjectAllowConcurrentExecution,
+            Update< Project > updateProjectDevelopers,
             Delete< Project > deleteProject,
             DataStorageHandler dataStorageHandler,
             Request request,
@@ -57,6 +59,7 @@ public class ProjectController {
         this.updateProjectSpecFilePath             = updateProjectSpecFilePath;
         this.updateProjectKeepNumberBuild          = updateProjectKeepNumberBuild;
         this.updateProjectAllowConcurrentExecution = updateProjectAllowConcurrentExecution;
+        this.updateProjectDevelopers               = updateProjectDevelopers;
         this.deleteProject                         = deleteProject;
         this.dataStorageHandler                    = dataStorageHandler;
         this.request                               = request;
@@ -163,6 +166,19 @@ public class ProjectController {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectAllowConcurrentExecution.update( request, project );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/projects/{id:[0-9]+}/developers" )
+    public ResponseEntity< Void > updateDevelopers( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        updateProjectDevelopers.update( request, project );
 
         dataStorageHandler.save();
 

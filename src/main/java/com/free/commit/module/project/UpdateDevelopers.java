@@ -36,10 +36,10 @@ public class UpdateDevelopers implements Update< Project > {
 
     @Override
     public void update( Request request, Project project ) {
-        List< Object > developersId = request.getParameters( ProjectParameter.DEVELOPERS_ID );
+        List< Object > developersId = request.getParameters( ProjectParameter.DEVELOPERS );
 
         project.getDevelopers().clear();
-        
+
         for ( Object developerId : developersId ) {
             project.addDeveloper( developerRepository.findOrFail( Cast.getLong( developerId ) ) );
         }
