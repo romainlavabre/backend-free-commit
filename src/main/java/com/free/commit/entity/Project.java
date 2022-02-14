@@ -2,7 +2,10 @@ package com.free.commit.entity;
 
 import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
+import com.free.commit.api.json.annotation.JsonPut;
+import com.free.commit.api.json.annotation.Row;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
@@ -13,6 +16,10 @@ import java.util.List;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@JsonPut( groups = {
+        @Group( name = GroupType.ADMIN, row = @Row( key = "last_build", handler = PutLastBuild.class ) ),
+        @Group( name = GroupType.DEVELOPER, row = @Row( key = "last_build", handler = PutLastBuild.class ) )
+} )
 @Entity
 public class Project {
 
