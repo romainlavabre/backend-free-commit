@@ -232,7 +232,7 @@ public class RequestImpl implements Request {
         final String jsonStr = json.toString();
 
         this.body = jsonStr;
-        
+
         if ( jsonStr.isBlank() ) {
             return;
         }
@@ -281,6 +281,8 @@ public class RequestImpl implements Request {
                 for ( final Map.Entry< String, Object > content : secondLevel.entrySet() ) {
                     this.parameters.put( input.getKey() + "_" + content.getKey(), content.getValue() );
                 }
+
+                continue;
             }
 
             if ( input.getValue() instanceof List ) {
@@ -300,7 +302,11 @@ public class RequestImpl implements Request {
                         }
                     }
                 }
+
+                continue;
             }
+
+            parameters.put( input.getKey(), input.getValue() );
         }
     }
 

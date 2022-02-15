@@ -48,6 +48,13 @@ public class Developer {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
+    @Column( name = "gitlab_username" )
+    private String gitlabUsername;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     private String email;
 
     @Json( groups = {
@@ -83,6 +90,18 @@ public class Developer {
 
     public Developer setGithubUsername( String githubUsername ) {
         this.githubUsername = githubUsername;
+
+        return this;
+    }
+
+
+    public String getGitlabUsername() {
+        return gitlabUsername;
+    }
+
+
+    public Developer setGitlabUsername( String gitlabUsername ) {
+        this.gitlabUsername = gitlabUsername;
 
         return this;
     }

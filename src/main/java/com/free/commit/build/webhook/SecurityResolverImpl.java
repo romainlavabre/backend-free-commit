@@ -32,6 +32,7 @@ public class SecurityResolverImpl implements SecurityResolver {
     public boolean isBuildAllowed( Request request, Project project ) {
         String  pusherLogin = getPusherLogin( request );
         boolean isGithub    = isGithub( request );
+        boolean isGitlab    = isGitlab( request );
         boolean isAllowed   = false;
 
         if ( isGithub ) {
@@ -49,11 +50,24 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
         }
 
+        if ( isGitlab ) {
+            Developer developer = developerRepository.findOrFailByGitlabUsername( pusherLogin );
+
+            if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
+                isAllowed = true;
+            } else {
+                for ( Developer projectDeveloper : project.getDevelopers() ) {
+                    if ( pusherLogin.equals( projectDeveloper.getGithubUsername() ) ) {
+                        isAllowed = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
         }
-
-        System.out.println( isAllowed );
 
         return isAllowed;
     }
@@ -61,15 +75,13 @@ public class SecurityResolverImpl implements SecurityResolver {
 
     protected boolean isValidSignature( Request request, Project project ) {
         if ( project.getSignatureKey() == null ) {
-            System.out.println( "Not signature found" );
             return true;
         }
 
         if ( isGithub( request ) ) {
-            String githubSignature = ( String ) request.getHeader( "X-Hub-Signature-256" );
+            String githubSignature = request.getHeader( "X-Hub-Signature-256" );
 
             if ( githubSignature == null ) {
-                System.out.println( "No github signature found" );
                 return false;
             }
 
@@ -84,9 +96,6 @@ public class SecurityResolverImpl implements SecurityResolver {
                     stringBuilder.append( String.format( "%02x", b ) );
                 }
 
-                System.out.println( githubSignature );
-                System.out.println( ("sha256=" + stringBuilder.toString()) );
-                System.out.println( ("sha256=" + stringBuilder.toString()).equals( githubSignature ) );
                 return ("sha256=" + stringBuilder.toString()).equals( githubSignature );
             } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
                 e.printStackTrace();
@@ -108,5 +117,10 @@ public class SecurityResolverImpl implements SecurityResolver {
 
     protected boolean isGithub( Request request ) {
         return request.getHeader( "X-GitHub-Event" ) != null;
+    }
+
+
+    protected boolean isGitlab( Request request ) {
+        return request.getHeader( "X-Gitlab-Event" ) != null;
     }
 }

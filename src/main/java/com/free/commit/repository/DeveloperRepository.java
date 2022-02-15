@@ -12,4 +12,10 @@ public interface DeveloperRepository extends DefaultRepository< Developer > {
 
 
     Optional< Developer > findByGithubUsername( String githubUsername );
+
+
+    Developer findOrFailByGitlabUsername( String gitlabUsername );
+
+
+    Optional< Developer > findByGitlabUsername( String gitlabUsername );
 }

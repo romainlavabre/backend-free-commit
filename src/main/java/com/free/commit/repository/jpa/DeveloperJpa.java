@@ -12,4 +12,7 @@ import java.util.Optional;
 @Repository
 public interface DeveloperJpa extends JpaRepository< Developer, Long > {
     Optional< Developer > findByGithubUsername( String githubUsername );
+
+
+    Optional< Developer > findByGitlabUsername( String gitlabUsername );
 }

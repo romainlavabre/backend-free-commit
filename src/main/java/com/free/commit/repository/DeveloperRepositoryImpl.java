@@ -45,6 +45,24 @@ public class DeveloperRepositoryImpl extends AbstractRepository< Developer > imp
 
 
     @Override
+    public Developer findOrFailByGitlabUsername( String gitlabUsername ) {
+        Optional< Developer > developerOptional = findByGitlabUsername( gitlabUsername );
+
+        if ( developerOptional.isPresent() ) {
+            return developerOptional.get();
+        }
+
+        throw new HttpNotFoundException( Message.DEVELOPER_NOT_FOUND );
+    }
+
+
+    @Override
+    public Optional< Developer > findByGitlabUsername( String gitlabUsername ) {
+        return developerJpa.findByGitlabUsername( gitlabUsername );
+    }
+
+
+    @Override
     protected Class< Developer > getClassType() {
         return Developer.class;
     }

@@ -14,6 +14,10 @@ NOTHING
 
 ### Versions
 
+##### 1.0.2
+
+ADD Root parameters
+
 ##### 1.0.1
 
 FIX Set body in request
