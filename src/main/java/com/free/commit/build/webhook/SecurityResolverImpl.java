@@ -66,13 +66,13 @@ public class SecurityResolverImpl implements SecurityResolver {
         }
 
         if ( isGithub( request ) ) {
-            String githubSignature = ( String ) request.getParameter( "X-Hub-Signature-256" );
+            String githubSignature = ( String ) request.getHeader( "X-Hub-Signature-256" );
 
             if ( githubSignature == null ) {
                 System.out.println( "No github signature found" );
                 return false;
             }
-            
+
             try {
                 Mac           mac           = Mac.getInstance( "HmacSHA256" );
                 SecretKeySpec secretKeySpec = new SecretKeySpec( project.getSignatureKey().getBytes(), "HmacSHA256" );
