@@ -1,10 +1,15 @@
 package com.free.commit.controller.developer;
 
 import com.free.commit.api.json.Encoder;
+import com.free.commit.api.security.Security;
 import com.free.commit.build.BuildManager;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.configuration.response.Message;
+import com.free.commit.configuration.security.Role;
 import com.free.commit.entity.Build;
+import com.free.commit.entity.Developer;
 import com.free.commit.entity.Project;
+import com.free.commit.exception.HttpForbiddenException;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.CredentialRepository;
 import com.free.commit.repository.ProjectRepository;
@@ -26,17 +31,20 @@ public class BuildController {
     protected final CredentialRepository credentialRepository;
     protected final ProjectRepository    projectRepository;
     protected final BuildRepository      buildRepository;
+    protected final Security             security;
 
 
     public BuildController(
             BuildManager buildManager,
             CredentialRepository credentialRepository,
             ProjectRepository projectRepository,
-            BuildRepository buildRepository ) {
+            BuildRepository buildRepository,
+            Security security ) {
         this.buildManager         = buildManager;
         this.credentialRepository = credentialRepository;
         this.projectRepository    = projectRepository;
         this.buildRepository      = buildRepository;
+        this.security             = security;
     }
 
 
@@ -79,6 +87,21 @@ public class BuildController {
     public ResponseEntity< Map< String, Object > > build( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
+        if ( !security.hasRole( Role.ADMIN ) ) {
+            boolean isAllowed = false;
+
+            for ( Developer developer : project.getDevelopers() ) {
+                if ( developer.getUser().getUsername().equals( security.getUsername() ) ) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+
+            if ( !isAllowed ) {
+                throw new HttpForbiddenException( Message.LAUNCH_BUILD_NOT_ALLOWED );
+            }
+        }
+        
         BuildManager.Queued queued = buildManager.launch( project );
 
         return ResponseEntity
