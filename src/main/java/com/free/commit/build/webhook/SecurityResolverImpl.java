@@ -63,10 +63,13 @@ public class SecurityResolverImpl implements SecurityResolver {
                     }
                 }
             }
+
+            System.out.println( isAllowed );
         }
 
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
+            System.out.println( isAllowed );
         }
 
         return isAllowed;
@@ -116,8 +119,7 @@ public class SecurityResolverImpl implements SecurityResolver {
         }
 
         if ( isGitlab( request ) ) {
-            System.out.println( request.getAllParameters() );
-            return request.getParameter( "usern_name" ).toString();
+            return request.getParameter( "user_name" ).toString();
         }
 
         throw new HttpNotFoundException( Message.WEBHOOK_SENDER_NOT_FOUND );
