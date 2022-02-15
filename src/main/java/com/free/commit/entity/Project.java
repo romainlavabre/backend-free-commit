@@ -6,6 +6,7 @@ import com.free.commit.api.json.annotation.JsonPut;
 import com.free.commit.api.json.annotation.Row;
 import com.free.commit.api.token.TokenGenerator;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.configuration.json.overwrite.OverwriteSignatureKey;
 import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.encrypt.EncryptField;
@@ -83,7 +84,7 @@ public class Project {
 
     @Json( groups = {
             @Group( name = GroupType.ADMIN ),
-            @Group( name = GroupType.DEVELOPER )
+            @Group( name = GroupType.DEVELOPER, overwrite = OverwriteSignatureKey.class )
     } )
     @Convert( converter = EncryptField.class )
     @Column( name = "signature_key", nullable = false )
