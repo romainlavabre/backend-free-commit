@@ -9,8 +9,8 @@ RUN apt-get update \
          "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
          focal stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y \
-    && mkdir /ci
-    && mkdir /ci/repository
+    && mkdir /ci \
+    && mkdir /ci/repository \
     && mkdir /ci/build
 
 WORKDIR app
