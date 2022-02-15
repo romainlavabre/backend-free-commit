@@ -111,6 +111,11 @@ public class SecurityResolverImpl implements SecurityResolver {
             return request.getParameter( "sender_login" ).toString();
         }
 
+        if ( isGitlab( request ) ) {
+            System.out.println( request.getAllParameters() );
+            return request.getParameter( "usern_name" ).toString();
+        }
+
         throw new HttpNotFoundException( Message.WEBHOOK_SENDER_NOT_FOUND );
     }
 
