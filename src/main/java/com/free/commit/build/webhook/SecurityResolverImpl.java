@@ -49,12 +49,11 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
         }
 
-        System.out.println( isGithub );
-        System.out.println( isAllowed );
-
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
         }
+
+        System.out.println( isAllowed );
 
         return isAllowed;
     }
@@ -62,6 +61,7 @@ public class SecurityResolverImpl implements SecurityResolver {
 
     protected boolean isValidSignature( Request request, Project project ) {
         if ( project.getSignatureKey() == null ) {
+            System.out.println( "Not signature found" );
             return true;
         }
 
@@ -69,9 +69,10 @@ public class SecurityResolverImpl implements SecurityResolver {
             String githubSignature = ( String ) request.getParameter( "X-Hub-Signature-256" );
 
             if ( githubSignature == null ) {
+                System.out.println( "No github signature found" );
                 return false;
             }
-
+            
             try {
                 Mac           mac           = Mac.getInstance( "HmacSHA256" );
                 SecretKeySpec secretKeySpec = new SecretKeySpec( project.getSignatureKey().getBytes(), "HmacSHA256" );
