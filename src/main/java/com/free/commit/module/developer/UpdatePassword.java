@@ -2,6 +2,7 @@ package com.free.commit.module.developer;
 
 import com.free.commit.api.crud.Update;
 import com.free.commit.api.request.Request;
+import com.free.commit.api.security.PasswordEncoder;
 import com.free.commit.entity.Developer;
 import com.free.commit.parameter.DeveloperParameter;
 import com.free.commit.repository.DeveloperRepository;
@@ -14,11 +15,14 @@ import org.springframework.stereotype.Service;
 public class UpdatePassword implements Update< Developer > {
 
     protected final DeveloperRepository developerRepository;
+    protected final PasswordEncoder     passwordEncoder;
 
 
     public UpdatePassword(
-            DeveloperRepository developerRepository ) {
+            DeveloperRepository developerRepository,
+            PasswordEncoder passwordEncoder ) {
         this.developerRepository = developerRepository;
+        this.passwordEncoder     = passwordEncoder;
     }
 
 
@@ -26,7 +30,7 @@ public class UpdatePassword implements Update< Developer > {
     public void update( Request request, Developer developer ) {
         String password = ( String ) request.getParameter( DeveloperParameter.PASSWORD );
 
-        developer.getUser().setPassword( password );
+        developer.getUser().setPassword( passwordEncoder.encode( password ) );
 
         developerRepository.persist( developer );
     }
