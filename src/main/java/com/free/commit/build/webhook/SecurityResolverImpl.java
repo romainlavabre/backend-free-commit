@@ -63,13 +63,10 @@ public class SecurityResolverImpl implements SecurityResolver {
                     }
                 }
             }
-
-            System.out.println( isAllowed );
         }
 
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
-            System.out.println( isAllowed );
         }
 
         return isAllowed;
@@ -106,7 +103,9 @@ public class SecurityResolverImpl implements SecurityResolver {
         }
 
         if ( isGitlab( request ) ) {
-            System.out.println( request.getHeader( "X-Gitlab-Token" ) );
+            String gitlabToken = request.getHeader( "X-Gitlab-Token" );
+
+            return gitlabToken != null && gitlabToken.equals( project.getSignatureKey() );
         }
 
         return false;
