@@ -36,3 +36,4 @@ build/
 /.submodule-trash
 
 /docker/dev/.env
+/docker/live/.env

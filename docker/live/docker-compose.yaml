@@ -1,0 +1,36 @@
+version: '3.2'
+
+services:
+    free-commit-api:
+        image: romainlavabre/free-commit-api:latest
+        environment:
+            DATASOURCE_URL: ${DATASOURCE_URL}
+            DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+            DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+            DATASOURCE_DIALECT: ${DATASOURCE_DIALECT}
+            ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+            JWT_SECRET: ${JWT_SECRET}
+            JWT_LIFE_TIME: ${JWT_LIFE_TIME}
+            DEFAULT_ADMIN_USERNAME: ${DEFAULT_ADMIN_USERNAME}
+            DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
+            MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+            MAILGUN_FROM: ${MAILGUN_FROM}
+            MAILGUN_PRIVATE_KEY: ${MAILGUN_PRIVATE_KEY}
+            TWILIO_SID: ${TWILIO_SID}
+            TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+            TWILIO_FROM: ${TWILIO_FROM}
+        networks:
+            - free-commit-api
+            - database
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        restart: always
+        container_name: free-commit-api
+
+
+networks:
+    free-commit-api:
+        name: free-commit-api
+    database:
+        name: database
+        external: true
