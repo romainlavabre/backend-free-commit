@@ -52,7 +52,8 @@ public class SecurityResolverImpl implements SecurityResolver {
 
             if ( isAllowed ) {
                 String[] parts = ref.split( "/" );
-                isAllowed = parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ] == project.getBranch();
+                System.out.println( (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]) );
+                isAllowed = (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]).equals( project.getBranch() );
             }
         }
 
@@ -72,7 +73,7 @@ public class SecurityResolverImpl implements SecurityResolver {
 
             if ( isAllowed ) {
                 String[] parts = ref.split( "/" );
-                isAllowed = parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ] == project.getBranch();
+                isAllowed = (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]).equals( project.getBranch() );
             }
         }
 
