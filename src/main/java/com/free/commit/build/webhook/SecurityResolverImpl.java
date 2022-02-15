@@ -102,6 +102,10 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
         }
 
+        if ( isGitlab( request ) ) {
+            System.out.println( request.getHeader( "X-Gitlab-Token" ) );
+        }
+
         return false;
     }
 
