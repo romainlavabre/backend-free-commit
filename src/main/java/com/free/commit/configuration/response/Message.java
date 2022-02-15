@@ -14,6 +14,6 @@ public interface Message {
     String CREDENTIAL_SSH_KEY_REQUIRED                 = "CREDENTIAL_SSH_KEY_REQUIRED";
     String CREDENTIAL_NAME_REQUIRED                    = "CREDENTIAL_NAME_REQUIRED";
     String INVALID_ENCRYPTION_KEY                      = "INVALID_ENCRYPTION_KEY";
-    String UNABLE_TO_CREATE_SSH_KEY_FILE               = "UNABLE_TO_CREATE_SSH_KEY_FILE";
     String EXECUTOR_NOT_FOUND                          = "EXECUTOR_NOT_FOUND";
+    String WEBHOOK_SENDER_NOT_FOUND                    = "WEBHOOK_SENDER_NOT_FOUND";
 }

@@ -7,6 +7,7 @@ import com.free.commit.api.json.annotation.Row;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
+import com.free.commit.entity.encrypt.EncryptField;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
 import javax.persistence.*;
@@ -78,6 +79,14 @@ public class Project {
     } )
     @Column( name = "allow_concurrent_execution", nullable = false )
     private boolean allowConcurrentExecution;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
+    @Convert( converter = EncryptField.class )
+    @Column( name = "signature_key" )
+    private String signatureKey;
 
     @Json( groups = {
             @Group( name = GroupType.ADMIN ),
@@ -239,6 +248,11 @@ public class Project {
         this.repositoryCredential = repositoryCredential;
 
         return this;
+    }
+
+
+    public String getSignatureKey() {
+        return signatureKey;
     }
 
 
