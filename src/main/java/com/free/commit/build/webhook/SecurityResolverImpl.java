@@ -74,6 +74,7 @@ public class SecurityResolverImpl implements SecurityResolver {
 
     protected String getPusherLogin( Request request ) {
         if ( isGithub( request ) ) {
+            System.out.println( request.getAllParameters() );
             return request.getParameter( "sender_login" ).toString();
         }
 
