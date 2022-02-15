@@ -31,6 +31,7 @@ public class SecurityResolverImpl implements SecurityResolver {
     @Override
     public boolean isBuildAllowed( Request request, Project project ) {
         String  pusherLogin = getPusherLogin( request );
+        String  ref         = getRef( request );
         boolean isGithub    = isGithub( request );
         boolean isGitlab    = isGitlab( request );
         boolean isAllowed   = false;
@@ -48,6 +49,11 @@ public class SecurityResolverImpl implements SecurityResolver {
                     }
                 }
             }
+
+            if ( isAllowed ) {
+                String[] parts = ref.split( "/" );
+                isAllowed = parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ] == project.getBranch();
+            }
         }
 
         if ( isGitlab ) {
@@ -62,6 +68,11 @@ public class SecurityResolverImpl implements SecurityResolver {
                         break;
                     }
                 }
+            }
+
+            if ( isAllowed ) {
+                String[] parts = ref.split( "/" );
+                isAllowed = parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ] == project.getBranch();
             }
         }
 
@@ -122,6 +133,11 @@ public class SecurityResolverImpl implements SecurityResolver {
         }
 
         throw new HttpNotFoundException( Message.WEBHOOK_SENDER_NOT_FOUND );
+    }
+
+
+    protected String getRef( Request request ) {
+        return request.getParameter( "ref" ).toString();
     }
 
 
