@@ -52,7 +52,6 @@ public class SecurityResolverImpl implements SecurityResolver {
 
             if ( isAllowed ) {
                 String[] parts = ref.split( "/" );
-                System.out.println( (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]) );
                 isAllowed = (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]).equals( project.getBranch() );
             }
         }
