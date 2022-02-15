@@ -62,6 +62,9 @@ public class SecurityResolverImpl implements SecurityResolver {
                     stringBuilder.append( String.format( "%02x", b ) );
                 }
 
+                System.out.println( githubSignature );
+                System.out.println( ("sha256=" + stringBuilder.toString()) );
+                System.out.println( ("sha256=" + stringBuilder.toString()).equals( githubSignature ) );
                 return ("sha256=" + stringBuilder.toString()).equals( githubSignature );
             } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
                 e.printStackTrace();
@@ -74,7 +77,6 @@ public class SecurityResolverImpl implements SecurityResolver {
 
     protected String getPusherLogin( Request request ) {
         if ( isGithub( request ) ) {
-            System.out.println( request.getAllParameters() );
             return request.getParameter( "sender_login" ).toString();
         }
 
