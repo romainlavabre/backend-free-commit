@@ -2,9 +2,11 @@ package com.free.commit.build.webhook;
 
 import com.free.commit.api.request.Request;
 import com.free.commit.configuration.response.Message;
+import com.free.commit.configuration.security.Role;
 import com.free.commit.entity.Developer;
 import com.free.commit.entity.Project;
 import com.free.commit.exception.HttpNotFoundException;
+import com.free.commit.repository.DeveloperRepository;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -18,16 +20,32 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class SecurityResolverImpl implements SecurityResolver {
 
+    protected final DeveloperRepository developerRepository;
+
+
+    public SecurityResolverImpl( DeveloperRepository developerRepository ) {
+        this.developerRepository = developerRepository;
+    }
+
+
     @Override
     public boolean isBuildAllowed( Request request, Project project ) {
         String  pusherLogin = getPusherLogin( request );
         boolean isGithub    = isGithub( request );
         boolean isAllowed   = false;
 
-        for ( Developer developer : project.getDevelopers() ) {
-            if ( isGithub && pusherLogin.equals( developer.getGithubUsername() ) ) {
+        if ( isGithub ) {
+            Developer developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
+
+            if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
                 isAllowed = true;
-                break;
+            } else {
+                for ( Developer projectDeveloper : project.getDevelopers() ) {
+                    if ( pusherLogin.equals( projectDeveloper.getGithubUsername() ) ) {
+                        isAllowed = true;
+                        break;
+                    }
+                }
             }
         }
 

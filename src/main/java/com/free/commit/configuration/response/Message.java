@@ -18,4 +18,5 @@ public interface Message {
     String EXECUTOR_NOT_FOUND                          = "EXECUTOR_NOT_FOUND";
     String WEBHOOK_SENDER_NOT_FOUND                    = "WEBHOOK_SENDER_NOT_FOUND";
     String LAUNCH_BUILD_NOT_ALLOWED                    = "LAUNCH_BUILD_NOT_ALLOWED";
+    String DEVELOPER_NOT_FOUND                         = "DEVELOPER_NOT_FOUND";
 }
