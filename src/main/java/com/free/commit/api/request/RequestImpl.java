@@ -231,6 +231,8 @@ public class RequestImpl implements Request {
 
         final String jsonStr = json.toString();
 
+        this.body = jsonStr;
+        
         if ( jsonStr.isBlank() ) {
             return;
         }
