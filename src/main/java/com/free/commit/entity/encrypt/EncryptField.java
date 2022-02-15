@@ -37,6 +37,10 @@ public class EncryptField implements AttributeConverter< String, String > {
 
     @Override
     public String convertToDatabaseColumn( String data ) {
+        if ( data == null ) {
+            return null;
+        }
+
         try {
             load();
         } catch ( NoSuchPaddingException | NoSuchAlgorithmException | NullPointerException e ) {
@@ -55,6 +59,10 @@ public class EncryptField implements AttributeConverter< String, String > {
 
     @Override
     public String convertToEntityAttribute( String data ) {
+        if ( data == null ) {
+            return null;
+        }
+        
         try {
             load();
         } catch ( NoSuchPaddingException | NoSuchAlgorithmException | NullPointerException e ) {

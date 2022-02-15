@@ -2,6 +2,7 @@ package com.free.commit.module.project;
 
 import com.free.commit.api.history.HistoryHandler;
 import com.free.commit.api.request.Request;
+import com.free.commit.api.token.TokenGenerator;
 import com.free.commit.entity.Project;
 import com.free.commit.parameter.ProjectParameter;
 import com.free.commit.repository.CredentialRepository;
@@ -59,7 +60,8 @@ public class Create implements com.free.commit.api.crud.Create< Project > {
                .setBranch( branch )
                .setSpecFilePath( specFilePath )
                .setKeepNumberBuild( keepNumberBuild )
-               .setAllowConcurrentExecution( allowConcurrentExecution );
+               .setAllowConcurrentExecution( allowConcurrentExecution )
+               .setSignatureKey( TokenGenerator.generate( 32 ) );
 
         if ( repositoryCredentialId != null ) {
             project.setRepositoryCredential( credentialRepository.findOrFail( repositoryCredentialId ) );

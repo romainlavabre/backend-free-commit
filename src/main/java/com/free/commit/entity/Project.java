@@ -4,6 +4,7 @@ import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
 import com.free.commit.api.json.annotation.JsonPut;
 import com.free.commit.api.json.annotation.Row;
+import com.free.commit.api.token.TokenGenerator;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
@@ -85,7 +86,7 @@ public class Project {
             @Group( name = GroupType.DEVELOPER )
     } )
     @Convert( converter = EncryptField.class )
-    @Column( name = "signature_key" )
+    @Column( name = "signature_key", nullable = false )
     private String signatureKey;
 
     @Json( groups = {
@@ -124,9 +125,10 @@ public class Project {
 
 
     public Project() {
-        secrets    = new ArrayList<>();
-        builds     = new ArrayList<>();
-        developers = new ArrayList<>();
+        signatureKey = TokenGenerator.generate( 32 );
+        secrets      = new ArrayList<>();
+        builds       = new ArrayList<>();
+        developers   = new ArrayList<>();
     }
 
 
@@ -253,6 +255,17 @@ public class Project {
 
     public String getSignatureKey() {
         return signatureKey;
+    }
+
+
+    public Project setSignatureKey( String signatureKey ) {
+        if ( signatureKey == null || signatureKey.isBlank() ) {
+            throw new HttpUnprocessableEntityException( Message.PROJECT_SIGNATURE_KEY_REQUIRED );
+        }
+
+        this.signatureKey = signatureKey;
+
+        return this;
     }
 
 

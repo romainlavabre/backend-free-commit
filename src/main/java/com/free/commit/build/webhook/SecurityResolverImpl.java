@@ -7,8 +7,9 @@ import com.free.commit.entity.Project;
 import com.free.commit.exception.HttpNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -51,17 +52,18 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
 
             try {
-                MessageDigest digest = MessageDigest.getInstance( "SHA-256" );
-                byte[] encodedhash = digest.digest(
-                        request.getBody().getBytes( StandardCharsets.UTF_8 ) );
+                Mac           mac           = Mac.getInstance( "HmacSHA256" );
+                SecretKeySpec secretKeySpec = new SecretKeySpec( project.getSignatureKey().getBytes(), "HmacSHA256" );
+                mac.init( secretKeySpec );
+                byte[] encodedHash = mac.doFinal( request.getBody().getBytes() );
 
                 StringBuilder stringBuilder = new StringBuilder();
-                for ( byte b : encodedhash ) {
+                for ( byte b : encodedHash ) {
                     stringBuilder.append( String.format( "%02x", b ) );
                 }
 
                 return ("sha256=" + stringBuilder.toString()).equals( githubSignature );
-            } catch ( NoSuchAlgorithmException e ) {
+            } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
                 e.printStackTrace();
             }
         }

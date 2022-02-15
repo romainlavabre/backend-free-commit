@@ -32,6 +32,7 @@ public class ProjectController {
     protected final Update< Project >  updateProjectAllowConcurrentExecution;
     protected final Update< Project >  updateProjectDevelopers;
     protected final Update< Project >  updateProjectRepositoryCredential;
+    protected final Update< Project >  updateProjectSignatureKey;
     protected final Delete< Project >  deleteProject;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -49,6 +50,7 @@ public class ProjectController {
             Update< Project > updateProjectAllowConcurrentExecution,
             Update< Project > updateProjectDevelopers,
             Update< Project > updateProjectRepositoryCredential,
+            Update< Project > updateProjectSignatureKey,
             Delete< Project > deleteProject,
             DataStorageHandler dataStorageHandler,
             Request request,
@@ -63,6 +65,7 @@ public class ProjectController {
         this.updateProjectAllowConcurrentExecution = updateProjectAllowConcurrentExecution;
         this.updateProjectDevelopers               = updateProjectDevelopers;
         this.updateProjectRepositoryCredential     = updateProjectRepositoryCredential;
+        this.updateProjectSignatureKey             = updateProjectSignatureKey;
         this.deleteProject                         = deleteProject;
         this.dataStorageHandler                    = dataStorageHandler;
         this.request                               = request;
@@ -195,6 +198,19 @@ public class ProjectController {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectRepositoryCredential.update( request, project );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/projects/{id:[0-9]+}/signature_key" )
+    public ResponseEntity< Void > updateSignatureKey( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        updateProjectSignatureKey.update( request, project );
 
         dataStorageHandler.save();
 
