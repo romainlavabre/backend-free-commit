@@ -31,6 +31,9 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
         }
 
+        System.out.println( isGithub );
+        System.out.println( isAllowed );
+
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
         }
