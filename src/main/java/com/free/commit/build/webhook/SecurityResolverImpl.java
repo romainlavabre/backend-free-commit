@@ -96,7 +96,11 @@ public class SecurityResolverImpl implements SecurityResolver {
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
 
-            logger.warn( "Invalid signature" );
+            if ( isAllowed ) {
+                logger.info( "Signature allowed" );
+            } else {
+                logger.warn( "Invalid signature" );
+            }
         }
 
         return isAllowed;
