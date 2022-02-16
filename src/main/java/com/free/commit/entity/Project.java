@@ -109,7 +109,7 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
+    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project", orphanRemoval = true )
     private final List< Build > builds;
 
     @Json( groups = {

@@ -1,10 +1,12 @@
 package com.free.commit.repository;
 
 import com.free.commit.entity.Build;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.free.commit.entity.Project;
+import com.free.commit.repository.jpa.BuildJpa;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -12,10 +14,20 @@ import javax.persistence.EntityManager;
 @Service
 public class BuildRepositoryImpl extends AbstractRepository< Build > implements BuildRepository {
 
+    protected final BuildJpa buildJpa;
+
+
     public BuildRepositoryImpl(
             EntityManager entityManager,
-            JpaRepository< Build, Long > jpaRepository ) {
-        super( entityManager, jpaRepository );
+            BuildJpa buildJpa ) {
+        super( entityManager, buildJpa );
+        this.buildJpa = buildJpa;
+    }
+
+
+    @Override
+    public List< Build > findAllByProject( Project project ) {
+        return buildJpa.findAllBuildByProject( project );
     }
 
 

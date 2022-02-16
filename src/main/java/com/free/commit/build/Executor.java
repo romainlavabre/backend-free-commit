@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -100,6 +99,18 @@ public class Executor {
 
         launchContainer( buildSpace, directoryId );
         entityManager.persist( build );
+
+        if ( project.getKeepNumberBuild() != null ) {
+            List< Build > current = new ArrayList<>( this.project.getBuilds() );
+            Collections.reverse( current );
+
+            this.project.getBuilds().clear();
+
+            for ( int i = 0; i < this.project.getKeepNumberBuild() && i < current.size(); i++ ) {
+                this.project.addBuild( current.get( i ) );
+            }
+        }
+
         active = false;
     }
 

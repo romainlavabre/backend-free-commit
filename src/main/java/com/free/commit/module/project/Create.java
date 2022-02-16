@@ -71,8 +71,10 @@ public class Create implements com.free.commit.api.crud.Create< Project > {
             project.addDeveloper( developerRepository.findOrFail( Cast.getLong( developerId ) ) );
         }
 
-        for ( Object secretId : secretsId ) {
-            project.addSecret( secretRepository.findOrFail( Cast.getLong( secretId ) ) );
+        if ( secretsId != null ) {
+            for ( Object secretId : secretsId ) {
+                project.addSecret( secretRepository.findOrFail( Cast.getLong( secretId ) ) );
+            }
         }
 
         historyHandler.create( project );
