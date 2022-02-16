@@ -61,7 +61,11 @@ public class SecurityResolverImpl implements SecurityResolver {
                 ref       = ref.replace( "refs/heads/", "" );
                 isAllowed = ref.equals( project.getBranch() );
 
-                logger.info( "Branch " + ref + " not concerned by project this project" );
+                if ( isAllowed ) {
+                    logger.warn( "Branch " + ref + " is concerned by this project" );
+                } else {
+                    logger.info( "Branch " + ref + " not concerned by this project" );
+                }
             }
         }
 
@@ -122,6 +126,8 @@ public class SecurityResolverImpl implements SecurityResolver {
                     stringBuilder.append( String.format( "%02x", b ) );
                 }
 
+                logger.info( "Computed signature: " + ("sha256=" + stringBuilder.toString()) );
+                logger.info( "Computed signature: " + githubSignature );
                 return ("sha256=" + stringBuilder.toString()).equals( githubSignature );
             } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
                 e.printStackTrace();
