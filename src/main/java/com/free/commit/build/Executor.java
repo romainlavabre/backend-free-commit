@@ -150,25 +150,23 @@ public class Executor {
 
     protected void launchContainer( Path buildSpace, String buildSpaceId ) {
         try {
-            Process process = Runtime.getRuntime()
-                                     .exec( getLaunchContainerCommandLine( buildSpace, buildSpaceId ) );
+            ProcessBuilder builder = new ProcessBuilder( getLaunchContainerCommandLine( buildSpace, buildSpaceId ) );
+            builder.redirectErrorStream( true );
+            Process process = builder.start();
 
             currentProcess = process;
 
             BufferedReader readerIn = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
 
-            BufferedReader readerErr = new BufferedReader(
-                    new InputStreamReader( process.getErrorStream() ) );
 
             String lineIn;
             while ( (lineIn = readerIn.readLine()) != null ) {
-                build.addOutputLine( lineIn );
-            }
+                if ( lineIn.equals( "null" ) ) {
+                    continue;
+                }
 
-            String lineErr;
-            while ( (lineErr = readerErr.readLine()) != null ) {
-                build.addOutputLine( lineErr );
+                build.addOutputLine( lineIn );
             }
 
             int exitCode = process.waitFor();
@@ -197,7 +195,7 @@ public class Executor {
             content.add( "" )
                    .add( "echo 'Step " + step.name + " ...'" )
                    .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
-                   .add( "./" + step.script.replaceFirst( "/", "" ) )
+                   .add( ". " + step.script.replaceFirst( "/", "" ) )
                    .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
         }
 
@@ -238,28 +236,29 @@ public class Executor {
                         .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
         }
 
-        stringJoiner.add( "git clone " + project.getRepository() + " app" )
+        stringJoiner.add( "git clone --quiet " + project.getRepository() + " app > /dev/null" )
                     .add( "cd app" )
-                    .add( "git fetch --all" )
-                    .add( "git checkout " + project.getBranch() )
-                    .add( "git pull origin " + project.getBranch() )
+                    .add( "git fetch --all -q > /dev/null 2>&1" )
+                    .add( "git checkout -q " + project.getBranch() + " > /dev/null" )
+                    .add( "git pull --ff-only origin " + project.getBranch() )
                     .add( "cd .." )
                     .add( "docker build -t " + imageName + " ." );
 
-        StringBuilder run = new StringBuilder( "docker run " + imageName + " " );
+        StringBuilder run = new StringBuilder( "docker run " );
 
         for ( Secret secret : project.getSecrets() ) {
-            run.append( " -e " + secret.getName() + "=" + secret.getValue() );
+            run.append( " -e \"" + secret.getName() + "=" + secret.getValue() + "\"" );
         }
 
         for ( Secret secret : secretRepository.findAllWithGlobalScope() ) {
-            run.append( " -e " + secret.getName() + "=" + secret.getValue() );
+            run.append( " -e \"" + secret.getName() + "=" + secret.getValue() + "\"" );
         }
 
-        run.append( " -v /var/run/docker.sock:/var/run/docker.sock" );
+        run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
+
+        run.append( imageName );
 
         stringJoiner.add( run.toString() );
-
 
         cmdline[ 2 ] = stringJoiner.toString();
 
@@ -272,26 +271,11 @@ public class Executor {
 
             final String[] cmdline = getInitRepositoryCommandLines( project );
 
-            Process process = Runtime.getRuntime()
-                                     .exec( cmdline );
+            ProcessBuilder builder = new ProcessBuilder( cmdline );
+            builder.redirectErrorStream( true );
+            Process process = builder.start();
 
             currentProcess = process;
-
-            BufferedReader readerIn = new BufferedReader(
-                    new InputStreamReader( process.getInputStream() ) );
-
-            BufferedReader readerErr = new BufferedReader(
-                    new InputStreamReader( process.getErrorStream() ) );
-
-            String lineIn;
-            while ( (lineIn = readerIn.readLine()) != null ) {
-                build.addOutputLine( lineIn );
-            }
-
-            String lineErr;
-            while ( (lineErr = readerErr.readLine()) != null ) {
-                build.addOutputLine( lineErr );
-            }
 
             process.waitFor();
         } catch ( IOException | InterruptedException e ) {

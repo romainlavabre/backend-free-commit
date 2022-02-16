@@ -77,7 +77,11 @@ public class Build {
 
 
     public Build addOutputLine( String line ) {
-        output += "\n" + line;
+        if ( output == null ) {
+            output = line;
+        } else {
+            output += "\n" + line;
+        }
 
         return this;
     }
