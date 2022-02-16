@@ -7,6 +7,8 @@ import com.free.commit.entity.Developer;
 import com.free.commit.entity.Project;
 import com.free.commit.exception.HttpNotFoundException;
 import com.free.commit.repository.DeveloperRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -20,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class SecurityResolverImpl implements SecurityResolver {
 
+    protected final Logger              logger = LoggerFactory.getLogger( getClass() );
     protected final DeveloperRepository developerRepository;
 
 
@@ -36,6 +39,8 @@ public class SecurityResolverImpl implements SecurityResolver {
         boolean isGitlab    = isGitlab( request );
         boolean isAllowed   = false;
 
+        logger.info( "Receive event of " + (isGithub ? "Github" : "Gitlab") + " for project " + project.getName() );
+
         if ( isGithub ) {
             Developer developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
 
@@ -48,11 +53,15 @@ public class SecurityResolverImpl implements SecurityResolver {
                         break;
                     }
                 }
+
+                logger.info( "Developer " + pusherLogin + " is " + (isAllowed ? " allowed " : " not allowed ") + " to launch build" );
             }
 
             if ( isAllowed ) {
-                String[] parts = ref.split( "/" );
-                isAllowed = (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]).equals( project.getBranch() );
+                ref       = ref.replace( "refs/heads/", "" );
+                isAllowed = ref.equals( project.getBranch() );
+
+                logger.info( "Branch " + ref + " not concerned by project this project" );
             }
         }
 
@@ -68,16 +77,22 @@ public class SecurityResolverImpl implements SecurityResolver {
                         break;
                     }
                 }
+
+                logger.info( "Developer " + pusherLogin + " is " + (isAllowed ? " allowed " : " not allowed ") + " to launch build" );
             }
 
             if ( isAllowed ) {
-                String[] parts = ref.split( "/" );
-                isAllowed = (parts[ parts.length - 2 ] + "/" + parts[ parts.length - 1 ]).equals( project.getBranch() );
+                ref       = ref.replace( "refs/heads/", "" );
+                isAllowed = ref.equals( project.getBranch() );
+
+                logger.info( "Branch " + ref + " not concerned by project this project" );
             }
         }
 
         if ( isAllowed ) {
             isAllowed = isValidSignature( request, project );
+
+            logger.warn( "Invalid signature" );
         }
 
         return isAllowed;
