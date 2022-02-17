@@ -258,7 +258,7 @@ public class Executor {
         StringBuilder run = new StringBuilder( "docker run " );
 
         for ( Secret secret : project.getSecrets() ) {
-            run.append( " -e \"" + secret.getName() + "=" + secret.getValue() + "\"" );
+            run.append( " -e \"" + secret.getName() + "=" + secret.getValue().replace( "$", "\\$" ) + "\"" );
         }
 
         for ( Secret secret : secretRepository.findAllWithGlobalScope() ) {
