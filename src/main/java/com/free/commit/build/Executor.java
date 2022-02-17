@@ -262,7 +262,7 @@ public class Executor {
         }
 
         for ( Secret secret : secretRepository.findAllWithGlobalScope() ) {
-            run.append( " -e \"" + secret.getName() + "=" + secret.getValue() + "\"" );
+            run.append( " -e \"" + secret.getName() + "=" + secret.getValue().replace( "$", "\\$" ) + "\"" );
         }
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
