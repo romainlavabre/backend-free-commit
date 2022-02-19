@@ -26,6 +26,7 @@ public class DeveloperController {
     protected final Update< Developer > updateDeveloperEmail;
     protected final Update< Developer > updateDeveloperEnabled;
     protected final Update< Developer > updateDeveloperGithubUsername;
+    protected final Update< Developer > updateDeveloperGitlabUsername;
     protected final Update< Developer > updateDeveloperUsername;
     protected final Update< Developer > updateDeveloperPassword;
     protected final Update< Developer > updateDeveloperRoles;
@@ -40,6 +41,7 @@ public class DeveloperController {
             Update< Developer > updateDeveloperEmail,
             Update< Developer > updateDeveloperEnabled,
             Update< Developer > updateDeveloperGithubUsername,
+            Update< Developer > updateDeveloperGitlabUsername,
             Update< Developer > updateDeveloperUsername,
             Update< Developer > updateDeveloperPassword,
             Update< Developer > updateDeveloperRoles,
@@ -51,6 +53,7 @@ public class DeveloperController {
         this.updateDeveloperEmail          = updateDeveloperEmail;
         this.updateDeveloperEnabled        = updateDeveloperEnabled;
         this.updateDeveloperGithubUsername = updateDeveloperGithubUsername;
+        this.updateDeveloperGitlabUsername = updateDeveloperGitlabUsername;
         this.updateDeveloperUsername       = updateDeveloperUsername;
         this.updateDeveloperPassword       = updateDeveloperPassword;
         this.updateDeveloperRoles          = updateDeveloperRoles;
@@ -108,6 +111,19 @@ public class DeveloperController {
         Developer developer = developerRepository.findOrFail( id );
 
         updateDeveloperGithubUsername.update( request, developer );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/developers/{id:[0-9]+}/gitlab_username" )
+    public ResponseEntity< Void > updateGitlabUsername( @PathVariable( "id" ) long id ) {
+        Developer developer = developerRepository.findOrFail( id );
+
+        updateDeveloperGitlabUsername.update( request, developer );
 
         dataStorageHandler.save();
 

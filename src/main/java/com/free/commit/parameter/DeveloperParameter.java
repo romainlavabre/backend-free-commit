@@ -9,6 +9,7 @@ public interface DeveloperParameter {
     String PASSWORD        = PREFIX + "password";
     String ROLES           = PREFIX + "roles";
     String GITHUB_USERNAME = PREFIX + "github_username";
+    String GITLAB_USERNAME = PREFIX + "gitlab_username";
     String EMAIL           = PREFIX + "email";
     String ENABLED         = PREFIX + "enabled";
     String PROJECTS_ID     = PREFIX + "projects_id";

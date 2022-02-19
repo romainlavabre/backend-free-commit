@@ -39,6 +39,7 @@ public class Create implements com.free.commit.api.crud.Create< Developer > {
         List< Object > roles          = request.getParameters( DeveloperParameter.ROLES );
         String         email          = ( String ) request.getParameter( DeveloperParameter.EMAIL );
         String         githubUsername = ( String ) request.getParameter( DeveloperParameter.GITHUB_USERNAME );
+        String         gitlabUsername = ( String ) request.getParameter( DeveloperParameter.GITLAB_USERNAME );
 
         User user = new User();
         user.setUsername( username );
@@ -51,6 +52,7 @@ public class Create implements com.free.commit.api.crud.Create< Developer > {
 
         developer
                 .setGithubUsername( githubUsername )
+                .setGitlabUsername( gitlabUsername )
                 .setEmail( email )
                 .setUser( user );
 
