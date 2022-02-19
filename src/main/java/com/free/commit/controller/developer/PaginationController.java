@@ -9,6 +9,7 @@ import com.free.commit.api.request.Request;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.view.DeveloperView;
 import com.free.commit.view.ProjectView;
+import com.free.commit.view.SecretView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,14 @@ public class PaginationController {
     public ResponseEntity< Map< String, Object > > developer()
             throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
         Pagination pagination = paginationBuilder.getResult( request, DeveloperView.class, "developer_pagination" );
+        return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
+    }
+
+
+    @GetMapping( path = "/paginations/secret" )
+    public ResponseEntity< Map< String, Object > > secret()
+            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
+        Pagination pagination = paginationBuilder.getResult( request, SecretView.class, "secret_pagination" );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 }

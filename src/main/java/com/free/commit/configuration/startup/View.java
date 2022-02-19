@@ -51,4 +51,16 @@ public class View {
 
         logger.info( "View developer_pagination created" );
     }
+
+
+    @Transactional
+    @EventListener( ApplicationReadyEvent.class )
+    public void secretView() throws IOException {
+        Resource resource = new ClassPathResource( "view/secret_pagination.sql" );
+
+        entityManager.createNativeQuery( "DROP TABLE IF EXISTS secret_pagination;" ).executeUpdate();
+        entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
+
+        logger.info( "View secret_pagination created" );
+    }
 }
