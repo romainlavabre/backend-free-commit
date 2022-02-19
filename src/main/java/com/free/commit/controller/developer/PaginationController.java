@@ -7,6 +7,7 @@ import com.free.commit.api.pagination.exception.NotSupportedOperator;
 import com.free.commit.api.pagination.exception.NotSupportedValue;
 import com.free.commit.api.request.Request;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.view.DeveloperView;
 import com.free.commit.view.ProjectView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,14 @@ public class PaginationController {
     public ResponseEntity< Map< String, Object > > project()
             throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
         Pagination pagination = paginationBuilder.getResult( request, ProjectView.class, "project_pagination" );
+        return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
+    }
+
+
+    @GetMapping( path = "/paginations/developer" )
+    public ResponseEntity< Map< String, Object > > developer()
+            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
+        Pagination pagination = paginationBuilder.getResult( request, DeveloperView.class, "developer_pagination" );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 }

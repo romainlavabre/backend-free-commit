@@ -31,12 +31,24 @@ public class View {
 
     @Transactional
     @EventListener( ApplicationReadyEvent.class )
-    public void createViews() throws IOException {
+    public void projectView() throws IOException {
         Resource resource = new ClassPathResource( "view/project_pagination.sql" );
 
         entityManager.createNativeQuery( "DROP TABLE IF EXISTS project_pagination;" ).executeUpdate();
         entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
 
         logger.info( "View project_pagination created" );
+    }
+
+
+    @Transactional
+    @EventListener( ApplicationReadyEvent.class )
+    public void developerView() throws IOException {
+        Resource resource = new ClassPathResource( "view/developer_pagination.sql" );
+
+        entityManager.createNativeQuery( "DROP TABLE IF EXISTS developer_pagination;" ).executeUpdate();
+        entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
+
+        logger.info( "View developer_pagination created" );
     }
 }
