@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -35,7 +34,7 @@ public class View {
         Resource resource = new ClassPathResource( "view/project_pagination.sql" );
 
         entityManager.createNativeQuery( "DROP TABLE IF EXISTS project_pagination;" ).executeUpdate();
-        entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
+        entityManager.createNativeQuery( new String( resource.getInputStream().readAllBytes() ) ).executeUpdate();
 
         logger.info( "View project_pagination created" );
     }
@@ -47,7 +46,7 @@ public class View {
         Resource resource = new ClassPathResource( "view/developer_pagination.sql" );
 
         entityManager.createNativeQuery( "DROP TABLE IF EXISTS developer_pagination;" ).executeUpdate();
-        entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
+        entityManager.createNativeQuery( new String( resource.getInputStream().readAllBytes() ) ).executeUpdate();
 
         logger.info( "View developer_pagination created" );
     }
@@ -59,7 +58,7 @@ public class View {
         Resource resource = new ClassPathResource( "view/secret_pagination.sql" );
 
         entityManager.createNativeQuery( "DROP TABLE IF EXISTS secret_pagination;" ).executeUpdate();
-        entityManager.createNativeQuery( Files.readString( resource.getFile().toPath() ) ).executeUpdate();
+        entityManager.createNativeQuery( new String( resource.getInputStream().readAllBytes() ) ).executeUpdate();
 
         logger.info( "View secret_pagination created" );
     }
