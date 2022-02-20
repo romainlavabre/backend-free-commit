@@ -102,7 +102,7 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project" )
+    @ManyToMany( cascade = {CascadeType.PERSIST}, mappedBy = "projects" )
     private final List< Secret > secrets;
 
     @Json( groups = {
@@ -279,8 +279,8 @@ public class Project {
         if ( !secrets.contains( secret ) ) {
             secrets.add( secret );
 
-            if ( secret.getProject() != this ) {
-                secret.setProject( this );
+            if ( !secret.getProjects().contains( this ) ) {
+                secret.addProject( this );
             }
         }
 

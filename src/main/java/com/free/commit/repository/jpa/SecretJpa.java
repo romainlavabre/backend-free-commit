@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Repository
 public interface SecretJpa extends JpaRepository< Secret, Long > {
-    List< Secret > findAllByProjectIsNull();
+    List< Secret > findAllByProjectsEmpty();
 }

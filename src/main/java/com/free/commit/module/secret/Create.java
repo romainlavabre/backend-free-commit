@@ -9,6 +9,8 @@ import com.free.commit.repository.SecretRepository;
 import com.free.commit.util.Cast;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
@@ -32,15 +34,17 @@ public class Create implements com.free.commit.api.crud.Create< Secret > {
 
     @Override
     public void create( Request request, Secret secret ) {
-        String name      = ( String ) request.getParameter( SecretParameter.NAME );
-        String value     = ( String ) request.getParameter( SecretParameter.VALUE );
-        Long   projectId = Cast.getLong( request.getParameter( SecretParameter.PROJECT ) );
+        String         name       = ( String ) request.getParameter( SecretParameter.NAME );
+        String         value      = ( String ) request.getParameter( SecretParameter.VALUE );
+        List< Object > projectsId = request.getParameters( SecretParameter.PROJECTS );
 
         secret.setName( name )
               .setValue( value );
 
-        if ( projectId != null ) {
-            secret.setProject( projectRepository.findOrFail( projectId ) );
+        if ( projectsId != null ) {
+            for ( Object object : projectsId ) {
+                secret.addProject( projectRepository.findOrFail( Cast.getLong( object ) ) );
+            }
         }
 
         historyHandler.create( secret );

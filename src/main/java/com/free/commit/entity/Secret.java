@@ -8,6 +8,8 @@ import com.free.commit.entity.encrypt.EncryptField;
 import com.free.commit.exception.HttpUnprocessableEntityException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -38,9 +40,18 @@ public class Secret {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @ManyToOne( cascade = {CascadeType.PERSIST} )
-    @JoinColumn( name = "project_id" )
-    private Project project;
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
+    @JoinTable(
+            name = "secret_project",
+            joinColumns = @JoinColumn( name = "secret_id" ),
+            inverseJoinColumns = @JoinColumn( name = "project_id" )
+    )
+    private final List< Project > projects;
+
+
+    public Secret() {
+        projects = new ArrayList<>();
+    }
 
 
     public long getId() {
@@ -80,23 +91,32 @@ public class Secret {
     }
 
 
-    public Project getProject() {
-        return project;
+    public List< Project > getProjects() {
+        return projects;
     }
 
 
-    public Secret setProject( Project project ) {
-        this.project = project;
+    public Secret addProject( Project project ) {
+        if ( !projects.contains( project ) ) {
+            projects.add( project );
 
-        if ( project != null && !project.getSecrets().contains( this ) ) {
-            project.addSecret( this );
+            if ( !project.getSecrets().contains( this ) ) {
+                project.addSecret( this );
+            }
         }
 
         return this;
     }
 
 
+    public Secret removeProject( Project project ) {
+        projects.remove( project );
+
+        return this;
+    }
+
+
     public boolean isGlobal() {
-        return project == null;
+        return projects.isEmpty();
     }
 }

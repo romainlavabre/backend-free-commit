@@ -3,7 +3,6 @@ package com.free.commit.module.secret;
 import com.free.commit.api.crud.Update;
 import com.free.commit.api.history.HistoryHandler;
 import com.free.commit.api.request.Request;
-import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
 import com.free.commit.parameter.SecretParameter;
 import com.free.commit.property.SecretProperty;
@@ -12,18 +11,20 @@ import com.free.commit.repository.SecretRepository;
 import com.free.commit.util.Cast;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service( "updateSecretProject" )
-public class UpdateProject implements Update< Secret > {
+@Service( "updateSecretProjects" )
+public class UpdateProjects implements Update< Secret > {
 
     protected final SecretRepository  secretRepository;
     protected final HistoryHandler    historyHandler;
     protected final ProjectRepository projectRepository;
 
 
-    public UpdateProject(
+    public UpdateProjects(
             SecretRepository secretRepository,
             HistoryHandler historyHandler,
             ProjectRepository projectRepository ) {
@@ -35,17 +36,17 @@ public class UpdateProject implements Update< Secret > {
 
     @Override
     public void update( Request request, Secret secret ) {
-        Long projectId = Cast.getLong( request.getParameter( SecretParameter.PROJECT ) );
+        List< Object > projectsId = request.getParameters( SecretParameter.PROJECTS );
 
-        if ( projectId != null ) {
-            Project project = projectRepository.findOrFail( projectId );
+        secret.getProjects().clear();
 
-            secret.setProject( project );
-        } else {
-            secret.setProject( null );
+        if ( projectsId != null ) {
+            for ( Object object : projectsId ) {
+                secret.addProject( projectRepository.findOrFail( Cast.getLong( object ) ) );
+            }
         }
 
-        historyHandler.update( secret, SecretProperty.PROJECT );
+        historyHandler.update( secret, SecretProperty.PROJECTS );
 
         secretRepository.persist( secret );
     }

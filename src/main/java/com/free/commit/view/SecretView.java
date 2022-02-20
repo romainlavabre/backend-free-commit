@@ -34,5 +34,5 @@ public class SecretView {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String project_name;
+    private String secret_scope;
 }

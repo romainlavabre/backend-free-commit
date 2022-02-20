@@ -26,7 +26,7 @@ public class SecretRepositoryImpl extends AbstractRepository< Secret > implement
 
     @Override
     public List< Secret > findAllWithGlobalScope() {
-        return secretJpa.findAllByProjectIsNull();
+        return secretJpa.findAllByProjectsEmpty();
     }
 
 
