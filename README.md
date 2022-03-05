@@ -1,25 +1,10 @@
-# Spring-Starter
+# Free Commit
 
-This project is custom spring starter.
+[1. Install](docs/install.md)<br>
+[2. Project]()<br>
+[3. Credential]()<br>
+[4. Secret]()<br>
+[5. Developer]()<br>
+[6. Webhook]()<br>
+[7. API]()
 
-### Documentation API
-
-```http request
-{{host}}/api/documentation/swagger-ui/index.html
-```
-
-### Start software
-
-```shell script
-mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"
-```
-
-With spring-cloud-config
-
-```shell script
-mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev -Dspring.cloud.bootstrap.enabled=true"
-```
-### Launch
-
-
-[COMPLETE DOCUMENTATION](docs/table.md)
