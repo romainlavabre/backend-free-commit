@@ -11,9 +11,10 @@ public interface Variable {
     String SMS_FROM               = "sms.from";
     String BASE_TEMPLATE_PATH     = "base.template.path";
     String PDF_TMP_DIRECTORY      = "pdf.tmp.directory";
-    String MAIL_DOMAIN            = "mail.domain";
-    String MAIL_PRIVATE_KEY       = "mail.private.key";
+    String MAIL_HOST              = "mail.host";
+    String MAIL_PORT              = "mail.port";
     String MAIL_FROM              = "mail.from";
+    String MAIL_PASSWORD          = "mail.password";
     String DEFAULT_ADMIN_USERNAME = "default.admin.username";
     String DEFAULT_ADMIN_PASSWORD = "default.admin.password";
     String ENCRYPTION_KEY         = "encryption.key";

@@ -121,6 +121,12 @@
             <artifactId>twilio</artifactId>
             <version>8.9.0</version>
         </dependency>
+        <!-- MAIL -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
         <!-- TEMPLATE -->
         <dependency>
             <groupId>org.apache.velocity</groupId>

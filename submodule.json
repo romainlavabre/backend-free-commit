@@ -35,13 +35,6 @@
         "target": "/src/main/java/com/free/commit/api/json"
     },
     {
-        "name": "Mail",
-        "repository": "git@github.com:romainlavabre/spring-starter-mail.git",
-        "tag": "1.[0-9]*.[0-9]*",
-        "scriptExecution": "auto",
-        "target": "/src/main/java/com/free/commit/api/mail"
-    },
-    {
         "name": "Pagination",
         "repository": "git@github.com:romainlavabre/spring-starter-pagination.git",
         "tag": "1.[0-9]*.[0-9]*",
