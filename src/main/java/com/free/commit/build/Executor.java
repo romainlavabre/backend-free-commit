@@ -270,6 +270,7 @@ public class Executor {
         run.append( imageName );
 
         stringJoiner.add( run.toString() );
+        stringJoiner.add( "docker image rm " + imageName + " -f" );
 
         cmdline[ 2 ] = stringJoiner.toString();
 
