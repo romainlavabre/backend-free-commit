@@ -1,5 +1,7 @@
 # Free Commit
 
+##### Simple, Free and Open source CI/CD tool
+
 [1. Install](docs/install.md)<br>
 [2. Project](docs/project.md)<br>
 [3. Credential](docs/credential.md)<br>
