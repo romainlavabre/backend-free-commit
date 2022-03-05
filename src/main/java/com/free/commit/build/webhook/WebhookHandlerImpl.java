@@ -2,6 +2,7 @@ package com.free.commit.build.webhook;
 
 import com.free.commit.api.request.Request;
 import com.free.commit.build.BuildManager;
+import com.free.commit.build.Initiator;
 import com.free.commit.entity.Project;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,10 @@ public class WebhookHandlerImpl implements WebhookHandler {
 
     @Override
     public void handle( Request request, Project project ) {
-        if ( securityResolver.isBuildAllowed( request, project ) ) {
-            buildManager.launch( project );
+        Initiator initiator = securityResolver.isBuildAllowed( request, project );
+
+        if ( initiator.isAllowed() ) {
+            buildManager.launch( project, initiator );
         }
     }
 }

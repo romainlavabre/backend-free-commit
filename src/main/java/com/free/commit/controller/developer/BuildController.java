@@ -2,7 +2,9 @@ package com.free.commit.controller.developer;
 
 import com.free.commit.api.json.Encoder;
 import com.free.commit.api.security.Security;
+import com.free.commit.api.security.UserRepository;
 import com.free.commit.build.BuildManager;
+import com.free.commit.build.Initiator;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.configuration.security.Role;
@@ -12,6 +14,7 @@ import com.free.commit.entity.Project;
 import com.free.commit.exception.HttpForbiddenException;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.CredentialRepository;
+import com.free.commit.repository.DeveloperRepository;
 import com.free.commit.repository.ProjectRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,8 @@ public class BuildController {
     protected final CredentialRepository credentialRepository;
     protected final ProjectRepository    projectRepository;
     protected final BuildRepository      buildRepository;
+    protected final DeveloperRepository  developerRepository;
+    protected final UserRepository       userRepository;
     protected final Security             security;
 
 
@@ -39,11 +44,15 @@ public class BuildController {
             CredentialRepository credentialRepository,
             ProjectRepository projectRepository,
             BuildRepository buildRepository,
+            DeveloperRepository developerRepository,
+            UserRepository userRepository,
             Security security ) {
         this.buildManager         = buildManager;
         this.credentialRepository = credentialRepository;
         this.projectRepository    = projectRepository;
         this.buildRepository      = buildRepository;
+        this.developerRepository  = developerRepository;
+        this.userRepository       = userRepository;
         this.security             = security;
     }
 
@@ -85,14 +94,16 @@ public class BuildController {
 
     @PostMapping( path = "/builds/{id:[0-9]+}" )
     public ResponseEntity< Map< String, Object > > build( @PathVariable( "id" ) long id ) {
-        Project project = projectRepository.findOrFail( id );
+        Project   project        = projectRepository.findOrFail( id );
+        Developer foundDeveloper = null;
 
         if ( !security.hasRole( Role.ADMIN ) ) {
             boolean isAllowed = false;
 
             for ( Developer developer : project.getDevelopers() ) {
                 if ( developer.getUser().getUsername().equals( security.getUsername() ) ) {
-                    isAllowed = true;
+                    foundDeveloper = developer;
+                    isAllowed      = true;
                     break;
                 }
             }
@@ -100,9 +111,14 @@ public class BuildController {
             if ( !isAllowed ) {
                 throw new HttpForbiddenException( Message.LAUNCH_BUILD_NOT_ALLOWED );
             }
+        } else {
+            foundDeveloper = developerRepository.findOrFailByUser( userRepository.findByUsername( security.getUsername() ) );
         }
-        
-        BuildManager.Queued queued = buildManager.launch( project );
+
+        BuildManager.Queued queued = buildManager.launch( project, new Initiator(
+                foundDeveloper.getEmail(),
+                true
+        ) );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )

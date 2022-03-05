@@ -1,5 +1,6 @@
 package com.free.commit.repository.jpa;
 
+import com.free.commit.api.security.User;
 import com.free.commit.entity.Developer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,7 @@ public interface DeveloperJpa extends JpaRepository< Developer, Long > {
 
 
     Optional< Developer > findByGitlabUsername( String gitlabUsername );
+
+
+    Optional< Developer > findByUser( User user );
 }

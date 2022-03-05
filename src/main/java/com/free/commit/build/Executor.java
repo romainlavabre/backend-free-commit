@@ -1,5 +1,6 @@
 package com.free.commit.build;
 
+import com.free.commit.api.mail.MailSender;
 import com.free.commit.build.exception.BuildException;
 import com.free.commit.build.exception.SpecFileNotFoundException;
 import com.free.commit.build.exception.SpecFileNotReadableException;
@@ -34,30 +35,35 @@ public class Executor {
 
     private         Build             build;
     private         Project           project;
+    private         Initiator         initiator;
     private         boolean           active = true;
     private         Process           currentProcess;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
     protected final EntityManager     entityManager;
+    protected final MailSender        mailSender;
 
 
     public Executor(
             BuildRepository buildRepository,
             SecretRepository secretRepository,
             ProjectRepository projectRepository,
-            EntityManager entityManager ) {
+            EntityManager entityManager,
+            MailSender mailSender ) {
         this.buildRepository   = buildRepository;
         this.secretRepository  = secretRepository;
         this.projectRepository = projectRepository;
         this.entityManager     = entityManager;
+        this.mailSender        = mailSender;
     }
 
 
     @Transactional
-    public void execute( Project project, Build build ) {
-        this.project = projectRepository.findOrFail( project.getId() );
-        this.build   = build;
+    public void execute( Project project, Build build, Initiator initiator ) {
+        this.project   = projectRepository.findOrFail( project.getId() );
+        this.build     = build;
+        this.initiator = initiator;
 
 
         initRepository();
@@ -72,6 +78,7 @@ public class Executor {
                  .setProject( this.project );
             active = false;
             entityManager.persist( build );
+            launchEmail( build );
             return;
         } catch ( Throwable e ) {
             build.addOutputLine( e.getMessage() )
@@ -80,6 +87,7 @@ public class Executor {
                  .setProject( this.project );
             active = false;
             entityManager.persist( build );
+            launchEmail( build );
             return;
         }
 
@@ -110,6 +118,8 @@ public class Executor {
                 this.project.addBuild( current.get( i ) );
             }
         }
+
+        launchEmail( build );
 
         active = false;
     }
@@ -321,5 +331,16 @@ public class Executor {
         cmdline[ 2 ] = stringJoiner.toString();
 
         return cmdline;
+    }
+
+
+    protected void launchEmail( Build build ) {
+        if ( build.getExitCode() != 0 && initiator.getEmail() != null ) {
+            mailSender.send(
+                    initiator.getEmail(),
+                    "[" + project.getName().toUpperCase() + "] Build Failure (#" + build.getId() + ")",
+                    "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")"
+            );
+        }
     }
 }

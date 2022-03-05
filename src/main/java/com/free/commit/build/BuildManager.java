@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface BuildManager {
 
-    Queued launch( Project project );
+    Queued launch( Project project, Initiator initiator );
 
 
     String getLogs( String executorId );
@@ -42,16 +42,20 @@ public interface BuildManager {
 
         private final Executor executor;
 
+        private final Initiator initiator;
+
 
         public Executed(
                 Project project,
                 Build build,
                 String executorId,
-                Executor executor ) {
+                Executor executor,
+                Initiator initiator ) {
             this.project    = project;
             this.build      = build;
             this.executorId = executorId;
             this.executor   = executor;
+            this.initiator  = initiator;
         }
 
 
@@ -73,6 +77,11 @@ public interface BuildManager {
         public Executor getExecutor() {
             return executor;
         }
+
+
+        public Initiator getInitiator() {
+            return initiator;
+        }
     }
 
 
@@ -89,11 +98,14 @@ public interface BuildManager {
         } )
         private final String executorId;
 
+        private final Initiator initiator;
 
-        public Queued( Project project, Build build, String executorId ) {
+
+        public Queued( Project project, Build build, String executorId, Initiator initiator ) {
             this.project    = project;
             this.build      = build;
             this.executorId = executorId;
+            this.initiator  = initiator;
         }
 
 
@@ -109,6 +121,11 @@ public interface BuildManager {
 
         public String getExecutorId() {
             return executorId;
+        }
+
+
+        public Initiator getInitiator() {
+            return initiator;
         }
     }
 }

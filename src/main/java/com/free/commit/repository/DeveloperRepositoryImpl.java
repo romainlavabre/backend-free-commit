@@ -1,5 +1,6 @@
 package com.free.commit.repository;
 
+import com.free.commit.api.security.User;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Developer;
 import com.free.commit.exception.HttpNotFoundException;
@@ -59,6 +60,20 @@ public class DeveloperRepositoryImpl extends AbstractRepository< Developer > imp
     @Override
     public Optional< Developer > findByGitlabUsername( String gitlabUsername ) {
         return developerJpa.findByGitlabUsername( gitlabUsername );
+    }
+
+
+    @Override
+    public Optional< Developer > findByUser( User user ) {
+        return developerJpa.findByUser( user );
+    }
+
+
+    @Override
+    public Developer findOrFailByUser( User user ) {
+        Optional< Developer > developerOptional = findByUser( user );
+
+        return developerOptional.orElseThrow( () -> new HttpNotFoundException( Message.DEVELOPER_NOT_FOUND ) );
     }
 
 

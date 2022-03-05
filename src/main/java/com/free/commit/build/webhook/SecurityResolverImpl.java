@@ -1,6 +1,7 @@
 package com.free.commit.build.webhook;
 
 import com.free.commit.api.request.Request;
+import com.free.commit.build.Initiator;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.configuration.security.Role;
 import com.free.commit.entity.Developer;
@@ -32,17 +33,18 @@ public class SecurityResolverImpl implements SecurityResolver {
 
 
     @Override
-    public boolean isBuildAllowed( Request request, Project project ) {
-        String  pusherLogin = getPusherLogin( request );
-        String  ref         = getRef( request );
-        boolean isGithub    = isGithub( request );
-        boolean isGitlab    = isGitlab( request );
-        boolean isAllowed   = false;
+    public Initiator isBuildAllowed( Request request, Project project ) {
+        String    pusherLogin = getPusherLogin( request );
+        String    ref         = getRef( request );
+        boolean   isGithub    = isGithub( request );
+        boolean   isGitlab    = isGitlab( request );
+        boolean   isAllowed   = false;
+        Developer developer   = null;
 
         logger.info( "Receive event of " + (isGithub ? "Github" : "Gitlab") + " for project " + project.getName() );
 
         if ( isGithub ) {
-            Developer developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
+            developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
 
             if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
                 isAllowed = true;
@@ -70,7 +72,7 @@ public class SecurityResolverImpl implements SecurityResolver {
         }
 
         if ( isGitlab ) {
-            Developer developer = developerRepository.findOrFailByGitlabUsername( pusherLogin );
+            developer = developerRepository.findOrFailByGitlabUsername( pusherLogin );
 
             if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
                 isAllowed = true;
@@ -103,7 +105,10 @@ public class SecurityResolverImpl implements SecurityResolver {
             }
         }
 
-        return isAllowed;
+        return new Initiator(
+                developer.getEmail(),
+                isAllowed
+        );
     }
 
 

@@ -1,6 +1,7 @@
 package com.free.commit.build.webhook;
 
 import com.free.commit.api.request.Request;
+import com.free.commit.build.Initiator;
 import com.free.commit.entity.Project;
 
 /**
@@ -8,5 +9,5 @@ import com.free.commit.entity.Project;
  */
 public interface SecurityResolver {
 
-    boolean isBuildAllowed( Request request, Project project );
+    Initiator isBuildAllowed( Request request, Project project );
 }
