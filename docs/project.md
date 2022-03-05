@@ -53,7 +53,7 @@ The project is a skeleton of this software.
 
 ##### Shortcut
 
-* [Add credentials](./credential.md)
+* [Add credentials](credential.md)
 
 ### Deployment file
 
