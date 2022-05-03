@@ -78,7 +78,7 @@ public class SecurityResolverImpl implements SecurityResolver {
                 isAllowed = true;
             } else {
                 for ( Developer projectDeveloper : project.getDevelopers() ) {
-                    if ( pusherLogin.equals( projectDeveloper.getGithubUsername() ) ) {
+                    if ( pusherLogin.toLowerCase().trim().equals( projectDeveloper.getGithubUsername().toLowerCase().trim() ) ) {
                         isAllowed = true;
                         break;
                     }
