@@ -38,8 +38,8 @@ public class UpdateProjects implements Update< Developer > {
     public void update( Request request, Developer developer ) {
         List< Object > projectsId = request.getParameters( DeveloperParameter.PROJECTS_ID );
 
-        developer.getProjects().clear();
-        
+        developer.cleaProjects();
+
         for ( Object projectId : projectsId ) {
             developer.addProject( projectRepository.findOrFail( Cast.getLong( projectId ) ) );
         }

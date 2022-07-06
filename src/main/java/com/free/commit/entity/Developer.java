@@ -152,6 +152,19 @@ public class Developer {
     public Developer removeProject( Project project ) {
         projects.remove( project );
 
+        project.removeDeveloper( this );
+
+        return this;
+    }
+
+
+    public Developer cleaProjects() {
+        for ( Project project : projects ) {
+            project.removeDeveloper( this );
+        }
+
+        projects.clear();
+
         return this;
     }
 }
