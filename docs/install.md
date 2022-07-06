@@ -125,6 +125,26 @@ networks:
         name: database
 ```
 
+| .env
+
+```env
+DATASOURCE_URL=?
+DATASOURCE_USERNAME=?
+DATASOURCE_PASSWORD=?
+DATASOURCE_DIALECT=?
+ENCRYPTION_KEY=?
+JWT_SECRET=?
+JWT_LIFE_TIME=?
+DEFAULT_ADMIN_USERNAME=?
+DEFAULT_ADMIN_PASSWORD=?
+MAIL_HOST=?
+MAIL_PORT=?
+MAIL_FROM=?
+MAIL_PASSWORD=?
+TWILIO_SID=?
+TWILIO_AUTH_TOKEN=?
+TWILIO_FROM=?
+```
 ### Protect your disk
 
 By default, Free Commit will clean your file system, but additionally you can add a cron job
