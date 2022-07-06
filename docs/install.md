@@ -27,6 +27,7 @@ You can see [romainlavabre/free-commit-client](https://hub.docker.com/r/romainla
 There is no standalone docker image for full stack.
 But our stack (with docker-compose)
 
+> docker-compose.yaml
 ```yaml
 version: '3.2'
 
@@ -74,7 +75,6 @@ services:
             - "traefik.http.routers.free-commit-api.middlewares=free-commit-api-replace-prefix@docker"
             - "traefik.http.routers.free-commit-api.entrypoints=websecure"
             - "traefik.http.routers.free-commit-api.tls=true"
-            - "traefik.http.routers.free-commit-api.tls.certresolver=fairfair"
             - "traefik.http.services.free-commit-api.loadbalancer.server.port=8080"
         networks:
             - free-commit-api
@@ -96,7 +96,6 @@ services:
             - "traefik.docker.network=free-commit-client"
             - "traefik.http.routers.free-commit-client.entrypoints=websecure"
             - "traefik.http.routers.free-commit-client.tls=true"
-            - "traefik.http.routers.free-commit-client.tls.certresolver=fairfair"
             - "traefik.http.services.free-commit-client.loadbalancer.server.port=80"
         restart: always
         container_name: free-commit-client
@@ -125,7 +124,7 @@ networks:
         name: database
 ```
 
-| .env
+> .env
 
 ```env
 DATASOURCE_URL=jdbc:mysql://database:3306/free-commit
@@ -144,6 +143,34 @@ MAIL_PASSWORD=?
 TWILIO_SID=?
 TWILIO_AUTH_TOKEN=?
 TWILIO_FROM=?
+FREE_COMMIT_API_URL=https://free-commit.{host}.{ext}/api
+```
+
+> traefik.yaml
+```yaml
+# Docker configuration backend
+providers:
+    docker:
+        defaultRule: "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)"
+        exposedByDefault: false
+
+# API and dashboard configuration
+api:
+    insecure: false
+
+entryPoints:
+    web:
+        address: ":80"
+        http:
+            redirections:
+                entryPoint:
+                    to: websecure
+                    scheme: https
+    websecure:
+        address: ":443"
+
+log:
+    level: ERROR
 ```
 
 ### Protect your disk
