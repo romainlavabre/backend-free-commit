@@ -105,7 +105,7 @@ services:
         image: mysql/mysql-server:latest
         environment:
             MYSQL_ROOT_HOST: '%'
-            MYSQL_ROOT_PASSWORD: ${DATASOURCE_USERNAME}
+            MYSQL_ROOT_PASSWORD: ${DATASOURCE_PASSWORD}
             MYSQL_DATABASE: free-commit
         networks:
             - database
@@ -128,13 +128,13 @@ networks:
 | .env
 
 ```env
-DATASOURCE_URL=?
-DATASOURCE_USERNAME=?
+DATASOURCE_URL=jdbc:mysql://database:3306/free-commit
+DATASOURCE_USERNAME=root
 DATASOURCE_PASSWORD=?
-DATASOURCE_DIALECT=?
+DATASOURCE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
 ENCRYPTION_KEY=?
 JWT_SECRET=?
-JWT_LIFE_TIME=?
+JWT_LIFE_TIME=7200
 DEFAULT_ADMIN_USERNAME=?
 DEFAULT_ADMIN_PASSWORD=?
 MAIL_HOST=?
@@ -145,6 +145,7 @@ TWILIO_SID=?
 TWILIO_AUTH_TOKEN=?
 TWILIO_FROM=?
 ```
+
 ### Protect your disk
 
 By default, Free Commit will clean your file system, but additionally you can add a cron job
