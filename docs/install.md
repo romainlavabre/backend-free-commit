@@ -12,11 +12,11 @@ To simplify, we offer 2 docker images (for the api and the client). <br>
 
 ### API
 
-You can see [romainlavabre/free-commit-api](https://hub.docker.com/repository/docker/romainlavabre/free-commit-api)
+You can see [romainlavabre/free-commit-api](https://hub.docker.com/r/romainlavabre/free-commit-api)
 
 ### Client
 
-You can see [romainlavabre/free-commit-client](https://hub.docker.com/repository/docker/romainlavabre/free-commit-client)
+You can see [romainlavabre/free-commit-client](https://hub.docker.com/r/romainlavabre/free-commit-client)
 
 ### Minimum resource requirement
 
