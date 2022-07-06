@@ -8,7 +8,7 @@
 [4. Secret](docs/secret.md)<br>
 [5. Developer]()<br>
 [6. Webhook]()<br>
-[7. Work only with API]()<br>
+[7. Work only with API](docs/api.md)<br>
 [8. System consideration & settings]()<br>
 [9. Contributing, issue & pull request]()
 
