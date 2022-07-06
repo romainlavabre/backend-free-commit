@@ -146,7 +146,11 @@ TWILIO_FROM=?
 FREE_COMMIT_API_URL=https://free-commit.{host}.{ext}/api
 ```
 
-> traefik.yaml
+```shell script
+mkdir traefik
+```
+
+> traefik/traefik.yaml
 ```yaml
 # Docker configuration backend
 providers:
