@@ -75,6 +75,8 @@ services:
             - "traefik.http.routers.free-commit-api.middlewares=free-commit-api-replace-prefix@docker"
             - "traefik.http.routers.free-commit-api.entrypoints=websecure"
             - "traefik.http.routers.free-commit-api.tls=true"
+            # Uncomment if you don't have a reverse proxy that handles TLS
+            #- "traefik.http.routers.free-commit-api.tls.certresolver=free-commit"
             - "traefik.http.services.free-commit-api.loadbalancer.server.port=8080"
         networks:
             - free-commit-api
@@ -96,6 +98,8 @@ services:
             - "traefik.docker.network=free-commit-client"
             - "traefik.http.routers.free-commit-client.entrypoints=websecure"
             - "traefik.http.routers.free-commit-client.tls=true"
+            # Uncomment if you don't have a reverse proxy that handles TLS
+            #- "traefik.http.routers.free-commit-client.tls.certresolver=free-commit"
             - "traefik.http.services.free-commit-client.loadbalancer.server.port=80"
         restart: always
         container_name: free-commit-client
@@ -172,6 +176,15 @@ entryPoints:
                     scheme: https
     websecure:
         address: ":443"
+
+# Uncomment if you don't have a reverse proxy that handles TLS
+#certificatesResolvers:
+#    free-commit:
+#        acme:
+#            email: {your email}
+#            storage: "/tlsKey/acme.json"
+#            httpChallenge:
+#                entryPoint: web
 
 log:
     level: ERROR
