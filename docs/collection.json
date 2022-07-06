@@ -1,0 +1,894 @@
+{
+    "info": {
+        "_postman_id": "61f2d137-f630-4a73-bedf-6d1bcf866fc8",
+        "name": "Free-commit-dev",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "secret",
+            "item": [
+                {
+                    "name": "CreateSecret",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"secret\": {\n        \"name\": \"API_TOKEN\",\n        \"value\": \"ABCD\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{host}}/api/admin/secrets",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "secrets"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetSecret",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/secrets/:id",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "secrets",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "3"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetAllSecret",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/secrets",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "secrets"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DeleteSecret",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/admin/secrets/:id",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "secrets",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "project",
+            "item": [
+                {
+                    "name": "GetProject",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/projects/:id",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "projects",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetAllProjects",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/projects",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "projects"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "CreateProject",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"project\": {\n        \"name\": \"service-user\",\n        \"description\": null,\n        \"repository\": \"git@github.com:fairfair-cloud/service-user.git\",\n        \"branch\": \"develop\",\n        \"spec_file_path\": \"/.deploy/develop.yaml\",\n        \"keep_number_build\": 3\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{host}}/api/admin/projects",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "projects"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "credential",
+            "item": [
+                {
+                    "name": "CreateCredential",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"credential\": {\n        \"name\": \"Github\",\n        \"ssh_key\": \"KEY\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{host}}/api/admin/credentials",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "credentials"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetCredential",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/credentials/:id",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "credentials",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetAllCredentials",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/credentials",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "credentials"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "developer",
+            "item": [
+                {
+                    "name": "CreateDeveloper",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"developer\": {\n        \"username\": \"evan\",\n        \"password\": \"0000\",\n        \"github_username\": \"evan-mart\",\n        \"email\": \"evan.martinez@fairfair.com\",\n        \"roles\": [\n            \"ROLE_DEVELOPER\"\n        ]\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{host}}/api/admin/developers",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "developers"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetDeveloper",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/developers/:id",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "developers",
+                                ":id"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetAllDevelopers",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/developers",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "developers"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "UpdateGithubUsername",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"developer\": {\n        \"github_username\": \"romainlavabre\"\n    }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{host}}/api/admin/developers/:id/github_username",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "developers",
+                                ":id",
+                                "github_username"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "2"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "build",
+            "item": [
+                {
+                    "name": "webhook",
+                    "item": [
+                        {
+                            "name": "Github",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "X-GitHub-Event",
+                                        "value": "push",
+                                        "type": "text"
+                                    },
+                                    {
+                                        "key": "X-Hub-Signature-256",
+                                        "value": "sha256=fc2024eeff84a001f3b1c76af36a5236081e2b9d56a706fae4b7d5deeea73c1a",
+                                        "type": "text"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"ref\": \"refs/heads/develop\",\n  \"before\": \"da9efe0a111ba4c6959ae4ea693605ca209a4174\",\n  \"after\": \"7af56503cf9cbe01486df5a17a58e22328745203\",\n  \"repository\": {\n    \"id\": 376116669,\n    \"node_id\": \"MDEwOlJlcG9zaXRvcnkzNzYxMTY2Njk=\",\n    \"name\": \"service-emergency\",\n    \"full_name\": \"fairfair-cloud/service-emergency\",\n    \"private\": true,\n    \"owner\": {\n      \"name\": \"fairfair-cloud\",\n      \"email\": null,\n      \"login\": \"fairfair-cloud\",\n      \"id\": 85732047,\n      \"node_id\": \"MDEyOk9yZ2FuaXphdGlvbjg1NzMyMDQ3\",\n      \"avatar_url\": \"https://avatars.githubusercontent.com/u/85732047?v=4\",\n      \"gravatar_id\": \"\",\n      \"url\": \"https://api.github.com/users/fairfair-cloud\",\n      \"html_url\": \"https://github.com/fairfair-cloud\",\n      \"followers_url\": \"https://api.github.com/users/fairfair-cloud/followers\",\n      \"following_url\": \"https://api.github.com/users/fairfair-cloud/following{/other_user}\",\n      \"gists_url\": \"https://api.github.com/users/fairfair-cloud/gists{/gist_id}\",\n      \"starred_url\": \"https://api.github.com/users/fairfair-cloud/starred{/owner}{/repo}\",\n      \"subscriptions_url\": \"https://api.github.com/users/fairfair-cloud/subscriptions\",\n      \"organizations_url\": \"https://api.github.com/users/fairfair-cloud/orgs\",\n      \"repos_url\": \"https://api.github.com/users/fairfair-cloud/repos\",\n      \"events_url\": \"https://api.github.com/users/fairfair-cloud/events{/privacy}\",\n      \"received_events_url\": \"https://api.github.com/users/fairfair-cloud/received_events\",\n      \"type\": \"Organization\",\n      \"site_admin\": false\n    },\n    \"html_url\": \"https://github.com/fairfair-cloud/service-emergency\",\n    \"description\": null,\n    \"fork\": false,\n    \"url\": \"https://github.com/fairfair-cloud/service-emergency\",\n    \"forks_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/forks\",\n    \"keys_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/keys{/key_id}\",\n    \"collaborators_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/collaborators{/collaborator}\",\n    \"teams_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/teams\",\n    \"hooks_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/hooks\",\n    \"issue_events_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/issues/events{/number}\",\n    \"events_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/events\",\n    \"assignees_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/assignees{/user}\",\n    \"branches_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/branches{/branch}\",\n    \"tags_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/tags\",\n    \"blobs_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/git/blobs{/sha}\",\n    \"git_tags_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/git/tags{/sha}\",\n    \"git_refs_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/git/refs{/sha}\",\n    \"trees_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/git/trees{/sha}\",\n    \"statuses_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/statuses/{sha}\",\n    \"languages_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/languages\",\n    \"stargazers_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/stargazers\",\n    \"contributors_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/contributors\",\n    \"subscribers_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/subscribers\",\n    \"subscription_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/subscription\",\n    \"commits_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/commits{/sha}\",\n    \"git_commits_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/git/commits{/sha}\",\n    \"comments_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/comments{/number}\",\n    \"issue_comment_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/issues/comments{/number}\",\n    \"contents_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/contents/{+path}\",\n    \"compare_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/compare/{base}...{head}\",\n    \"merges_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/merges\",\n    \"archive_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/{archive_format}{/ref}\",\n    \"downloads_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/downloads\",\n    \"issues_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/issues{/number}\",\n    \"pulls_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/pulls{/number}\",\n    \"milestones_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/milestones{/number}\",\n    \"notifications_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/notifications{?since,all,participating}\",\n    \"labels_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/labels{/name}\",\n    \"releases_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/releases{/id}\",\n    \"deployments_url\": \"https://api.github.com/repos/fairfair-cloud/service-emergency/deployments\",\n    \"created_at\": 1623437605,\n    \"updated_at\": \"2022-01-09T14:57:39Z\",\n    \"pushed_at\": 1645025622,\n    \"git_url\": \"git://github.com/fairfair-cloud/service-emergency.git\",\n    \"ssh_url\": \"git@github.com:fairfair-cloud/service-emergency.git\",\n    \"clone_url\": \"https://github.com/fairfair-cloud/service-emergency.git\",\n    \"svn_url\": \"https://github.com/fairfair-cloud/service-emergency\",\n    \"homepage\": null,\n    \"size\": 2023,\n    \"stargazers_count\": 0,\n    \"watchers_count\": 0,\n    \"language\": \"Java\",\n    \"has_issues\": true,\n    \"has_projects\": true,\n    \"has_downloads\": true,\n    \"has_wiki\": true,\n    \"has_pages\": false,\n    \"forks_count\": 0,\n    \"mirror_url\": null,\n    \"archived\": false,\n    \"disabled\": false,\n    \"open_issues_count\": 0,\n    \"license\": null,\n    \"allow_forking\": false,\n    \"is_template\": false,\n    \"topics\": [\n\n    ],\n    \"visibility\": \"private\",\n    \"forks\": 0,\n    \"open_issues\": 0,\n    \"watchers\": 0,\n    \"default_branch\": \"master\",\n    \"stargazers\": 0,\n    \"master_branch\": \"master\",\n    \"organization\": \"fairfair-cloud\"\n  },\n  \"pusher\": {\n    \"name\": \"romainlavabre\",\n    \"email\": \"68106520+romainlavabre@users.noreply.github.com\"\n  },\n  \"organization\": {\n    \"login\": \"fairfair-cloud\",\n    \"id\": 85732047,\n    \"node_id\": \"MDEyOk9yZ2FuaXphdGlvbjg1NzMyMDQ3\",\n    \"url\": \"https://api.github.com/orgs/fairfair-cloud\",\n    \"repos_url\": \"https://api.github.com/orgs/fairfair-cloud/repos\",\n    \"events_url\": \"https://api.github.com/orgs/fairfair-cloud/events\",\n    \"hooks_url\": \"https://api.github.com/orgs/fairfair-cloud/hooks\",\n    \"issues_url\": \"https://api.github.com/orgs/fairfair-cloud/issues\",\n    \"members_url\": \"https://api.github.com/orgs/fairfair-cloud/members{/member}\",\n    \"public_members_url\": \"https://api.github.com/orgs/fairfair-cloud/public_members{/member}\",\n    \"avatar_url\": \"https://avatars.githubusercontent.com/u/85732047?v=4\",\n    \"description\": \"\"\n  },\n  \"sender\": {\n    \"login\": \"romainlavabre\",\n    \"id\": 68106520,\n    \"node_id\": \"MDQ6VXNlcjY4MTA2NTIw\",\n    \"avatar_url\": \"https://avatars.githubusercontent.com/u/68106520?v=4\",\n    \"gravatar_id\": \"\",\n    \"url\": \"https://api.github.com/users/romainlavabre\",\n    \"html_url\": \"https://github.com/romainlavabre\",\n    \"followers_url\": \"https://api.github.com/users/romainlavabre/followers\",\n    \"following_url\": \"https://api.github.com/users/romainlavabre/following{/other_user}\",\n    \"gists_url\": \"https://api.github.com/users/romainlavabre/gists{/gist_id}\",\n    \"starred_url\": \"https://api.github.com/users/romainlavabre/starred{/owner}{/repo}\",\n    \"subscriptions_url\": \"https://api.github.com/users/romainlavabre/subscriptions\",\n    \"organizations_url\": \"https://api.github.com/users/romainlavabre/orgs\",\n    \"repos_url\": \"https://api.github.com/users/romainlavabre/repos\",\n    \"events_url\": \"https://api.github.com/users/romainlavabre/events{/privacy}\",\n    \"received_events_url\": \"https://api.github.com/users/romainlavabre/received_events\",\n    \"type\": \"User\",\n    \"site_admin\": false\n  },\n  \"created\": false,\n  \"deleted\": false,\n  \"forced\": false,\n  \"base_ref\": null,\n  \"compare\": \"https://github.com/fairfair-cloud/service-emergency/compare/da9efe0a111b...7af56503cf9c\",\n  \"commits\": [\n    {\n      \"id\": \"7af56503cf9cbe01486df5a17a58e22328745203\",\n      \"tree_id\": \"02724303d3ab8d6966699c71bbe77e6a091b594d\",\n      \"distinct\": true,\n      \"message\": \"FIX dev.deploy.sh\",\n      \"timestamp\": \"2022-02-16T16:33:39+01:00\",\n      \"url\": \"https://github.com/fairfair-cloud/service-emergency/commit/7af56503cf9cbe01486df5a17a58e22328745203\",\n      \"author\": {\n        \"name\": \"romainlavabre\",\n        \"email\": \"romainlavabre98@gmail.com\",\n        \"username\": \"romainlavabre\"\n      },\n      \"committer\": {\n        \"name\": \"romainlavabre\",\n        \"email\": \"romainlavabre98@gmail.com\",\n        \"username\": \"romainlavabre\"\n      },\n      \"added\": [\n\n      ],\n      \"removed\": [\n\n      ],\n      \"modified\": [\n        \".free-commit/dev/deploy.sh\"\n      ]\n    }\n  ],\n  \"head_commit\": {\n    \"id\": \"7af56503cf9cbe01486df5a17a58e22328745203\",\n    \"tree_id\": \"02724303d3ab8d6966699c71bbe77e6a091b594d\",\n    \"distinct\": true,\n    \"message\": \"FIX dev.deploy.sh\",\n    \"timestamp\": \"2022-02-16T16:33:39+01:00\",\n    \"url\": \"https://github.com/fairfair-cloud/service-emergency/commit/7af56503cf9cbe01486df5a17a58e22328745203\",\n    \"author\": {\n      \"name\": \"romainlavabre\",\n      \"email\": \"romainlavabre98@gmail.com\",\n      \"username\": \"romainlavabre\"\n    },\n    \"committer\": {\n      \"name\": \"romainlavabre\",\n      \"email\": \"romainlavabre98@gmail.com\",\n      \"username\": \"romainlavabre\"\n    },\n    \"added\": [\n\n    ],\n    \"removed\": [\n\n    ],\n    \"modified\": [\n      \".free-commit/dev/deploy.sh\"\n    ]\n  }\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{host}}/api/guest/webhooks/build/9",
+                                    "host": [
+                                        "{{host}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "guest",
+                                        "webhooks",
+                                        "build",
+                                        "9"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "LaunchBuildByProjectId",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var currentExecutor = pm.response.json().executor_id;",
+                                    "pm.environment.set(\"current_executor\", currentExecutor);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/builds/:projectId",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "builds",
+                                ":projectId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "projectId",
+                                    "value": "3"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetOutputByExecutorId",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/builds/output/:executorId",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "builds",
+                                "output",
+                                ":executorId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "executorId",
+                                    "value": "{{current_executor}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetQueueds",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/builds/queueds",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "builds",
+                                "queueds"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetExecuteds",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/builds/executeds",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "builds",
+                                "executeds"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "pagination",
+            "item": [
+                {
+                    "name": "ProjectPagination",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/developer/paginations/project?page=1&orderBy=DESC",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "developer",
+                                "paginations",
+                                "project"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "orderBy",
+                                    "value": "DESC"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "configuration",
+            "item": [
+                {
+                    "name": "TestEmail",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{host}}/api/admin/config/mail/test/:recipient",
+                            "host": [
+                                "{{host}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "config",
+                                "mail",
+                                "test",
+                                ":recipient"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "recipient",
+                                    "value": "romainlavabre98@gmail.com"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Authentication",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "var token = pm.response.json().access_token;",
+                            "pm.environment.set(\"access_token\", token);"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"auth\": {\n        \"username\": \"romain\",\n        \"password\": \"0000\"\n    }\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{host}}/api/auth",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "api",
+                        "auth"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "UserInfo",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "{{access_token}}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/api/user/info",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "api",
+                        "user",
+                        "info"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Ping",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/api/guest/ping",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "api",
+                        "guest",
+                        "ping"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}
