@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service( "updateSecretValue" )
+@Service( "updateSecretEscapeChar" )
 public class UpdateEscapeChar implements Update< Secret > {
 
     protected final SecretRepository secretRepository;
