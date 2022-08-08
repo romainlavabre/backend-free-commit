@@ -40,6 +40,12 @@ public class Secret {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
+    private String escapeChar;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
             name = "secret_project",
@@ -86,6 +92,18 @@ public class Secret {
         }
 
         this.value = value;
+
+        return this;
+    }
+
+
+    public String getEscapeChar() {
+        return escapeChar;
+    }
+
+
+    public Secret setEscapeChar( String escapeChar ) {
+        this.escapeChar = escapeChar;
 
         return this;
     }
