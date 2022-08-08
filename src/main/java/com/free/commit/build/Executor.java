@@ -268,11 +268,11 @@ public class Executor {
         StringBuilder run = new StringBuilder( "docker run " );
 
         for ( Secret secret : project.getSecrets() ) {
-            run.append( " -e \"" + secret.getName() + "=" + secret.getValue().replace( "$", "\\$" ) + "\"" );
+            run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret.getValue() ) + "\"" );
         }
 
         for ( Secret secret : secretRepository.findAllWithGlobalScope() ) {
-            run.append( " -e \"" + secret.getName() + "=" + secret.getValue().replace( "$", "\\$" ) + "\"" );
+            run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret.getValue() ) + "\"" );
         }
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
@@ -342,5 +342,12 @@ public class Executor {
                     "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")"
             );
         }
+    }
+
+
+    protected String escapeSecret( String secret ) {
+        return secret
+                .replace( "$", "\\$" )
+                .replace( "+", "\\+" );
     }
 }
