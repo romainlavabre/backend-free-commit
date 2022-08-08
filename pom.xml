@@ -8,11 +8,11 @@
         <version>2.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.replace</groupId>
-    <artifactId>replace</artifactId>
+    <groupId>com.free</groupId>
+    <artifactId>commit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>replace</name>
-    <description>Basic framework installation</description>
+    <name>free-commit</name>
+    <description>Free deployer</description>
     <properties>
         <java.version>11</java.version>
         <!-- FIX Vulnerability -->
