@@ -26,7 +26,7 @@ public class SecretController {
     protected final Create< Secret >   createSecret;
     protected final Update< Secret >   updateSecretName;
     protected final Update< Secret >   updateSecretValue;
-    protected final Update< Secret >   updateEscapeChar;
+    protected final Update< Secret >   updateSecretEscapeChar;
     protected final Update< Secret >   updateSecretProjects;
     protected final Delete< Secret >   deleteSecret;
     protected final DataStorageHandler dataStorageHandler;
@@ -38,21 +38,21 @@ public class SecretController {
             Create< Secret > createSecret,
             Update< Secret > updateSecretName,
             Update< Secret > updateSecretValue,
-            Update< Secret > updateEscapeChar,
+            Update< Secret > updateSecretEscapeChar,
             Update< Secret > updateSecretProjects,
             Delete< Secret > deleteSecret,
             DataStorageHandler dataStorageHandler,
             Request request,
             SecretRepository secretRepository ) {
-        this.createSecret         = createSecret;
-        this.updateSecretName     = updateSecretName;
-        this.updateSecretValue    = updateSecretValue;
-        this.updateEscapeChar     = updateEscapeChar;
-        this.updateSecretProjects = updateSecretProjects;
-        this.deleteSecret         = deleteSecret;
-        this.dataStorageHandler   = dataStorageHandler;
-        this.request              = request;
-        this.secretRepository     = secretRepository;
+        this.createSecret           = createSecret;
+        this.updateSecretName       = updateSecretName;
+        this.updateSecretValue      = updateSecretValue;
+        this.updateSecretEscapeChar = updateSecretEscapeChar;
+        this.updateSecretProjects   = updateSecretProjects;
+        this.deleteSecret           = deleteSecret;
+        this.dataStorageHandler     = dataStorageHandler;
+        this.request                = request;
+        this.secretRepository       = secretRepository;
     }
 
 
@@ -102,7 +102,7 @@ public class SecretController {
     public ResponseEntity< Void > updateEscapeChar( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
-        updateSecretValue.update( request, secret );
+        updateSecretEscapeChar.update( request, secret );
 
         dataStorageHandler.save();
 
