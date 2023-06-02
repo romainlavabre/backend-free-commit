@@ -265,7 +265,7 @@ public class Executor {
                     .add( "cd .." )
                     .add( "docker build -t " + imageName + " ." );
 
-        StringBuilder run = new StringBuilder( "docker run " );
+        StringBuilder run = new StringBuilder( "docker run --user root" );
 
         for ( Secret secret : project.getSecrets() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
