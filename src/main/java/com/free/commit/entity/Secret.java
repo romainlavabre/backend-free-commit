@@ -32,6 +32,9 @@ public class Secret {
     @Column( nullable = false )
     private String name;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Convert( converter = EncryptField.class )
     @Column( nullable = false, columnDefinition = "TEXT" )
     private String value;
@@ -46,7 +49,7 @@ public class Secret {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @ManyToMany( cascade = {CascadeType.PERSIST} )
+    @ManyToMany( cascade = { CascadeType.PERSIST } )
     @JoinTable(
             name = "secret_project",
             joinColumns = @JoinColumn( name = "secret_id" ),

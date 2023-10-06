@@ -8,37 +8,37 @@
   "Event": {
     "tag": "1.0.0"
   },
-  "History": {
-    "tag": "1.0.0"
-  },
-  "Json": {
-    "tag": "2.0.0"
-  },
-  "Pagination": {
-    "tag": "1.0.1"
-  },
   "Pdf": {
     "tag": "1.0.0"
   },
   "Crud": {
     "tag": "1.0.0"
   },
-  "Rest": {
-    "tag": "1.0.0"
-  },
   "Sms": {
-    "tag": "1.0.0"
-  },
-  "Template": {
     "tag": "1.0.0"
   },
   "Upload": {
     "tag": "1.0.0"
   },
-  "Security": {
-    "tag": "1.0.2"
+  "History": {
+    "tag": "1.1.0"
+  },
+  "Json": {
+    "tag": "3.1.0"
+  },
+  "Pagination": {
+    "tag": "1.1.0"
   },
   "Request": {
-    "tag": "1.0.2"
+    "tag": "1.1.2"
+  },
+  "Rest": {
+    "tag": "1.3.0"
+  },
+  "Security": {
+    "tag": "1.0.4"
+  },
+  "Template": {
+    "tag": "1.1.0"
   }
 }

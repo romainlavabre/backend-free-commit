@@ -2,6 +2,7 @@ package com.free.commit.api.json;
 
 import com.free.commit.api.container.Container;
 import com.free.commit.configuration.json.GroupType;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,7 +89,13 @@ public class Encoder {
 
 
     protected static Map< String, Object > core( final Object entity, final String targetGroup ) {
-        Class< ? > search = entity.getClass();
+        Class< ? > search;
+
+        if ( entity instanceof HibernateProxy ) {
+            search = entity.getClass().getSuperclass();
+        } else {
+            search = entity.getClass();
+        }
 
         for ( EntityParser entityParser : instance.entitiesParser ) {
             if ( entityParser.getType().equals( search ) ) {
@@ -96,7 +103,7 @@ public class Encoder {
             }
         }
 
-        EntityParser entityParser = new EntityParser( entity.getClass(), instance.container );
+        EntityParser entityParser = new EntityParser( search, instance.container );
 
         instance.entitiesParser.add( entityParser );
 

@@ -34,13 +34,11 @@ services:
             MAIL_PORT: ${MAIL_PORT}
             MAIL_FROM: ${MAIL_FROM}
             MAIL_PASSWORD: ${MAIL_PASSWORD}
-            TWILIO_SID: ${TWILIO_SID}
-            TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
-            TWILIO_FROM: ${TWILIO_FROM}
             JWT_SECRET: ${JWT_SECRET}
             JWT_LIFE_TIME: ${JWT_LIFE_TIME}
             DEFAULT_ADMIN_USERNAME: ${DEFAULT_ADMIN_USERNAME}
             DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
+            MAX_PARALLEL_EXECUTOR: ${MAX_PARALLEL_EXECUTOR}
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=api"
@@ -60,6 +58,7 @@ services:
         volumes:
             - ${PWD}/../../:/app
             - /var/run/docker.sock:/var/run/docker.sock
+            - "/var/docker-volume/free-commit/maven-dependency:/home/ubuntu"
         restart: always
         container_name: api
 
@@ -69,12 +68,12 @@ services:
             dockerfile: database.dockerfile
         environment:
             MYSQL_ROOT_HOST: '%'
-            MYSQL_ROOT_PASSWORD: ${DATASOURCE_USERNAME}
+            MYSQL_ROOT_PASSWORD: ${DATASOURCE_PASSWORD}
             MYSQL_DATABASE: free-commit
         networks:
             - database
         volumes:
-            - ${VOLUME}/database:/var/lib/mysql
+            - /var/docker-volume/free-commit/database:/var/lib/mysql
         restart: on-failure
         container_name: database
 

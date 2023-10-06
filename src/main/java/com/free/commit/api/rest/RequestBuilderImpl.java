@@ -1,9 +1,14 @@
 package com.free.commit.api.rest;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.free.commit.api.rest.fix.LocalDateTimeTypeAdapter;
+import com.free.commit.api.rest.fix.ZonedDateTimeTypeAdapter;
 import kong.unirest.*;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +27,30 @@ public class RequestBuilderImpl implements RequestBuilder {
     public RequestBuilder init( final String method, final String url ) {
 
         this.requestWithBody = Unirest.request( method, url );
+
+        return this;
+    }
+
+
+    @Override
+    public RequestBuilder withBasicAuth( String username, String password ) {
+        addHeader( "Authorization", "Basic " + Base64.getEncoder().encodeToString( String.valueOf( username + ":" + password ).getBytes() ) );
+
+        return this;
+    }
+
+
+    @Override
+    public RequestBuilder withBearerToken( String token ) {
+        addHeader( "Authorization", "Bearer " + token );
+
+        return this;
+    }
+
+
+    @Override
+    public RequestBuilder withXApiKey( String apiKey ) {
+        addHeader( "X-Api-Key", apiKey );
 
         return this;
     }
@@ -81,7 +110,15 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder jsonBody( final Map< String, Object > json ) {
-        this.requestBodyEntity = this.requestWithBody.body( (new Gson()).toJson( json ) );
+        this.requestBodyEntity = this.requestWithBody.body(
+                (
+                        new GsonBuilder()
+                                .registerTypeAdapter( LocalDateTime.class, new LocalDateTimeTypeAdapter() )
+                                .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeTypeAdapter() )
+                                .serializeNulls()
+                                .create()
+                ).toJson( json )
+        );
 
         this.inContentType( RequestBuilder.JSON );
 
@@ -91,7 +128,15 @@ public class RequestBuilderImpl implements RequestBuilder {
 
     @Override
     public RequestBuilder jsonBody( final List< Object > json ) {
-        this.requestBodyEntity = this.requestWithBody.body( (new Gson()).toJson( json ) );
+        this.requestBodyEntity = this.requestWithBody.body(
+                (
+                        new GsonBuilder()
+                                .registerTypeAdapter( LocalDateTime.class, new LocalDateTimeTypeAdapter() )
+                                .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeTypeAdapter() )
+                                .serializeNulls()
+                                .create()
+                ).toJson( json )
+        );
 
         this.inContentType( RequestBuilder.JSON );
 
@@ -142,6 +187,37 @@ public class RequestBuilderImpl implements RequestBuilder {
 
 
     @Override
+    public Response buildAndSend( String responseMedia ) {
+        if ( responseMedia.equals( RESPONSE_JSON ) ) {
+            return buildAndSend();
+        }
+
+        HttpResponse< String > response = null;
+
+        try {
+            if ( this.multipartBody != null ) {
+                response = this.multipartBody.asString();
+            } else if ( this.requestBodyEntity != null ) {
+                response = this.requestBodyEntity.asString();
+            } else {
+                response = this.requestWithBody.asString();
+            }
+        } catch ( final Throwable ignored ) {
+        }
+
+        this.requestWithBody   = null;
+        this.requestBodyEntity = null;
+        this.multipartBody     = null;
+
+        if ( response != null ) {
+            return (new ResponseImpl()).supplyString( response );
+        }
+
+        return (new ResponseImpl()).supply();
+    }
+
+
+    @Override
     public Response buildAndSend() {
         HttpResponse< JsonNode > response = null;
 
@@ -161,7 +237,7 @@ public class RequestBuilderImpl implements RequestBuilder {
         this.multipartBody     = null;
 
         if ( response != null ) {
-            return (new ResponseImpl()).supply( response );
+            return (new ResponseImpl()).supplyJson( response );
         }
 
         return (new ResponseImpl()).supply();

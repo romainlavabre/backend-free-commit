@@ -57,7 +57,6 @@ public class JavaMail implements MailSender {
         MimeMessage msg = new MimeMessage( getSession() );
 
         try {
-
             msg.addHeader( "Content-type", "text/plain; charset=UTF-8" );
             msg.addHeader( "format", "flowed" );
             msg.addHeader( "Content-Transfer-Encoding", "8bit" );

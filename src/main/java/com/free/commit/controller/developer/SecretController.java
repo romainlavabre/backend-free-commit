@@ -23,8 +23,7 @@ public class SecretController {
     protected final SecretRepository secretRepository;
 
 
-    public SecretController(
-            SecretRepository secretRepository ) {
+    public SecretController( SecretRepository secretRepository ) {
         this.secretRepository = secretRepository;
     }
 

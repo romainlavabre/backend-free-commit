@@ -50,6 +50,14 @@ public class CredentialController {
     }
 
 
+    @GetMapping( path = "/credentials/{id:[0-9]+}" )
+    public ResponseEntity< Map< String, Object > > getCredential( @PathVariable( "id" ) long id ) {
+        Credential credential = credentialRepository.findOrFail( id );
+
+        return ResponseEntity.ok( Encoder.encode( credential, GroupType.ADMIN ) );
+    }
+
+
     @Transactional
     @PostMapping( path = "/credentials" )
     public ResponseEntity< Map< String, Object > > create() {
@@ -67,27 +75,27 @@ public class CredentialController {
 
     @Transactional
     @PatchMapping( path = "/credentials/{id:[0-9]+}/name" )
-    public ResponseEntity< Void > updateName( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateName( @PathVariable( "id" ) long id ) {
         Credential credential = credentialRepository.findOrFail( id );
 
         updateCredentialName.update( request, credential );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( credential, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/credentials/{id:[0-9]+}/ssh_key" )
-    public ResponseEntity< Void > updateSshKey( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateSshKey( @PathVariable( "id" ) long id ) {
         Credential credential = credentialRepository.findOrFail( id );
 
         updateCredentialSshKey.update( request, credential );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( credential, GroupType.ADMIN ) );
     }
 
 

@@ -56,6 +56,14 @@ public class SecretController {
     }
 
 
+    @GetMapping( path = "/secrets/{id:[0-9]+}" )
+    public ResponseEntity< Map< String, Object > > getSecret( @PathVariable( "id" ) long id ) {
+        Secret secret = secretRepository.findOrFail( id );
+
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
+    }
+
+
     @Transactional
     @PostMapping( path = "/secrets" )
     public ResponseEntity< Map< String, Object > > create() {
@@ -73,65 +81,65 @@ public class SecretController {
 
     @Transactional
     @PatchMapping( path = "/secrets/{id:[0-9]+}/name" )
-    public ResponseEntity< Void > updateName( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateName( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretName.update( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/secrets/{id:[0-9]+}/value" )
-    public ResponseEntity< Void > updateValue( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateValue( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretValue.update( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/secrets/{id:[0-9]+}/escape_char" )
-    public ResponseEntity< Void > updateEscapeChar( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateEscapeChar( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretEscapeChar.update( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/secrets/{id:[0-9]+}/projects" )
-    public ResponseEntity< Void > updateProject( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateProject( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretProjects.update( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @DeleteMapping( path = "/secrets/{id:[0-9]+}" )
-    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > delete( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         deleteSecret.delete( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
     }
 }

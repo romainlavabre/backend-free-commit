@@ -6,9 +6,12 @@ import com.free.commit.build.exception.SpecFileNotFoundException;
 import com.free.commit.build.exception.SpecFileNotReadableException;
 import com.free.commit.build.parser.SpecFile;
 import com.free.commit.build.parser.Step;
+import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
+import com.free.commit.exception.HttpInternalServerErrorException;
+import com.free.commit.exception.HttpNotFoundException;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
@@ -38,6 +41,7 @@ public class Executor {
     private         Initiator         initiator;
     private         boolean           active = true;
     private         Process           currentProcess;
+    private         String            imageId;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
@@ -73,18 +77,20 @@ public class Executor {
         try {
             specFile = getSpecFile();
         } catch ( BuildException e ) {
-            build.setExitCode( e.getCode() )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) )
-                 .setProject( this.project );
+            build
+                    .setExitCode( e.getCode() )
+                    .setExitMessage( ExitMessageMapper.MAPPER.get( e.getCode() ) )
+                    .setProject( this.project );
             active = false;
             entityManager.persist( build );
             launchEmail( build );
             return;
         } catch ( Throwable e ) {
-            build.addOutputLine( e.getMessage() )
-                 .setExitCode( -1 )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) )
-                 .setProject( this.project );
+            build
+                    .addOutputLine( e.getMessage() )
+                    .setExitCode( -1 )
+                    .setExitMessage( ExitMessageMapper.MAPPER.get( -1 ) )
+                    .setProject( this.project );
             active = false;
             entityManager.persist( build );
             launchEmail( build );
@@ -105,7 +111,7 @@ public class Executor {
 
         createDockerFile( specFile, buildSpace );
 
-        launchContainer( buildSpace, directoryId );
+        launchContainer( directoryId );
         entityManager.persist( build );
 
         if ( project.getKeepNumberBuild() != null ) {
@@ -138,6 +144,56 @@ public class Executor {
     public void kill() {
         if ( currentProcess != null ) {
             currentProcess.destroy();
+
+            List< String > lines = new ArrayList<>();
+
+            try {
+                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container ls" );
+                builder.redirectErrorStream( true );
+                Process process = builder.start();
+
+                BufferedReader readerIn = new BufferedReader(
+                        new InputStreamReader( process.getInputStream() ) );
+
+
+                String lineIn;
+                while ( ( lineIn = readerIn.readLine() ) != null ) {
+                    if ( lineIn.equals( "null" ) ) {
+                        continue;
+                    }
+
+                    lines.add( lineIn );
+                }
+
+                process.waitFor();
+            } catch ( IOException | InterruptedException e ) {
+                e.printStackTrace();
+                throw new HttpInternalServerErrorException( "INTERNAL_SERVER_ERROR" );
+            }
+
+            String containerId = null;
+
+            for ( String line : lines ) {
+                if ( line.contains( imageId ) ) {
+                    containerId = line.split( " " )[ 0 ].trim();
+                }
+            }
+
+            if ( containerId == null ) {
+                throw new HttpNotFoundException( Message.CONTAINER_NOT_FOUND );
+            }
+
+            try {
+                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container rm " + containerId + " -f" );
+                builder.redirectErrorStream( true );
+                Process process = builder.start();
+                process.waitFor();
+            } catch ( IOException | InterruptedException e ) {
+                e.printStackTrace();
+                throw new HttpInternalServerErrorException( "INTERNAL_SERVER_ERROR" );
+            }
+
+            build.addOutputLine( "[WARNING] Container killed" );
         }
 
         active = false;
@@ -154,11 +210,12 @@ public class Executor {
 
 
         StringJoiner content = new StringJoiner( "\n" );
-        content.add( "FROM " + specFile.from )
-               .add( "COPY . ." )
-               .add( "COPY app/ app/" )
-               .add( "RUN chmod +x entrypoint.sh" )
-               .add( "ENTRYPOINT [\"./entrypoint.sh\"]" );
+        content
+                .add( "FROM " + specFile.from )
+                .add( "COPY . ." )
+                .add( "COPY app/ app/" )
+                .add( "RUN chmod +x entrypoint.sh" )
+                .add( "ENTRYPOINT [\"./entrypoint.sh\"]" );
 
         try {
             Files.createFile( dockerFile );
@@ -169,9 +226,9 @@ public class Executor {
     }
 
 
-    protected void launchContainer( Path buildSpace, String buildSpaceId ) {
+    protected void launchContainer( String buildSpaceId ) {
         try {
-            ProcessBuilder builder = new ProcessBuilder( getLaunchContainerCommandLine( buildSpace, buildSpaceId ) );
+            ProcessBuilder builder = new ProcessBuilder( getLaunchContainerCommandLine( buildSpaceId ) );
             builder.redirectErrorStream( true );
             Process process = builder.start();
 
@@ -182,7 +239,7 @@ public class Executor {
 
 
             String lineIn;
-            while ( (lineIn = readerIn.readLine()) != null ) {
+            while ( ( lineIn = readerIn.readLine() ) != null ) {
                 if ( lineIn.equals( "null" ) ) {
                     continue;
                 }
@@ -193,8 +250,8 @@ public class Executor {
             int exitCode = process.waitFor();
 
             build.setExitCode( exitCode )
-                 .setExitMessage( ExitMessageMapper.MAPPER.get( exitCode ) )
-                 .setProject( this.project );
+                    .setExitMessage( ExitMessageMapper.MAPPER.get( exitCode ) )
+                    .setProject( this.project );
         } catch ( IOException | InterruptedException e ) {
             e.printStackTrace();
         }
@@ -204,20 +261,22 @@ public class Executor {
     protected byte[] getEntryPointContent( SpecFile specFile ) {
         StringJoiner content = new StringJoiner( "\n" );
 
-        content.add( "#!/bin/sh" )
-               .add( "assertLastCmdSuccess() {" )
-               .add( "if [ \"$?\" != \"0\" ]; then" )
-               .add( "echo \"$1\" && exit 2000" )
-               .add( "fi" )
-               .add( "}" )
-               .add( "cd /app" );
+        content
+                .add( "#!/bin/sh" )
+                .add( "assertLastCmdSuccess() {" )
+                .add( "if [ \"$?\" != \"0\" ]; then" )
+                .add( "echo \"$1\" && exit 2000" )
+                .add( "fi" )
+                .add( "}" )
+                .add( "cd /app" );
 
         for ( Step step : specFile.steps ) {
-            content.add( "" )
-                   .add( "echo 'Step " + step.name + " ...'" )
-                   .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
-                   .add( ". " + step.script.replaceFirst( "/", "" ) )
-                   .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
+            content
+                    .add( "" )
+                    .add( "echo 'Step " + step.name + " ...'" )
+                    .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
+                    .add( ". " + step.script.replaceFirst( "/", "" ) )
+                    .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
         }
 
         return content.toString().getBytes();
@@ -241,29 +300,29 @@ public class Executor {
     }
 
 
-    protected String[] getLaunchContainerCommandLine( Path buildSpace, String buildSpaceId ) {
+    protected String[] getLaunchContainerCommandLine( String buildSpaceId ) {
         String[] cmdline = new String[ 3 ];
         cmdline[ 0 ] = "sh";
         cmdline[ 1 ] = "-c";
         StringJoiner stringJoiner = new StringJoiner( " && " );
 
-        String imageName = UUID.randomUUID().toString();
+        String imageName = imageId = UUID.randomUUID().toString();
 
         stringJoiner.add( "cd /ci/build/" + buildSpaceId );
 
         if ( project.getRepositoryCredential() != null ) {
             stringJoiner.add( "eval `ssh-agent`" )
-                        .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                        .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+                    .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
+                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
         }
 
         stringJoiner.add( "git clone --quiet " + project.getRepository() + " app > /dev/null" )
-                    .add( "cd app" )
-                    .add( "git fetch --all -q > /dev/null 2>&1" )
-                    .add( "git checkout -q " + project.getBranch() + " > /dev/null" )
-                    .add( "git pull --ff-only origin " + project.getBranch() )
-                    .add( "cd .." )
-                    .add( "docker build -t " + imageName + " ." );
+                .add( "cd app" )
+                .add( "git fetch --all -q > /dev/null 2>&1" )
+                .add( "git checkout -q " + project.getBranch() + " > /dev/null" )
+                .add( "git pull --ff-only origin " + project.getBranch() )
+                .add( "cd .." )
+                .add( "docker build -t " + imageName + " ." );
 
         StringBuilder run = new StringBuilder( "docker run --user root" );
 
@@ -314,9 +373,9 @@ public class Executor {
 
         if ( project.getRepositoryCredential() != null ) {
             stringJoiner.add( "eval `ssh-agent`" )
-                        .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                        .add( "cd /ci/repository" )
-                        .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+                    .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
+                    .add( "cd /ci/repository" )
+                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
         }
 
         if ( !Files.exists( Path.of( "/ci/repository/" + project.getName() ) ) ) {
@@ -324,9 +383,9 @@ public class Executor {
         }
 
         stringJoiner.add( "cd /ci/repository/" + project.getName() )
-                    .add( "git fetch --all" )
-                    .add( "git checkout " + project.getBranch() )
-                    .add( "git pull origin " + project.getBranch() );
+                .add( "git fetch --all" )
+                .add( "git checkout " + project.getBranch() )
+                .add( "git pull origin " + project.getBranch() );
 
         cmdline[ 2 ] = stringJoiner.toString();
 
@@ -336,10 +395,12 @@ public class Executor {
 
     protected void launchEmail( Build build ) {
         if ( build.getExitCode() != 0 && initiator.getEmail() != null ) {
+
+
             mailSender.send(
                     initiator.getEmail(),
                     "[" + project.getName().toUpperCase() + "] Build Failure (#" + build.getId() + ")",
-                    "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")"
+                    "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")\r\r\r\r" + build.getOutput()
             );
         }
     }

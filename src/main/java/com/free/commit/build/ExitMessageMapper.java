@@ -16,5 +16,6 @@ public class ExitMessageMapper {
         MAPPER.put( 1000, "Spec file not found" );
         MAPPER.put( 1001, "Spec file not readable" );
         MAPPER.put( 2000, "Custom deployment error" );
+        MAPPER.put( 143, "Deployment aborted by user" );
     }
 }

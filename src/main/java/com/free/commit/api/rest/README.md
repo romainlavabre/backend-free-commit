@@ -17,6 +17,10 @@ Maven dependency
 
 ### Versions
 
+##### 1.1.0
+
+ADD String response body
+
 ##### 1.0.0
 
 INITIAL

@@ -8,6 +8,8 @@ import com.free.commit.api.json.overwritter.Overwrite;
 
 import javax.persistence.Entity;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +34,8 @@ public class FieldParser {
 
     private Field field;
 
+    private Method method;
+
     private boolean isCollectionOrArray;
 
     private Field relationFieldId;
@@ -40,12 +44,22 @@ public class FieldParser {
     public ParsingResult parse( Object entity ) {
         Object value;
 
-        try {
-            value = field.get( entity );
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();
-            return ParsingResult.of( key );
+        if ( method != null ) {
+            try {
+                value = method.invoke( entity );
+            } catch ( IllegalAccessException | InvocationTargetException e ) {
+                e.printStackTrace();
+                return ParsingResult.of( key );
+            }
+        } else {
+            try {
+                value = field.get( entity );
+            } catch ( IllegalAccessException e ) {
+                e.printStackTrace();
+                return ParsingResult.of( key );
+            }
         }
+
 
         Object newValue;
 
@@ -58,8 +72,8 @@ public class FieldParser {
                         if ( subValue == null ) {
                             continue;
                         }
-                        
-                        (( List ) newValue).add( onlyId ? getIdOfRelation( subValue ) : Encoder.encode( subValue, group ) );
+
+                        ( ( List ) newValue ).add( onlyId ? getIdOfRelation( subValue ) : Encoder.encode( subValue, group ) );
                     }
                 } else {
                     newValue = onlyId ? getIdOfRelation( value ) : Encoder.encode( value, group );
@@ -88,6 +102,16 @@ public class FieldParser {
 
     private Long getIdOfRelation( Object relation ) {
         try {
+            for ( Method method : relation.getClass().getDeclaredMethods() ) {
+                if ( method.getName().equals( "get" + relationFieldId.getName().substring( 0, 1 ).toUpperCase() + relationFieldId.getName().substring( 1 ) ) && method.getParameterCount() == 0 ) {
+                    method.setAccessible( true );
+                    return ( Long ) method.invoke( relation );
+                }
+            }
+        } catch ( IllegalAccessException | InvocationTargetException e ) {
+        }
+
+        try {
             return ( Long ) relationFieldId.get( relation );
         } catch ( IllegalAccessException e ) {
             e.printStackTrace();
@@ -115,16 +139,26 @@ public class FieldParser {
             fieldParser.field               = field;
             fieldParser.isCollectionOrArray = TypeResolver.isArrayOrCollection( field );
 
+            for ( Method method : field.getDeclaringClass().getDeclaredMethods() ) {
+                if ( ( method.getName().equals( "get" + field.getName().substring( 0, 1 ).toUpperCase() + field.getName().substring( 1 ) )
+                        || method.getName().equals( "is" + field.getName().substring( 0, 1 ).toUpperCase() + field.getName().substring( 1 ) )
+                        || method.getName().equals( "has" + field.getName().substring( 0, 1 ).toUpperCase() + field.getName().substring( 1 ) ) )
+                        && method.getParameterCount() == 0 ) {
+                    method.setAccessible( true );
+                    fieldParser.method = method;
+                }
+            }
+
             if ( group.forceEncoding()
-                    || (field.getType().getAnnotation( Entity.class ) != null)
-                    || (Collection.class.isAssignableFrom( field.getType() ) && ((( Class< ? > ) (( ParameterizedType ) field.getGenericType()).getActualTypeArguments()[ 0 ]).isAnnotationPresent( Entity.class ))) ) {
+                    || ( field.getType().getAnnotation( Entity.class ) != null )
+                    || ( Collection.class.isAssignableFrom( field.getType() ) && ( ( ( Class< ? > ) ( ( ParameterizedType ) field.getGenericType() ).getActualTypeArguments()[ 0 ] ).isAnnotationPresent( Entity.class ) ) ) ) {
                 fieldParser.relation = true;
             }
 
             if ( fieldParser.relation && group.onlyId() ) {
                 try {
                     if ( fieldParser.isCollectionOrArray ) {
-                        fieldParser.relationFieldId = (( Class< ? > ) (( ParameterizedType ) field.getGenericType()).getActualTypeArguments()[ 0 ]).getDeclaredField( "id" );
+                        fieldParser.relationFieldId = ( ( Class< ? > ) ( ( ParameterizedType ) field.getGenericType() ).getActualTypeArguments()[ 0 ] ).getDeclaredField( "id" );
                     } else {
                         fieldParser.relationFieldId = field.getType().getDeclaredField( "id" );
                     }
@@ -135,7 +169,7 @@ public class FieldParser {
                 fieldParser.relationFieldId.setAccessible( true );
             }
 
-            fieldParser.key = !group.key().isBlank() ? group.key() : (fieldParser.relation && fieldParser.onlyId ? Formatter.toSnakeCase( field.getName() ) + "_id" : Formatter.toSnakeCase( field.getName() ));
+            fieldParser.key = !group.key().isBlank() ? group.key() : ( fieldParser.relation && fieldParser.onlyId ? Formatter.toSnakeCase( field.getName() ) + "_id" : Formatter.toSnakeCase( field.getName() ) );
 
             result.add( fieldParser );
         }

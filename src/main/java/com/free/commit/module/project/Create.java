@@ -55,20 +55,22 @@ public class Create implements com.free.commit.api.crud.Create< Project > {
         Long           repositoryCredentialId   = Cast.getLong( request.getParameter( ProjectParameter.REPOSITORY_CREDENTIAL ) );
 
         project.setName( name )
-               .setDescription( description )
-               .setRepository( repository )
-               .setBranch( branch )
-               .setSpecFilePath( specFilePath )
-               .setKeepNumberBuild( keepNumberBuild )
-               .setAllowConcurrentExecution( allowConcurrentExecution )
-               .setSignatureKey( TokenGenerator.generate( 32 ) );
+                .setDescription( description )
+                .setRepository( repository )
+                .setBranch( branch )
+                .setSpecFilePath( specFilePath )
+                .setKeepNumberBuild( keepNumberBuild )
+                .setAllowConcurrentExecution( allowConcurrentExecution )
+                .setSignatureKey( TokenGenerator.generate( 32 ) );
 
         if ( repositoryCredentialId != null ) {
             project.setRepositoryCredential( credentialRepository.findOrFail( repositoryCredentialId ) );
         }
 
-        for ( Object developerId : developersId ) {
-            project.addDeveloper( developerRepository.findOrFail( Cast.getLong( developerId ) ) );
+        if ( developersId != null ) {
+            for ( Object developerId : developersId ) {
+                project.addDeveloper( developerRepository.findOrFail( Cast.getLong( developerId ) ) );
+            }
         }
 
         if ( secretsId != null ) {

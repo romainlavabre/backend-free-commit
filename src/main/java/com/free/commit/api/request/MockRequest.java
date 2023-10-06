@@ -1,5 +1,8 @@
 package com.free.commit.api.request;
 
+import com.free.commit.exception.HttpBadRequestException;
+import com.free.commit.exception.HttpUnprocessableEntityException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,62 @@ public class MockRequest implements Request {
     @Override
     public Object getParameter( final String name ) {
         return this.parameters.get( name );
+    }
+
+
+    @Override
+    public < T > T getParameter( String name, Class< T > type ) {
+        return getParameter( name, type, false );
+    }
+
+
+    @Override
+    public < T > T getParameter( String name, Class< T > type, boolean keepRawData ) {
+        if ( parameters.get( name ) == null ) {
+            return null;
+        }
+
+        if ( !keepRawData && parameters.get( name ) == "" ) {
+            return null;
+        }
+
+        try {
+            if ( String.class == type ) {
+                return ( T ) parameters.get( name ).toString();
+            }
+
+            if ( Byte.class == type ) {
+                return ( T ) Byte.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Short.class == type ) {
+                return ( T ) Short.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Integer.class == type ) {
+                return ( T ) Integer.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Long.class == type ) {
+                return ( T ) Long.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Double.class == type ) {
+                return ( T ) Double.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Float.class == type ) {
+                return ( T ) Float.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Boolean.class == type ) {
+                return ( T ) Boolean.valueOf( parameters.get( name ).toString() );
+            }
+        } catch ( ClassCastException classCastException ) {
+            throw new HttpUnprocessableEntityException( "BAD_PARAMETER_TYPE" );
+        }
+
+        throw new HttpBadRequestException( "UNSUPPORTED_PARAMETER_TYPE" );
     }
 
 

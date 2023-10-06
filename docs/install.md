@@ -1,8 +1,10 @@
 [BACK](../README.md)
 ___
+
 # Installation
 
 For installation, you need to four elements :
+
 * Free Commit api (Required)
 * A relational database (Required)
 * A HTTP server / reverse poxy (Optional but recommended)
@@ -24,10 +26,12 @@ You can see [romainlavabre/free-commit-client](https://hub.docker.com/r/romainla
 * 2 GO RAM
 
 ### Standalone image
+
 There is no standalone docker image for full stack.
 But our stack (with docker-compose)
 
 > docker-compose.yaml
+
 ```yaml
 version: '3.2'
 
@@ -132,7 +136,7 @@ networks:
 
 ```env
 DATASOURCE_URL=jdbc:mysql://database:3306/free-commit
-DATASOURCE_USERNAME=root
+DATASOURCE_USERNAME=?
 DATASOURCE_PASSWORD=?
 DATASOURCE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
 ENCRYPTION_KEY=?
@@ -144,10 +148,7 @@ MAIL_HOST=?
 MAIL_PORT=?
 MAIL_FROM=?
 MAIL_PASSWORD=?
-TWILIO_SID=?
-TWILIO_AUTH_TOKEN=?
-TWILIO_FROM=?
-FREE_COMMIT_API_URL=https://free-commit.{host}.{ext}/api
+FREE_COMMIT_API_URL=https://free-commit.{host}.{ext}
 ```
 
 ```shell script
@@ -155,6 +156,7 @@ mkdir traefik
 ```
 
 > traefik/traefik.yaml
+
 ```yaml
 # Docker configuration backend
 providers:
@@ -193,7 +195,7 @@ log:
 ### Protect your disk
 
 By default, Free Commit will clean your file system, but additionally you can add a cron job
-  
+
 ```shell script
 sudo -i && crontab -e
 >> 0 */6 * * * docker system prune -fa

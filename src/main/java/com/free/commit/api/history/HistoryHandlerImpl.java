@@ -8,6 +8,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -15,12 +16,15 @@ import java.util.Map;
 public class HistoryHandlerImpl implements HistoryHandler {
     private final Map< Object, History > store;
     private final EntityManager          entityManager;
+    private final List<HistorySubscriber> historySubscribers;
 
 
     public HistoryHandlerImpl(
-            final EntityManager entityManager ) {
+            final EntityManager entityManager,
+            List<HistorySubscriber> historySubscribers) {
         this.entityManager = entityManager;
         this.store         = new HashMap<>();
+        this.historySubscribers = historySubscribers;
     }
 
 
@@ -36,6 +40,10 @@ public class HistoryHandlerImpl implements HistoryHandler {
         history.setIpAddress( this.getRemoteAddr() );
 
         this.store.put( object, history );
+
+        for ( HistorySubscriber historySubscriber : historySubscribers ){
+            historySubscriber.create( object, history );
+        }
     }
 
 
@@ -54,6 +62,10 @@ public class HistoryHandlerImpl implements HistoryHandler {
         history.setIpAddress( this.getRemoteAddr() );
 
         this.store.put( object, history );
+
+        for ( HistorySubscriber historySubscriber : historySubscribers ){
+            historySubscriber.update( object, property, history );
+        }
     }
 
 
@@ -70,6 +82,10 @@ public class HistoryHandlerImpl implements HistoryHandler {
         history.setIpAddress( this.getRemoteAddr() );
 
         this.entityManager.persist( history );
+
+        for ( HistorySubscriber historySubscriber : historySubscribers ){
+            historySubscriber.delete( object, history );
+        }
     }
 
 

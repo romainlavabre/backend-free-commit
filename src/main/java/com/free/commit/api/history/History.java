@@ -2,6 +2,8 @@ package com.free.commit.api.history;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -29,13 +31,13 @@ public class History {
     @Column( name = "log_type", nullable = false )
     private String    logType;
     @Column( name = "ip_address" )
-    private String    ipAddress;
+    private String        ipAddress;
     @Column( name = "created_at", nullable = false )
-    private Timestamp createdAt;
+    private ZonedDateTime createdAt;
 
 
     public History() {
-        this.createdAt = new Timestamp( (new Date().getTime()) );
+        this.createdAt = ZonedDateTime.now( ZoneOffset.UTC );
     }
 
 
@@ -129,12 +131,7 @@ public class History {
     }
 
 
-    public Timestamp getCreatedAt() {
-        return this.createdAt;
-    }
-
-
-    public void setCreatedAt( final Timestamp createdAt ) {
-        this.createdAt = createdAt;
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
     }
 }

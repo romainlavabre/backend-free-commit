@@ -2,9 +2,12 @@ package com.free.commit.api.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.free.commit.exception.HttpBadRequestException;
+import com.free.commit.exception.HttpUnprocessableEntityException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -12,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -34,32 +38,80 @@ public class RequestImpl implements Request {
 
     @Override
     public boolean containsParameter( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return this.parameters.containsKey( name );
     }
 
 
     @Override
     public Object getParameter( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return this.parameters.get( name );
     }
 
 
     @Override
-    public void setParameter( final String name, final Object value ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
+    public < T > T getParameter( String name, Class< T > type ) {
+        return getParameter( name, type, false );
+    }
 
+
+    @Override
+    public < T > T getParameter( String name, Class< T > type, boolean keepRawData ) {
+        if ( parameters.get( name ) == null ) {
+            return null;
+        }
+
+        if ( !keepRawData && parameters.get( name ) == "" ) {
+            return null;
+        }
+
+        try {
+            if ( String.class == type ) {
+                return ( T ) parameters.get( name ).toString();
+            }
+
+            if ( Byte.class == type ) {
+                return ( T ) Byte.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Short.class == type ) {
+                return ( T ) Short.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Integer.class == type ) {
+                return ( T ) Integer.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Long.class == type ) {
+                return ( T ) Long.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Double.class == type ) {
+                return ( T ) Double.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Float.class == type ) {
+                return ( T ) Float.valueOf( parameters.get( name ).toString() );
+            }
+
+            if ( Boolean.class == type ) {
+                return ( T ) Boolean.valueOf( parameters.get( name ).toString() );
+            }
+        } catch ( ClassCastException classCastException ) {
+            throw new HttpUnprocessableEntityException( "BAD_PARAMETER_TYPE" );
+        }
+
+        throw new HttpBadRequestException( "UNSUPPORTED_PARAMETER_TYPE" );
+    }
+
+
+    @Override
+    public void setParameter( final String name, final Object value ) {
         this.parameters.put( name, value );
     }
 
 
     @Override
     public List< Object > getParameters( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return ( List< Object > ) this.parameters.get( name );
     }
 
@@ -78,8 +130,6 @@ public class RequestImpl implements Request {
 
     @Override
     public Map< String, Object > getAllParameters( final String prefix ) {
-        assert prefix != null && !prefix.isBlank() : "variable prefix should not be null or blank";
-
         final Map< String, Object > parameters = new HashMap<>();
 
         for ( final Map.Entry< String, Object > entry : this.parameters.entrySet() ) {
@@ -94,8 +144,6 @@ public class RequestImpl implements Request {
 
     @Override
     public String getQueryString( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         if ( this.queryStrings.containsKey( name ) ) {
             return this.queryStrings.get( name );
         }
@@ -112,24 +160,18 @@ public class RequestImpl implements Request {
 
     @Override
     public UploadedFile getFile( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return ( UploadedFile ) this.parameters.get( name );
     }
 
 
     @Override
     public List< UploadedFile > getFiles( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return ( List< UploadedFile > ) this.parameters.get( name );
     }
 
 
     @Override
     public void setUploadedFile( final String name, final UploadedFile uploadedFile ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         if ( this.parameters.get( name ) instanceof List ) {
             final List< UploadedFile > uploadedFiles = ( List< UploadedFile > ) this.parameters.get( name );
 
@@ -150,8 +192,6 @@ public class RequestImpl implements Request {
 
     @Override
     public String getHeader( final String name ) {
-        assert name != null && !name.isBlank() : "variable name should not be null or blank";
-
         return this.request.getHeader( name );
     }
 
@@ -209,38 +249,48 @@ public class RequestImpl implements Request {
 
     private void parseJson() throws JsonProcessingException {
 
-        if ( this.request.getContentType() == null
-                || !this.request.getContentType().equals( "application/json" ) ) {
-            return;
-        }
-
-        final StringBuffer json = new StringBuffer();
-
-        String         line   = null;
-        BufferedReader reader = null;
-
         try {
-            reader = this.request.getReader();
-
-            while ( (line = reader.readLine()) != null ) {
-                json.append( line );
-            }
-        } catch ( final IOException e ) {
+            body = StreamUtils.copyToString( request.getInputStream(), StandardCharsets.UTF_8 );
+        } catch ( IOException e ) {
             e.printStackTrace();
         }
 
-        final String jsonStr = json.toString();
-
-        this.body = jsonStr;
-
-        if ( jsonStr.isBlank() ) {
+        if ( this.request.getContentType() == null
+                || !this.request.getContentType().contains( "application/json" ) ) {
             return;
         }
 
 
+        if ( body == null ) {
+
+            final StringBuffer json = new StringBuffer();
+
+
+            String         line   = null;
+            BufferedReader reader = null;
+
+            try {
+                reader = this.request.getReader();
+
+                while ( (line = reader.readLine()) != null ) {
+                    json.append( line );
+                }
+            } catch ( final IOException e ) {
+                e.printStackTrace();
+            }
+
+            final String jsonStr = json.toString();
+
+            this.body = jsonStr;
+
+            if ( jsonStr.isBlank() ) {
+                return;
+            }
+        }
+
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final Map< String, Object > map = objectMapper.readValue( jsonStr, HashMap.class );
+        final Map< String, Object > map = objectMapper.readValue( body, HashMap.class );
 
         for ( final Map.Entry< String, Object > input : map.entrySet() ) {
 

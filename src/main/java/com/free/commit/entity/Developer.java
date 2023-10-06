@@ -6,6 +6,7 @@ import com.free.commit.api.json.annotation.JsonPut;
 import com.free.commit.api.json.annotation.Row;
 import com.free.commit.api.security.User;
 import com.free.commit.configuration.json.GroupType;
+import com.free.commit.configuration.json.overwrite.AscentUserToDeveloper;
 import com.free.commit.configuration.json.put.PutUserRoles;
 import com.free.commit.configuration.json.put.PutUserUsername;
 
@@ -58,10 +59,10 @@ public class Developer {
     private String email;
 
     @Json( groups = {
-            @Group( name = GroupType.ADMIN ),
-            @Group( name = GroupType.DEVELOPER )
+            @Group( name = GroupType.ADMIN, onlyId = false, ascent = true, overwrite = AscentUserToDeveloper.class ),
+            @Group( name = GroupType.DEVELOPER, onlyId = false, ascent = true, overwrite = AscentUserToDeveloper.class )
     } )
-    @OneToOne( cascade = {CascadeType.PERSIST} )
+    @OneToOne( cascade = { CascadeType.PERSIST } )
     @JoinColumn( name = "user_id", unique = true, nullable = false )
     private User user;
 

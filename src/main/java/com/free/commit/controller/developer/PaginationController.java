@@ -28,9 +28,7 @@ public class PaginationController {
     protected final Request           request;
 
 
-    public PaginationController(
-            PaginationBuilder paginationBuilder,
-            Request request ) {
+    public PaginationController( PaginationBuilder paginationBuilder, Request request ) {
         this.paginationBuilder = paginationBuilder;
         this.request           = request;
     }

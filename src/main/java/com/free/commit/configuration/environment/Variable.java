@@ -18,4 +18,5 @@ public interface Variable {
     String DEFAULT_ADMIN_USERNAME = "default.admin.username";
     String DEFAULT_ADMIN_PASSWORD = "default.admin.password";
     String ENCRYPTION_KEY         = "encryption.key";
+    String MAX_PARALLEL_EXECUTOR  = "max.parallel.executor";
 }

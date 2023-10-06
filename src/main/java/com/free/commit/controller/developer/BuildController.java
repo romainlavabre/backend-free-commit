@@ -126,9 +126,17 @@ public class BuildController {
     }
 
 
-    @DeleteMapping( path = "/builds/kill/{executorId}" )
-    public ResponseEntity< Map< String, Object > > build( @PathVariable( "executorId" ) String executorId ) {
-        buildManager.kill( executorId );
+    @DeleteMapping( path = "/builds/kill/executed/{executorId}" )
+    public ResponseEntity< Map< String, Object > > killExecuted( @PathVariable( "executorId" ) String executorId ) {
+        buildManager.killExecuted( executorId );
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping( path = "/builds/kill/queued/{executorId}" )
+    public ResponseEntity< Map< String, Object > > buildQueued( @PathVariable( "executorId" ) String executorId ) {
+        buildManager.killQueued( executorId );
 
         return ResponseEntity.noContent().build();
     }

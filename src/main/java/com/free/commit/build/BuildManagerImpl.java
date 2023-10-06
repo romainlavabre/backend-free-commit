@@ -1,9 +1,12 @@
 package com.free.commit.build;
 
+import com.free.commit.api.environment.Environment;
+import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.exception.HttpNotFoundException;
+import com.free.commit.util.Cast;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
@@ -28,14 +31,23 @@ public class BuildManagerImpl implements BuildManager {
     protected final ApplicationContext      applicationContext;
     protected final ExecutorService         executorService;
     protected final ThreadPoolTaskScheduler threadPoolTaskScheduler;
+    protected final Environment             environment;
 
 
     public BuildManagerImpl(
             ApplicationContext applicationContext,
-            ThreadPoolTaskScheduler threadPoolTaskScheduler ) {
+            ThreadPoolTaskScheduler threadPoolTaskScheduler,
+            Environment environment ) {
         this.applicationContext      = applicationContext;
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
-        this.executorService         = Executors.newFixedThreadPool( 2 );
+        this.environment             = environment;
+        Integer maxParallelExecutor = Cast.getInteger( environment.getEnv( Variable.MAX_PARALLEL_EXECUTOR ) );
+
+        if ( maxParallelExecutor == null ) {
+            maxParallelExecutor = 2;
+        }
+
+        this.executorService = Executors.newFixedThreadPool( maxParallelExecutor );
         process();
     }
 
@@ -84,7 +96,7 @@ public class BuildManagerImpl implements BuildManager {
 
 
     @Override
-    public void kill( String executorId ) {
+    public void killExecuted( String executorId ) {
         Executor executor = null;
 
         Iterator< Executed > executedIterator = executeds.iterator();
@@ -106,8 +118,30 @@ public class BuildManagerImpl implements BuildManager {
     }
 
 
+    @Override
+    public void killQueued( String executorId ) {
+        Iterator< Queued > queuedIterator = queueds.iterator();
+
+        while ( queuedIterator.hasNext() ) {
+            Queued queued = queuedIterator.next();
+
+            if ( queued.getExecutorId().equals( executorId ) ) {
+                queueds.remove( queued );
+                return;
+            }
+        }
+
+        throw new HttpNotFoundException( Message.EXECUTOR_NOT_FOUND );
+    }
+
+
     protected void process() {
         CronTrigger cronTrigger = new CronTrigger( "*/5 * * * * *" );
+        Integer maxParallelExecutor =
+                environment.getEnv( Variable.MAX_PARALLEL_EXECUTOR ) == null
+                        ? 2
+                        : Cast.getInteger( environment.getEnv( Variable.MAX_PARALLEL_EXECUTOR ) );
+
 
         threadPoolTaskScheduler.schedule( () -> {
 
@@ -116,7 +150,7 @@ public class BuildManagerImpl implements BuildManager {
 
             Iterator< Queued > queuedIterator = queueds.iterator();
 
-            while ( queuedIterator.hasNext() && executeds.size() < 2 ) {
+            while ( queuedIterator.hasNext() && executeds.size() < maxParallelExecutor ) {
                 Queued queued = queuedIterator.next();
 
                 if ( !queued.getProject().isAllowConcurrentExecution() ) {

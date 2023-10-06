@@ -30,6 +30,9 @@ public class Credential {
     @Column( nullable = false )
     private String name;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN )
+    } )
     @Convert( converter = EncryptField.class )
     @Column( name = "ssh_key", nullable = false, columnDefinition = "TEXT" )
     private String sshKey;

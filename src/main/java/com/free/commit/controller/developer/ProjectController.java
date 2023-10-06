@@ -22,8 +22,7 @@ public class ProjectController {
     protected final ProjectRepository projectRepository;
 
 
-    public ProjectController(
-            ProjectRepository projectRepository ) {
+    public ProjectController( ProjectRepository projectRepository ) {
         this.projectRepository = projectRepository;
     }
 

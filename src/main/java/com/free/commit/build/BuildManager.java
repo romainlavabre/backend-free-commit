@@ -2,9 +2,13 @@ package com.free.commit.build;
 
 import com.free.commit.api.json.annotation.Group;
 import com.free.commit.api.json.annotation.Json;
+import com.free.commit.configuration.json.overwrite.ProjectNameExecuted;
+import com.free.commit.configuration.json.overwrite.ProjectNameQueued;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -24,12 +28,15 @@ public interface BuildManager {
     List< Executed > getExecuteds();
 
 
-    void kill( String executorId );
+    void killExecuted( String executorId );
+
+
+    void killQueued( String executorId );
 
 
     class Executed {
         @Json( groups = {
-                @Group
+                @Group( key = "project_name", overwrite = ProjectNameExecuted.class, onlyId = false )
         } )
         private final Project project;
 
@@ -44,6 +51,11 @@ public interface BuildManager {
 
         private final Initiator initiator;
 
+        @Json( groups = {
+                @Group
+        } )
+        private final ZonedDateTime at;
+
 
         public Executed(
                 Project project,
@@ -56,6 +68,7 @@ public interface BuildManager {
             this.executorId = executorId;
             this.executor   = executor;
             this.initiator  = initiator;
+            at              = ZonedDateTime.now( ZoneOffset.UTC );
         }
 
 
@@ -87,7 +100,7 @@ public interface BuildManager {
 
     class Queued {
         @Json( groups = {
-                @Group
+                @Group( key = "project_name", overwrite = ProjectNameQueued.class )
         } )
         private final Project project;
 

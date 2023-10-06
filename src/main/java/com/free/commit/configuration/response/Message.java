@@ -19,4 +19,5 @@ public interface Message {
     String WEBHOOK_SENDER_NOT_FOUND                    = "WEBHOOK_SENDER_NOT_FOUND";
     String LAUNCH_BUILD_NOT_ALLOWED                    = "LAUNCH_BUILD_NOT_ALLOWED";
     String DEVELOPER_NOT_FOUND                         = "DEVELOPER_NOT_FOUND";
+    String CONTAINER_NOT_FOUND                         = "CONTAINER_NOT_FOUND";
 }

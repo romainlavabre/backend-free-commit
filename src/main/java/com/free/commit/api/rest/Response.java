@@ -26,5 +26,8 @@ public interface Response {
     Map< String, Object > getBodyAsMap();
 
 
+    String getBodyAsString();
+
+
     List< Object > getBodyAsList();
 }

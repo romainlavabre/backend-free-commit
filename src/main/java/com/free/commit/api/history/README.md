@@ -76,7 +76,10 @@ public class DeleteSample{
 
 This sample adds trace of Sample deletion.
 
+### Listen event
 
+Implement interface
+> HistorySubscriber.class
 
 ### Core
 
@@ -85,9 +88,3 @@ This library take the pertinent values of object for keep good trace.
 ### Requirements
 
 - Module git@github.com:romainlavabre/spring-starter-event.git
-
-### Versions
-
-##### 1.0.0
-
-INITIAL

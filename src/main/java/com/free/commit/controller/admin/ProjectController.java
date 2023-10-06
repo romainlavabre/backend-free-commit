@@ -73,6 +73,14 @@ public class ProjectController {
     }
 
 
+    @GetMapping( path = "/projects/{id:[0-9]+}" )
+    public ResponseEntity< Map< String, Object > > getProject( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
+    }
+
+
     @Transactional
     @PostMapping( path = "/projects" )
     public ResponseEntity< Map< String, Object > > create() {
@@ -90,131 +98,131 @@ public class ProjectController {
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/name" )
-    public ResponseEntity< Void > updateName( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateName( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectName.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/description" )
-    public ResponseEntity< Void > updateDescription( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateDescription( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectDescription.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/repository" )
-    public ResponseEntity< Void > updateRepository( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateRepository( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectRepository.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/branch" )
-    public ResponseEntity< Void > updateBranch( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateBranch( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectBranch.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/spec_file_path" )
-    public ResponseEntity< Void > updateSpecFilePath( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateSpecFilePath( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectSpecFilePath.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/keep_number_build" )
-    public ResponseEntity< Void > updateKeepNumberBuild( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateKeepNumberBuild( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectKeepNumberBuild.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/allow_concurrent_execution" )
-    public ResponseEntity< Void > updateAllowConcurrentExecution( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateAllowConcurrentExecution( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectAllowConcurrentExecution.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/developers" )
-    public ResponseEntity< Void > updateDevelopers( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateDevelopers( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectDevelopers.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/repository_credential" )
-    public ResponseEntity< Void > updateRepositoryCredential( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateRepositoryCredential( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectRepositoryCredential.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 
     @Transactional
     @PatchMapping( path = "/projects/{id:[0-9]+}/signature_key" )
-    public ResponseEntity< Void > updateSignatureKey( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Map< String, Object > > updateSignatureKey( @PathVariable( "id" ) long id ) {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectSignatureKey.update( request, project );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
     }
 
 

@@ -20,6 +20,22 @@ public interface Request {
 
 
     /**
+     * @param name Parameter name
+     * @param type Parameter type
+     * @return
+     */
+    < T > T getParameter( String name, Class< T > type );
+
+
+    /**
+     * @param name Parameter name
+     * @param type Parameter type
+     * @return
+     */
+    < T > T getParameter( String name, Class< T > type, boolean keepRawData );
+
+
+    /**
      * Add or overwrite parameter
      *
      * @param name  Parameter name

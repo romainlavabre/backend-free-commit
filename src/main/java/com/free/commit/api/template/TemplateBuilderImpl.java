@@ -19,18 +19,23 @@ import java.util.Map;
 public class TemplateBuilderImpl implements TemplateBuilder {
 
     protected final static String         ENCODING = "UTF-8";
-    protected              VelocityEngine velocityEngine;
+    protected              VelocityEngine velocityEngineRelative;
+    protected              VelocityEngine velocityEngineAbsolute;
     protected              Environment    environment;
 
 
     public TemplateBuilderImpl(
             final Environment environment
     ) {
-        this.environment    = environment;
-        this.velocityEngine = new VelocityEngine();
-        this.velocityEngine.setProperty( RuntimeConstants.RESOURCE_LOADER, "classpath" );
-        this.velocityEngine.setProperty( "classpath.resource.loader.class", ClasspathResourceLoader.class.getName() );
-        this.velocityEngine.init();
+        this.environment            = environment;
+        this.velocityEngineRelative = new VelocityEngine();
+        this.velocityEngineRelative.setProperty( RuntimeConstants.RESOURCE_LOADER, "classpath" );
+        this.velocityEngineRelative.setProperty( "classpath.resource.loader.class", ClasspathResourceLoader.class.getName() );
+        this.velocityEngineRelative.init();
+
+        this.velocityEngineAbsolute = new VelocityEngine();
+        this.velocityEngineAbsolute.setProperty( "file.resource.loader.path", "/" );
+        this.velocityEngineAbsolute.init();
     }
 
 
@@ -46,7 +51,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     public String build( final String name, final Map< String, Object > parameters ) {
         assert name != null && !name.isBlank() : "variable name should not be null or blank";
 
-        final Template template = this.velocityEngine.getTemplate( this.getPath( name ), TemplateBuilderImpl.ENCODING );
+        String path = getPath( name );
+
+        final Template template = path.startsWith( "/" )
+                ? this.velocityEngineAbsolute.getTemplate( path, TemplateBuilderImpl.ENCODING )
+                : this.velocityEngineRelative.getTemplate( path, TemplateBuilderImpl.ENCODING );
 
         final VelocityContext velocityContext = new VelocityContext();
 
