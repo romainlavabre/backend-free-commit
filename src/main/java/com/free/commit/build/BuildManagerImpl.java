@@ -53,11 +53,10 @@ public class BuildManagerImpl implements BuildManager {
 
 
     @Override
-    public Queued launch( Project project, Initiator initiator ) {
-
+    public Queued launch( Project project, Initiator initiator, String body ) {
         String id = UUID.randomUUID().toString();
 
-        Queued queued = new Queued( project, new Build(), id, initiator );
+        Queued queued = new Queued( project, new Build(), id, initiator, body );
 
         queueds.add( queued );
 
@@ -170,9 +169,9 @@ public class BuildManagerImpl implements BuildManager {
 
                 Executor executor = applicationContext.getBean( Executor.class );
 
-                executeds.add( new Executed( queued.getProject(), queued.getBuild(), queued.getExecutorId(), executor, queued.getInitiator() ) );
+                executeds.add( new Executed( queued.getProject(), queued.getBuild(), queued.getExecutorId(), executor, queued.getInitiator(), queued.getRequestBody() ) );
 
-                executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild(), queued.getInitiator() ) );
+                executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild(), queued.getInitiator(), queued.getRequestBody() ) );
 
                 queuedIterator.remove();
             }

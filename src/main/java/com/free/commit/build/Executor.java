@@ -42,6 +42,7 @@ public class Executor {
     private         boolean           active = true;
     private         Process           currentProcess;
     private         String            imageId;
+    private         String            requestBody;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
@@ -64,10 +65,11 @@ public class Executor {
 
 
     @Transactional
-    public void execute( Project project, Build build, Initiator initiator ) {
-        this.project   = projectRepository.findOrFail( project.getId() );
-        this.build     = build;
-        this.initiator = initiator;
+    public void execute( Project project, Build build, Initiator initiator, String requestBody ) {
+        this.project     = projectRepository.findOrFail( project.getId() );
+        this.build       = build;
+        this.initiator   = initiator;
+        this.requestBody = requestBody;
 
 
         initRepository();
@@ -319,8 +321,8 @@ public class Executor {
         stringJoiner.add( "git clone --quiet " + project.getRepository() + " app > /dev/null" )
                 .add( "cd app" )
                 .add( "git fetch --all -q > /dev/null 2>&1" )
-                .add( "git checkout -q " + project.getBranch() + " > /dev/null" )
-                .add( "git pull --ff-only origin " + project.getBranch() )
+                .add( "git checkout -q " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) + " > /dev/null" )
+                .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
                 .add( "cd .." )
                 .add( "docker build -t " + imageName + " ." );
 
@@ -333,6 +335,8 @@ public class Executor {
         for ( Secret secret : secretRepository.findAllWithGlobalScope() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
         }
+
+        run.append( " -e FREE_COMMIT_REQUEST_BODY='" + requestBody + "'" );
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
 
@@ -374,9 +378,10 @@ public class Executor {
         if ( project.getRepositoryCredential() != null ) {
             stringJoiner.add( "eval `ssh-agent`" )
                     .add( "echo \"" + project.getRepositoryCredential().getSshKey() + "\" | ssh-add -" )
-                    .add( "cd /ci/repository" )
-                    .add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
+                    .add( "cd /ci/repository" );
         }
+
+        stringJoiner.add( "export GIT_SSH_COMMAND=\"ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\"" );
 
         if ( !Files.exists( Path.of( "/ci/repository/" + project.getName() ) ) ) {
             stringJoiner.add( "git clone " + project.getRepository() + " " + project.getName() );
@@ -384,7 +389,7 @@ public class Executor {
 
         stringJoiner.add( "cd /ci/repository/" + project.getName() )
                 .add( "git fetch --all" )
-                .add( "git checkout " + project.getBranch() )
+                .add( "git checkout " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
                 .add( "git pull origin " + project.getBranch() );
 
         cmdline[ 2 ] = stringJoiner.toString();

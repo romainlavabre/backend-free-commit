@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface BuildManager {
 
-    Queued launch( Project project, Initiator initiator );
+    Queued launch( Project project, Initiator initiator, String body );
 
 
     String getLogs( String executorId );
@@ -51,6 +51,8 @@ public interface BuildManager {
 
         private final Initiator initiator;
 
+        private final String requestBody;
+
         @Json( groups = {
                 @Group
         } )
@@ -62,13 +64,15 @@ public interface BuildManager {
                 Build build,
                 String executorId,
                 Executor executor,
-                Initiator initiator ) {
-            this.project    = project;
-            this.build      = build;
-            this.executorId = executorId;
-            this.executor   = executor;
-            this.initiator  = initiator;
-            at              = ZonedDateTime.now( ZoneOffset.UTC );
+                Initiator initiator,
+                String requestBody ) {
+            this.project     = project;
+            this.build       = build;
+            this.executorId  = executorId;
+            this.executor    = executor;
+            this.initiator   = initiator;
+            this.requestBody = requestBody;
+            at               = ZonedDateTime.now( ZoneOffset.UTC );
         }
 
 
@@ -95,6 +99,11 @@ public interface BuildManager {
         public Initiator getInitiator() {
             return initiator;
         }
+
+
+        public String getRequestBody() {
+            return requestBody;
+        }
     }
 
 
@@ -113,12 +122,15 @@ public interface BuildManager {
 
         private final Initiator initiator;
 
+        private final String requestBody;
 
-        public Queued( Project project, Build build, String executorId, Initiator initiator ) {
-            this.project    = project;
-            this.build      = build;
-            this.executorId = executorId;
-            this.initiator  = initiator;
+
+        public Queued( Project project, Build build, String executorId, Initiator initiator, String requestBody ) {
+            this.project     = project;
+            this.build       = build;
+            this.executorId  = executorId;
+            this.initiator   = initiator;
+            this.requestBody = requestBody;
         }
 
 
@@ -139,6 +151,11 @@ public interface BuildManager {
 
         public Initiator getInitiator() {
             return initiator;
+        }
+
+
+        public String getRequestBody() {
+            return requestBody;
         }
     }
 }

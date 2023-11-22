@@ -41,7 +41,7 @@ public class SecurityResolverImpl implements SecurityResolver {
         boolean   isAllowed   = false;
         Developer developer   = null;
 
-        logger.info( "Receive event of " + (isGithub ? "Github" : "Gitlab") + " for project " + project.getName() );
+        logger.info( "Receive event of " + ( isGithub ? "Github" : "Gitlab" ) + " for project " + project.getName() );
 
         if ( isGithub ) {
             developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
@@ -56,12 +56,12 @@ public class SecurityResolverImpl implements SecurityResolver {
                     }
                 }
 
-                logger.info( "Developer " + pusherLogin + " is " + (isAllowed ? " allowed " : " not allowed ") + " to launch build" );
+                logger.info( "Developer " + pusherLogin + " is " + ( isAllowed ? " allowed " : " not allowed " ) + " to launch build" );
             }
 
             if ( isAllowed ) {
                 ref       = ref.replace( "refs/heads/", "" );
-                isAllowed = ref.equals( project.getBranch() );
+                isAllowed = project.getBranch().equals( "*" ) || ref.equals( project.getBranch() );
 
                 if ( isAllowed ) {
                     logger.warn( "Branch " + ref + " is concerned by this project" );
@@ -84,7 +84,7 @@ public class SecurityResolverImpl implements SecurityResolver {
                     }
                 }
 
-                logger.info( "Developer " + pusherLogin + " is " + (isAllowed ? " allowed " : " not allowed ") + " to launch build" );
+                logger.info( "Developer " + pusherLogin + " is " + ( isAllowed ? " allowed " : " not allowed " ) + " to launch build" );
             }
 
             if ( isAllowed ) {
@@ -135,9 +135,9 @@ public class SecurityResolverImpl implements SecurityResolver {
                     stringBuilder.append( String.format( "%02x", b ) );
                 }
 
-                logger.info( "Computed signature: " + ("sha256=" + stringBuilder.toString()) );
+                logger.info( "Computed signature: " + ( "sha256=" + stringBuilder.toString() ) );
                 logger.info( "Computed signature: " + githubSignature );
-                return ("sha256=" + stringBuilder.toString()).equals( githubSignature );
+                return ( "sha256=" + stringBuilder.toString() ).equals( githubSignature );
             } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
                 e.printStackTrace();
             }
@@ -167,7 +167,7 @@ public class SecurityResolverImpl implements SecurityResolver {
 
 
     protected String getRef( Request request ) {
-        return request.getParameter( "ref" ).toString();
+        return request.getParameter( "ref" ) == null ? "" : request.getParameter( "ref" ).toString();
     }
 
 

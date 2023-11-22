@@ -118,7 +118,7 @@ public class BuildController {
         BuildManager.Queued queued = buildManager.launch( project, new Initiator(
                 foundDeveloper.getEmail(),
                 true
-        ) );
+        ), "" );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )

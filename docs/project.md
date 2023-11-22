@@ -1,5 +1,6 @@
 [BACK](../README.md)
 ___
+
 # Project
 
 The project is a skeleton of this software.
@@ -51,6 +52,22 @@ The project is a skeleton of this software.
     </tr>
 </table>
 
+##### Specific case
+
+If you need to listen for other events (like writing a issue comment), you can set "*" to branch, the retrieved branch
+will be
+master.
+
+Also note that you can retrieve the body of the request in your execution container.
+
+```bash
+apt-get install jq -y
+
+echo "$(printenv FREE_COMMIT_REQUEST_BODY)" > payload.json
+
+echo "$(jq '.repository.id' payload.json)"
+```
+
 ##### Shortcut
 
 * [Add credentials](credential.md)
@@ -61,35 +78,35 @@ Your deployment file will orchestrate the build.
 
 ```yaml
 # Optional
-version: '1.0' 
+version: '1.0'
 
 # Docker image base (for more performance, you can prepare your custom image)
 from: 'ubuntu:focal'
 
 # Steps (Make atomic step)
 steps:
-        # Only for repair in output
+    # Only for repair in output
     -   name: '@install'
         # From base project
-        script: './free-commit/live/install.sh'
+        script: '.free-commit/live/install.sh'
 
     -   name: '@test'
-        script: './free-commit/live/test.sh'
+        script: '.free-commit/live/test.sh'
 
     -   name: '@resolve-version'
-        script: './free-commit/live/version.sh'
+        script: '.free-commit/live/version.sh'
 
     -   name: '@build'
-        script: './free-commit/live/build.sh'
+        script: '.free-commit/live/build.sh'
 
     -   name: '@deploy'
-        script: './free-commit/live/deploy.sh'
+        script: '.free-commit/live/deploy.sh'
 
     -   name: '@tag'
-        script: './free-commit/live/tag.sh'
+        script: '.free-commit/live/tag.sh'
 ```
 
-All your steps will be a simple shell script 
+All your steps will be a simple shell script
 
 ___
 [BACK](../README.md)

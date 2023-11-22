@@ -29,7 +29,7 @@ public class WebhookHandlerImpl implements WebhookHandler {
         Initiator initiator = securityResolver.isBuildAllowed( request, project );
 
         if ( initiator.isAllowed() ) {
-            buildManager.launch( project, initiator );
+            buildManager.launch( project, initiator, request.getBody() );
         }
     }
 }
