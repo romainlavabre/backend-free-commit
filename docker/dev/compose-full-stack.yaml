@@ -58,7 +58,7 @@ services:
         volumes:
             - ${PWD}/../../:/app
             - /var/run/docker.sock:/var/run/docker.sock
-            - "/var/docker-volume/free-commit/maven-dependency:/home/ubuntu"
+            - "/var/docker-volume/free-commit/maven-dependency:/root"
         restart: always
         container_name: api
 
