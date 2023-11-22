@@ -390,7 +390,7 @@ public class Executor {
         stringJoiner.add( "cd /ci/repository/" + project.getName() )
                 .add( "git fetch --all" )
                 .add( "git checkout " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
-                .add( "git pull origin " + project.getBranch() );
+                .add( "git pull origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) );
 
         cmdline[ 2 ] = stringJoiner.toString();
 
