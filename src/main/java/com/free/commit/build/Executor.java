@@ -336,7 +336,7 @@ public class Executor {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
         }
 
-        run.append( " -e FREE_COMMIT_REQUEST_BODY='" + requestBody + "'" );
+        run.append( " -e FREE_COMMIT_REQUEST_BODY='" + Base64.getEncoder().encodeToString( requestBody.getBytes() ) + "'" );
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
 
