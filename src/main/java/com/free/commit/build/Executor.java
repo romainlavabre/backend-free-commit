@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -43,6 +44,7 @@ public class Executor {
     private         Process           currentProcess;
     private         String            imageId;
     private         String            requestBody;
+    private         ZonedDateTime     launchedAt;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
@@ -66,6 +68,7 @@ public class Executor {
 
     @Transactional
     public void execute( Project project, Build build, Initiator initiator, String requestBody ) {
+        launchedAt       = ZonedDateTime.now();
         this.project     = projectRepository.findOrFail( project.getId() );
         this.build       = build;
         this.initiator   = initiator;
@@ -182,18 +185,21 @@ public class Executor {
             }
 
             if ( containerId == null ) {
-                throw new HttpNotFoundException( Message.CONTAINER_NOT_FOUND );
+                if ( launchedAt.toEpochSecond() + 20 >= ZonedDateTime.now().toEpochSecond() ) {
+                    throw new HttpNotFoundException( Message.CONTAINER_NOT_FOUND );
+                }
+            } else {
+                try {
+                    ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container rm " + containerId + " -f" );
+                    builder.redirectErrorStream( true );
+                    Process process = builder.start();
+                    process.waitFor();
+                } catch ( IOException | InterruptedException e ) {
+                    e.printStackTrace();
+                    throw new HttpInternalServerErrorException( "INTERNAL_SERVER_ERROR" );
+                }
             }
 
-            try {
-                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container rm " + containerId + " -f" );
-                builder.redirectErrorStream( true );
-                Process process = builder.start();
-                process.waitFor();
-            } catch ( IOException | InterruptedException e ) {
-                e.printStackTrace();
-                throw new HttpInternalServerErrorException( "INTERNAL_SERVER_ERROR" );
-            }
 
             build.addOutputLine( "[WARNING] Container killed" );
         }
