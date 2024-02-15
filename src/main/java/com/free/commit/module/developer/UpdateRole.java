@@ -10,6 +10,8 @@ import com.free.commit.repository.DeveloperRepository;
 import com.free.commit.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
@@ -33,10 +35,13 @@ public class UpdateRole implements Update< Developer > {
 
     @Override
     public void update( Request request, Developer developer ) {
-        String role = request.getParameter( DeveloperParameter.ROLE, String.class );
+        List< Object > roles = request.getParameters( DeveloperParameter.ROLE );
 
         developer.getUser().getRoles().clear();
-        developer.getUser().addRole( role );
+
+        for ( Object role : roles ) {
+            developer.getUser().addRole( role.toString() );
+        }
 
         historyHandler.update( developer, DeveloperProperty.ROLES );
 
