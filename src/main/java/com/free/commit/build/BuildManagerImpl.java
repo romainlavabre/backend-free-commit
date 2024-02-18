@@ -1,9 +1,12 @@
 package com.free.commit.build;
 
+import com.free.commit.build.exec.Executor;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
+import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
+import com.free.commit.repository.BuildRepository;
 import com.free.commit.util.Cast;
 import org.romainlavabre.environment.Environment;
 import org.romainlavabre.exception.HttpNotFoundException;
@@ -32,15 +35,17 @@ public class BuildManagerImpl implements BuildManager {
     protected final ExecutorService         executorService;
     protected final ThreadPoolTaskScheduler threadPoolTaskScheduler;
     protected final Environment             environment;
+    protected final BuildRepository         buildRepository;
 
 
     public BuildManagerImpl(
             ApplicationContext applicationContext,
             ThreadPoolTaskScheduler threadPoolTaskScheduler,
-            Environment environment ) {
+            Environment environment, BuildRepository buildRepository ) {
         this.applicationContext      = applicationContext;
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
         this.environment             = environment;
+        this.buildRepository         = buildRepository;
         Integer maxParallelExecutor = Cast.getInteger( environment.getEnv( Variable.MAX_PARALLEL_EXECUTOR ) );
 
         if ( maxParallelExecutor == null ) {
@@ -65,7 +70,7 @@ public class BuildManagerImpl implements BuildManager {
 
 
     @Override
-    public String getLogs( String executorId ) {
+    public String getOutputLogs( String executorId ) {
         for ( Executed executed : executeds ) {
             if ( executed.getExecutorId().equals( executorId ) ) {
                 return executed.getBuild().getOutput();
@@ -79,6 +84,99 @@ public class BuildManagerImpl implements BuildManager {
         }
 
         throw new HttpNotFoundException( Message.EXECUTOR_NOT_FOUND );
+    }
+
+
+    @Override
+    public LogWrapper getLog( String executorId, String step, int lineNumber ) {
+        for ( Executed executed : executeds ) {
+            if ( !executed.getExecutorId().equals( executorId ) ) {
+                continue;
+            }
+
+            if ( executed.getBuild().getLogs().isEmpty() ) {
+                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null );
+            }
+
+            Log currentClientLog = null;
+            int index            = 0;
+
+            for ( Log log : executed.getBuild().getLogs() ) {
+                if ( log.getStep().equals( step ) ) {
+                    currentClientLog = log;
+                    break;
+                }
+
+                index++;
+            }
+
+            if ( currentClientLog == null ) {
+                currentClientLog = executed.getBuild().getLogs().get( 0 );
+            }
+
+            String[] lines = currentClientLog.getLog().split( "\\n" );
+
+            if ( lines.length == lineNumber ) {
+                if ( executed.getBuild().getLogs().size() - 1 > index ) {
+                    Log log = executed.getBuild().getLogs().get( index + 1 );
+
+                    return new LogWrapper( log.getStep(), log.getLog(), log.getLog().split( "\\n" ).length, log.getStartAt(), log.getClosedAt(), log.getSuccess() );
+                }
+
+                return new LogWrapper( step, "", lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess() );
+            }
+
+            String toReturn = null;
+
+
+            for ( int i = lineNumber; i < lines.length; i++ ) {
+                if ( toReturn == null ) {
+                    toReturn = "\n" + lines[ i ];
+                    continue;
+                }
+
+                toReturn += "\n" + lines[ i ];
+            }
+
+            return new LogWrapper( currentClientLog.getStep(), toReturn, lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess() );
+        }
+
+        for ( Queued queued : queueds ) {
+            if ( queued.getExecutorId().equals( executorId ) ) {
+                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null );
+            }
+        }
+
+        throw new HttpNotFoundException( Message.EXECUTOR_NOT_FOUND );
+    }
+
+
+    @Override
+    public Log getLog( long buildId, String step ) {
+        Build build = buildRepository.findOrFail( buildId );
+
+        if ( build.getLogs().isEmpty() ) {
+            throw new HttpNotFoundException( "LOG_NOT_FOUND" );
+        }
+
+        if ( step.equals( "-1" ) ) {
+            return build.getLogs().get( 0 );
+        }
+
+        boolean found = false;
+
+        for ( Log log : build.getLogs() ) {
+            if ( log.getStep().equals( step ) ) {
+                found = true;
+                continue;
+            }
+
+            if ( found ) {
+                return log;
+            }
+        }
+
+        throw new HttpNotFoundException( "LOG_NOT_FOUND" );
     }
 
 

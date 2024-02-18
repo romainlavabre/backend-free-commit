@@ -8,6 +8,8 @@ import org.romainlavabre.encoder.annotation.Json;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -60,9 +62,13 @@ public class Build {
     @JoinColumn( name = "project_id", nullable = false )
     private Project project;
 
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "build" )
+    protected final List< Log > logs;
+
 
     public Build() {
         createdAt = ZonedDateTime.now( ZoneId.of( "UTC" ) );
+        logs      = new ArrayList<>();
     }
 
 
@@ -152,4 +158,23 @@ public class Build {
             addOutputLine( "Exit with code " + exitCode + " and message " + exitMessage );
         }
     }
+
+
+    public List< Log > getLogs() {
+        return logs;
+    }
+
+
+    public Build addLog( Log log ) {
+        if ( !logs.contains( log ) ) {
+            logs.add( log );
+
+            if ( log.getBuild() != this ) {
+                log.setBuild( this );
+            }
+        }
+
+        return this;
+    }
+
 }

@@ -11,7 +11,7 @@ import org.romainlavabre.pagination.annotation.Pagination;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/secret.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "classpath:sql/secret.sql" )
 @Entity
 public class SecretPagination {
 

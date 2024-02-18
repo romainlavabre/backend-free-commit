@@ -1,5 +1,7 @@
-package com.free.commit.build;
+package com.free.commit.build.exec;
 
+import com.free.commit.build.ExitMessageMapper;
+import com.free.commit.build.Initiator;
 import com.free.commit.build.exception.BuildException;
 import com.free.commit.build.exception.SpecFileNotFoundException;
 import com.free.commit.build.exception.SpecFileNotReadableException;
@@ -8,6 +10,7 @@ import com.free.commit.build.parser.Step;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
+import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
 import com.free.commit.repository.BuildRepository;
@@ -36,7 +39,7 @@ import java.util.*;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service
+@Service( "buildExecutor" )
 @Scope( "prototype" )
 public class Executor {
 
@@ -207,7 +210,7 @@ public class Executor {
             }
 
 
-            build.addOutputLine( "[WARNING] Container killed" );
+            build.addLog( new Log( "abort" ).addLine( "[WARNING] Container killed" ) ).addOutputLine( "[WARNING] Container killed" );
         }
 
         active = false;
@@ -248,22 +251,10 @@ public class Executor {
 
             currentProcess = process;
 
-            BufferedReader readerIn = new BufferedReader(
-                    new InputStreamReader( process.getInputStream() ) );
+            int exitCode = LogCompiler.compile( process, build );
 
-
-            String lineIn;
-            while ( ( lineIn = readerIn.readLine() ) != null ) {
-                if ( lineIn.equals( "null" ) ) {
-                    continue;
-                }
-
-                build.addOutputLine( lineIn );
-            }
-
-            int exitCode = process.waitFor();
-
-            build.setExitCode( exitCode )
+            build
+                    .setExitCode( exitCode )
                     .setExitMessage( ExitMessageMapper.MAPPER.get( exitCode ) )
                     .setProject( this.project );
         } catch ( IOException | InterruptedException e ) {
@@ -300,7 +291,7 @@ public class Executor {
     protected SpecFile getSpecFile()
             throws BuildException {
         Path path = Path.of( "/ci/repository/" + project.getName() + "/" + project.getSpecFilePath().replaceFirst( "/", "" ) );
-        
+
         if ( Files.exists( path ) ) {
             Yaml yaml = new Yaml( new Constructor( new LoaderOptions() ) );
 

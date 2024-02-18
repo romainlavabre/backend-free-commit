@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/project.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "classpath:sql/project.sql" )
 @Entity
 public class ProjectPagination {
 

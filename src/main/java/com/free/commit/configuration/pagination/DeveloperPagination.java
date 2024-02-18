@@ -11,7 +11,7 @@ import org.romainlavabre.pagination.annotation.Pagination;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/developer.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "classpath:sql/developer.sql" )
 @Entity
 public class DeveloperPagination {
 

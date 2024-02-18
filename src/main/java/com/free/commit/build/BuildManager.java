@@ -1,8 +1,11 @@
 package com.free.commit.build;
 
+import com.free.commit.build.exec.Executor;
+import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.overwrite.ProjectNameExecuted;
 import com.free.commit.configuration.json.overwrite.ProjectNameQueued;
 import com.free.commit.entity.Build;
+import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
 import org.romainlavabre.encoder.annotation.Group;
 import org.romainlavabre.encoder.annotation.Json;
@@ -19,7 +22,14 @@ public interface BuildManager {
     Queued launch( Project project, Initiator initiator, String body );
 
 
-    String getLogs( String executorId );
+    @Deprecated
+    String getOutputLogs( String executorId );
+
+
+    LogWrapper getLog( String executorId, String step, int lineNumber );
+
+
+    Log getLog( long buildId, String step );
 
 
     List< Queued > getQueueds();
@@ -156,6 +166,63 @@ public interface BuildManager {
 
         public String getRequestBody() {
             return requestBody;
+        }
+    }
+
+    class LogWrapper {
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private final String step;
+
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private final String log;
+
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private final int lineNumber;
+
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private ZonedDateTime startAt;
+
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private ZonedDateTime closedAt;
+
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private Boolean success;
+
+
+        public LogWrapper( String step, String log, int lineNumber, ZonedDateTime startAt, ZonedDateTime closedAt, Boolean success ) {
+            this.step       = step;
+            this.log        = log;
+            this.lineNumber = lineNumber;
+            this.startAt    = startAt;
+            this.closedAt   = closedAt;
+            this.success    = success;
+        }
+
+
+        public String getLog() {
+            return log;
+        }
+
+
+        public String getStep() {
+            return step;
+        }
+
+
+        public int getLineNumber() {
+            return lineNumber;
         }
     }
 }

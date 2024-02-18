@@ -16,7 +16,6 @@ public interface Message {
     String CREDENTIAL_NAME_REQUIRED                    = "CREDENTIAL_NAME_REQUIRED";
     String INVALID_ENCRYPTION_KEY                      = "INVALID_ENCRYPTION_KEY";
     String EXECUTOR_NOT_FOUND                          = "EXECUTOR_NOT_FOUND";
-    String WEBHOOK_SENDER_NOT_FOUND                    = "WEBHOOK_SENDER_NOT_FOUND";
     String WEBHOOK_PROVIDER_NOT_SUPPORTED              = "WEBHOOK_PROVIDER_NOT_SUPPORTED";
     String LAUNCH_BUILD_NOT_ALLOWED                    = "LAUNCH_BUILD_NOT_ALLOWED";
     String DEVELOPER_NOT_FOUND                         = "DEVELOPER_NOT_FOUND";

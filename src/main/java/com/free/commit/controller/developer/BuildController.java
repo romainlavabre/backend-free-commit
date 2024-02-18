@@ -76,7 +76,7 @@ public class BuildController {
 
     @GetMapping( path = "/builds/output/{executorId}" )
     public ResponseEntity< String > getOutput( @PathVariable( "executorId" ) String id ) {
-        return ResponseEntity.ok( buildManager.getLogs( id ) );
+        return ResponseEntity.ok( buildManager.getOutputLogs( id ) );
     }
 
 

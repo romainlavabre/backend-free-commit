@@ -23,8 +23,6 @@ public class ConfigureSecurity {
                 .init()
                 .addPublicEndpoint( "/guest/**" )
                 .addPublicEndpoint( "/auth/**" )
-                .addPublicEndpoint( "/application/**" )
-                .addPublicEndpoint( "/actuator/health" )
 
                 .addSecuredEndpoint( "/admin/**", Role.ADMIN )
                 .addSecuredEndpoint( "/developer/**", Role.DEVELOPER )
