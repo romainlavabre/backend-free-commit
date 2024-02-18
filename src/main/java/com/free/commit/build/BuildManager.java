@@ -9,6 +9,7 @@ import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
 import org.romainlavabre.encoder.annotation.Group;
 import org.romainlavabre.encoder.annotation.Json;
+import org.romainlavabre.request.Request;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,6 +21,9 @@ import java.util.List;
 public interface BuildManager {
 
     Queued launch( Project project, Initiator initiator, String body );
+
+
+    Queued launch( Project project, Initiator initiator, String body, Request request );
 
 
     @Deprecated
@@ -134,13 +138,16 @@ public interface BuildManager {
 
         private final String requestBody;
 
+        private final List< String > ignoreSteps;
 
-        public Queued( Project project, Build build, String executorId, Initiator initiator, String requestBody ) {
+
+        public Queued( Project project, Build build, String executorId, Initiator initiator, String requestBody, List< String > ignoreSteps ) {
             this.project     = project;
             this.build       = build;
             this.executorId  = executorId;
             this.initiator   = initiator;
             this.requestBody = requestBody;
+            this.ignoreSteps = ignoreSteps;
         }
 
 
@@ -166,6 +173,11 @@ public interface BuildManager {
 
         public String getRequestBody() {
             return requestBody;
+        }
+
+
+        public List< String > getIgnoreSteps() {
+            return ignoreSteps;
         }
     }
 
@@ -200,14 +212,20 @@ public interface BuildManager {
         } )
         private Boolean success;
 
+        @Json( groups = {
+                @Group( name = GroupType.DEVELOPER )
+        } )
+        private Boolean skipped;
 
-        public LogWrapper( String step, String log, int lineNumber, ZonedDateTime startAt, ZonedDateTime closedAt, Boolean success ) {
+
+        public LogWrapper( String step, String log, int lineNumber, ZonedDateTime startAt, ZonedDateTime closedAt, Boolean success, Boolean skipped ) {
             this.step       = step;
             this.log        = log;
             this.lineNumber = lineNumber;
             this.startAt    = startAt;
             this.closedAt   = closedAt;
             this.success    = success;
+            this.skipped    = skipped;
         }
 
 

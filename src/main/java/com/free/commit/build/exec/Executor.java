@@ -76,7 +76,7 @@ public class Executor {
 
 
     @Transactional
-    public void execute( Project project, Build build, Initiator initiator, String requestBody ) {
+    public void execute( Project project, Build build, Initiator initiator, String requestBody, List< String > ignoreSteps ) {
         launchedAt       = ZonedDateTime.now();
         this.project     = projectRepository.findOrFail( project.getId() );
         this.build       = build;
@@ -118,7 +118,7 @@ public class Executor {
         try {
             Files.createDirectory( buildSpace );
             Files.createFile( entrypoint );
-            Files.write( entrypoint, getEntryPointContent( specFile ) );
+            Files.write( entrypoint, getEntryPointContent( specFile, ignoreSteps ) );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
@@ -263,7 +263,7 @@ public class Executor {
     }
 
 
-    protected byte[] getEntryPointContent( SpecFile specFile ) {
+    protected byte[] getEntryPointContent( SpecFile specFile, List< String > ignoreSteps ) {
         StringJoiner content = new StringJoiner( "\n" );
 
         content
@@ -275,13 +275,25 @@ public class Executor {
                 .add( "}" )
                 .add( "cd /app" );
 
+        project.getAvailableSteps().clear();
+
         for ( Step step : specFile.steps ) {
-            content
-                    .add( "" )
-                    .add( "echo 'Step " + step.name + " ...'" )
-                    .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
-                    .add( ". " + step.script.replaceFirst( "/", "" ) )
-                    .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
+            project.addAvailableStep( step.name );
+
+            if ( ignoreSteps.contains( step.name ) ) {
+                content
+                        .add( "" )
+                        .add( "echo 'Step " + step.name + " ...'" )
+                        .add( "echo 'Step " + step.name + " skipped'" );
+            } else {
+                content
+                        .add( "" )
+                        .add( "echo 'Step " + step.name + " ...'" )
+                        .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
+                        .add( ". " + step.script.replaceFirst( "/", "" ) )
+                        .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
+            }
+
         }
 
         return content.toString().getBytes();

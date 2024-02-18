@@ -4,6 +4,8 @@ import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.overwrite.OverwriteSignatureKey;
 import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
+import com.free.commit.entity.converter.JsonArrayColumn;
+import com.free.commit.entity.converter.JsonArrayColumnConverter;
 import com.free.commit.entity.encrypt.EncryptField;
 import jakarta.persistence.*;
 import org.romainlavabre.encoder.annotation.Group;
@@ -94,6 +96,14 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
+    @Column( columnDefinition = "JSON" )
+    @Convert( converter = JsonArrayColumnConverter.class )
+    protected final JsonArrayColumn< String > availableSteps;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToOne( cascade = { CascadeType.PERSIST } )
     @JoinColumn( name = "repository_credential_id" )
     private Credential repositoryCredential;
@@ -126,10 +136,11 @@ public class Project {
 
 
     public Project() {
-        signatureKey = TokenGenerator.generate( 32 );
-        secrets      = new ArrayList<>();
-        builds       = new ArrayList<>();
-        developers   = new ArrayList<>();
+        signatureKey   = TokenGenerator.generate( 32 );
+        secrets        = new ArrayList<>();
+        builds         = new ArrayList<>();
+        developers     = new ArrayList<>();
+        availableSteps = new JsonArrayColumn<>();
     }
 
 
@@ -265,6 +276,18 @@ public class Project {
         }
 
         this.signatureKey = signatureKey;
+
+        return this;
+    }
+
+
+    public JsonArrayColumn< String > getAvailableSteps() {
+        return availableSteps;
+    }
+
+
+    public Project addAvailableStep( String step ) {
+        availableSteps.add( step );
 
         return this;
     }

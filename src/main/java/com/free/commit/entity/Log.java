@@ -56,6 +56,11 @@ public class Log {
     } )
     protected Boolean success;
 
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER )
+    } )
+    protected Boolean skipped;
+
 
     public Log() {
         startAt = ZonedDateTime.now( ZoneOffset.UTC );
@@ -141,6 +146,18 @@ public class Log {
 
     public Log setSuccess( Boolean success ) {
         this.success = success;
+
+        return this;
+    }
+
+
+    public Boolean getSkipped() {
+        return skipped;
+    }
+
+
+    public Log setSkipped( Boolean skipped ) {
+        this.skipped = skipped;
 
         return this;
     }

@@ -6,10 +6,12 @@ import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
+import com.free.commit.parameter.BuildParameter;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.util.Cast;
 import org.romainlavabre.environment.Environment;
 import org.romainlavabre.exception.HttpNotFoundException;
+import org.romainlavabre.request.Request;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
@@ -59,9 +61,26 @@ public class BuildManagerImpl implements BuildManager {
 
     @Override
     public Queued launch( Project project, Initiator initiator, String body ) {
+        return launch( project, initiator, body, new ArrayList<>() );
+    }
+
+
+    @Override
+    public Queued launch( Project project, Initiator initiator, String body, Request request ) {
+        List< String > ignoreSteps = new ArrayList<>();
+
+        for ( Object step : request.getParameters( BuildParameter.IGNORE_STEPS ) ) {
+            ignoreSteps.add( step.toString() );
+        }
+
+        return launch( project, initiator, body, ignoreSteps );
+    }
+
+
+    protected Queued launch( Project project, Initiator initiator, String body, List< String > ignoreSteps ) {
         String id = UUID.randomUUID().toString();
 
-        Queued queued = new Queued( project, new Build(), id, initiator, body );
+        Queued queued = new Queued( project, new Build(), id, initiator, body, ignoreSteps );
 
         queueds.add( queued );
 
@@ -95,7 +114,7 @@ public class BuildManagerImpl implements BuildManager {
             }
 
             if ( executed.getBuild().getLogs().isEmpty() ) {
-                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null );
+                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null, null );
             }
 
             Log currentClientLog = null;
@@ -120,10 +139,10 @@ public class BuildManagerImpl implements BuildManager {
                 if ( executed.getBuild().getLogs().size() - 1 > index ) {
                     Log log = executed.getBuild().getLogs().get( index + 1 );
 
-                    return new LogWrapper( log.getStep(), log.getLog(), log.getLog().split( "\\n" ).length, log.getStartAt(), log.getClosedAt(), log.getSuccess() );
+                    return new LogWrapper( log.getStep(), log.getLog(), log.getLog().split( "\\n" ).length, log.getStartAt(), log.getClosedAt(), log.getSuccess(), log.getSkipped() );
                 }
 
-                return new LogWrapper( step, "", lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess() );
+                return new LogWrapper( step, "", lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess(), currentClientLog.getSkipped() );
             }
 
             String toReturn = null;
@@ -138,12 +157,12 @@ public class BuildManagerImpl implements BuildManager {
                 toReturn += "\n" + lines[ i ];
             }
 
-            return new LogWrapper( currentClientLog.getStep(), toReturn, lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess() );
+            return new LogWrapper( currentClientLog.getStep(), toReturn, lines.length, currentClientLog.getStartAt(), currentClientLog.getClosedAt(), currentClientLog.getSuccess(), currentClientLog.getSkipped() );
         }
 
         for ( Queued queued : queueds ) {
             if ( queued.getExecutorId().equals( executorId ) ) {
-                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null );
+                return new LogWrapper( "init", "Waiting for first byte", 0, null, null, null, null );
             }
         }
 
@@ -269,7 +288,7 @@ public class BuildManagerImpl implements BuildManager {
 
                 executeds.add( new Executed( queued.getProject(), queued.getBuild(), queued.getExecutorId(), executor, queued.getInitiator(), queued.getRequestBody() ) );
 
-                executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild(), queued.getInitiator(), queued.getRequestBody() ) );
+                executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild(), queued.getInitiator(), queued.getRequestBody(), queued.getIgnoreSteps() ) );
 
                 queuedIterator.remove();
             }

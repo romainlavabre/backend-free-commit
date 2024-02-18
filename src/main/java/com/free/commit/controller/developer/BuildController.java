@@ -14,6 +14,7 @@ import com.free.commit.repository.DeveloperRepository;
 import com.free.commit.repository.ProjectRepository;
 import org.romainlavabre.encoder.Encoder;
 import org.romainlavabre.exception.HttpForbiddenException;
+import org.romainlavabre.request.Request;
 import org.romainlavabre.security.Security;
 import org.romainlavabre.security.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ public class BuildController {
     protected final DeveloperRepository  developerRepository;
     protected final UserRepository       userRepository;
     protected final Security             security;
+    protected final Request              request;
 
 
     public BuildController(
@@ -46,7 +48,8 @@ public class BuildController {
             BuildRepository buildRepository,
             DeveloperRepository developerRepository,
             UserRepository userRepository,
-            Security security ) {
+            Security security,
+            Request request ) {
         this.buildManager         = buildManager;
         this.credentialRepository = credentialRepository;
         this.projectRepository    = projectRepository;
@@ -54,6 +57,7 @@ public class BuildController {
         this.developerRepository  = developerRepository;
         this.userRepository       = userRepository;
         this.security             = security;
+        this.request              = request;
     }
 
 
@@ -118,7 +122,7 @@ public class BuildController {
         BuildManager.Queued queued = buildManager.launch( project, new Initiator(
                 foundDeveloper.getEmail(),
                 true
-        ), "" );
+        ), "", request );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )

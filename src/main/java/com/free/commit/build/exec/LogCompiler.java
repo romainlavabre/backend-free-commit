@@ -33,8 +33,16 @@ public class LogCompiler {
 
             if ( lineIn.startsWith( "Step @" ) ) {
                 currentLog.close();
-                currentLog = new Log( lineIn.replace( "Step @", "" ).replace( "...", "" ).trim() );
-                build.addLog( currentLog );
+                currentLog.setSuccess( true );
+
+                if ( lineIn.contains( "skipped" ) ) {
+                    currentLog.setSkipped( true );
+                } else {
+                    String stepName = lineIn.replace( "Step @", "" ).replace( "...", "" ).trim();
+
+                    currentLog = new Log( stepName );
+                    build.addLog( currentLog );
+                }
             }
 
             currentLog.addLine( lineIn );
