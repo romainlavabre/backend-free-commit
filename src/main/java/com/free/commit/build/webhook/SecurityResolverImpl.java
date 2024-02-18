@@ -2,20 +2,10 @@ package com.free.commit.build.webhook;
 
 import com.free.commit.build.Initiator;
 import com.free.commit.configuration.response.Message;
-import com.free.commit.configuration.security.Role;
-import com.free.commit.entity.Developer;
 import com.free.commit.entity.Project;
-import com.free.commit.repository.DeveloperRepository;
-import org.romainlavabre.exception.HttpNotFoundException;
+import org.romainlavabre.exception.HttpBadRequestException;
 import org.romainlavabre.request.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
@@ -23,151 +13,32 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class SecurityResolverImpl implements SecurityResolver {
 
-    protected final Logger              logger = LoggerFactory.getLogger( getClass() );
-    protected final DeveloperRepository developerRepository;
+    protected final GithubSecurity githubSecurity;
+    protected final GitlabSecurity gitlabSecurity;
 
 
-    public SecurityResolverImpl( DeveloperRepository developerRepository ) {
-        this.developerRepository = developerRepository;
+    public SecurityResolverImpl( GithubSecurity githubSecurity, GitlabSecurity gitlabSecurity ) {
+        this.githubSecurity = githubSecurity;
+        this.gitlabSecurity = gitlabSecurity;
     }
 
 
     @Override
     public Initiator isBuildAllowed( Request request, Project project ) {
-        String    pusherLogin = getPusherLogin( request );
-        String    ref         = getRef( request );
-        boolean   isGithub    = isGithub( request );
-        boolean   isGitlab    = isGitlab( request );
-        boolean   isAllowed   = false;
-        Developer developer   = null;
-
-        logger.info( "Receive event of " + ( isGithub ? "Github" : "Gitlab" ) + " for project " + project.getName() );
-
-        if ( isGithub ) {
-            developer = developerRepository.findOrFailByGithubUsername( pusherLogin );
-
-            if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
-                isAllowed = true;
-            } else {
-                for ( Developer projectDeveloper : project.getDevelopers() ) {
-                    if ( pusherLogin.equals( projectDeveloper.getGithubUsername() ) ) {
-                        isAllowed = true;
-                        break;
-                    }
-                }
-
-                logger.info( "Developer " + pusherLogin + " is " + ( isAllowed ? " allowed " : " not allowed " ) + " to launch build" );
-            }
-
-            if ( isAllowed ) {
-                ref       = ref.replace( "refs/heads/", "" );
-                isAllowed = project.getBranch().equals( "*" ) || ref.equals( project.getBranch() );
-
-                if ( isAllowed ) {
-                    logger.warn( "Branch " + ref + " is concerned by this project" );
-                } else {
-                    logger.info( "Branch " + ref + " not concerned by this project" );
-                }
-            }
-        }
-
-        if ( isGitlab ) {
-            developer = developerRepository.findOrFailByGitlabUsername( pusherLogin );
-
-            if ( developer.getUser().getRoles().contains( Role.ADMIN ) ) {
-                isAllowed = true;
-            } else {
-                for ( Developer projectDeveloper : project.getDevelopers() ) {
-                    if ( pusherLogin.toLowerCase().trim().equals( projectDeveloper.getGithubUsername().toLowerCase().trim() ) ) {
-                        isAllowed = true;
-                        break;
-                    }
-                }
-
-                logger.info( "Developer " + pusherLogin + " is " + ( isAllowed ? " allowed " : " not allowed " ) + " to launch build" );
-            }
-
-            if ( isAllowed ) {
-                ref       = ref.replace( "refs/heads/", "" );
-                isAllowed = ref.equals( project.getBranch() );
-
-                logger.info( "Branch " + ref + " not concerned by project this project" );
-            }
-        }
-
-        if ( isAllowed ) {
-            isAllowed = isValidSignature( request, project );
-
-            if ( isAllowed ) {
-                logger.info( "Signature allowed" );
-            } else {
-                logger.warn( "Invalid signature" );
-            }
-        }
-
-        return new Initiator(
-                developer.getEmail(),
-                isAllowed
-        );
-    }
-
-
-    protected boolean isValidSignature( Request request, Project project ) {
-        if ( project.getSignatureKey() == null ) {
-            return true;
-        }
 
         if ( isGithub( request ) ) {
-            String githubSignature = request.getHeader( "X-Hub-Signature-256" );
+            String eventInitiator = request.getParameter( "sender_login", String.class );
 
-            if ( githubSignature == null ) {
-                return false;
-            }
-
-            try {
-                Mac           mac           = Mac.getInstance( "HmacSHA256" );
-                SecretKeySpec secretKeySpec = new SecretKeySpec( project.getSignatureKey().getBytes(), "HmacSHA256" );
-                mac.init( secretKeySpec );
-                byte[] encodedHash = mac.doFinal( request.getBody().getBytes() );
-
-                StringBuilder stringBuilder = new StringBuilder();
-                for ( byte b : encodedHash ) {
-                    stringBuilder.append( String.format( "%02x", b ) );
-                }
-
-                logger.info( "Computed signature: " + ( "sha256=" + stringBuilder.toString() ) );
-                logger.info( "Computed signature: " + githubSignature );
-                return ( "sha256=" + stringBuilder.toString() ).equals( githubSignature );
-            } catch ( NoSuchAlgorithmException | InvalidKeyException e ) {
-                e.printStackTrace();
-            }
+            return githubSecurity.isBuildAllowed( request, project, eventInitiator );
         }
 
         if ( isGitlab( request ) ) {
-            String gitlabToken = request.getHeader( "X-Gitlab-Token" );
-
-            return gitlabToken != null && gitlabToken.equals( project.getSignatureKey() );
+            String eventInitiator = request.getParameter( "user_name", String.class );
+            
+            return gitlabSecurity.isBuildAllowed( request, project, eventInitiator );
         }
 
-        return false;
-    }
-
-
-    protected String getPusherLogin( Request request ) {
-        if ( isGithub( request ) ) {
-            return request.getParameter( "sender_login" ).toString();
-        }
-
-        if ( isGitlab( request ) ) {
-            return request.getParameter( "user_name" ).toString();
-        }
-
-        throw new HttpNotFoundException( Message.WEBHOOK_SENDER_NOT_FOUND );
-    }
-
-
-    protected String getRef( Request request ) {
-        return request.getParameter( "ref" ) == null ? "" : request.getParameter( "ref" ).toString();
+        throw new HttpBadRequestException( Message.WEBHOOK_PROVIDER_NOT_SUPPORTED );
     }
 
 
