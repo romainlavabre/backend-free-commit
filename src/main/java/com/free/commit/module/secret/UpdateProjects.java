@@ -1,14 +1,14 @@
 package com.free.commit.module.secret;
 
-import com.free.commit.api.crud.Update;
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
 import com.free.commit.entity.Secret;
 import com.free.commit.parameter.SecretParameter;
 import com.free.commit.property.SecretProperty;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
 import com.free.commit.util.Cast;
+import org.romainlavabre.crud.Update;
+import org.romainlavabre.history.HistoryHandler;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

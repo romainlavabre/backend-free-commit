@@ -1,4 +1,4 @@
-FROM openjdk:11.0.14
+FROM openjdk:17-slim
 RUN apt-get update \
     && apt-get install ca-certificates \
                            curl \

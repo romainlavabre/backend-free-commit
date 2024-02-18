@@ -2,9 +2,9 @@ package com.free.commit.repository;
 
 import com.free.commit.entity.Secret;
 import com.free.commit.repository.jpa.SecretJpa;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 /**

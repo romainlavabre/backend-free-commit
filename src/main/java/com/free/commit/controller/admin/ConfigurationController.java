@@ -1,8 +1,8 @@
 package com.free.commit.controller.admin;
 
-import com.free.commit.api.environment.Environment;
-import com.free.commit.api.mail.MailSender;
 import com.free.commit.configuration.environment.Variable;
+import org.romainlavabre.environment.Environment;
+import org.romainlavabre.mail.MailSender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +44,7 @@ public class ConfigurationController {
 
     @PostMapping( path = "/mail/test/{recipient}" )
     public ResponseEntity< Void > testMail( @PathVariable( "recipient" ) String recipient ) {
-        mailSender.send( recipient, "Free Commit - Test", "Test success" );
+        mailSender.send( environment.getEnv( Variable.MAIL_FROM ), recipient, "Free Commit - Test", "Test success" );
 
         return ResponseEntity
                 .status( HttpStatus.CREATED )

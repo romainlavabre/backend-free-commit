@@ -1,15 +1,13 @@
 package com.free.commit.controller.developer;
 
-import com.free.commit.api.pagination.Pagination;
-import com.free.commit.api.pagination.PaginationBuilder;
-import com.free.commit.api.pagination.exception.NotSupportedKey;
-import com.free.commit.api.pagination.exception.NotSupportedOperator;
-import com.free.commit.api.pagination.exception.NotSupportedValue;
-import com.free.commit.api.request.Request;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.view.DeveloperView;
 import com.free.commit.view.ProjectView;
 import com.free.commit.view.SecretView;
+import org.romainlavabre.pagination.Pagination;
+import org.romainlavabre.pagination.PaginationHandler;
+import org.romainlavabre.pagination.exception.*;
+import org.romainlavabre.request.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,36 +22,36 @@ import java.util.Map;
 @RequestMapping( path = "/developer" )
 public class PaginationController {
 
-    protected final PaginationBuilder paginationBuilder;
+    protected final PaginationHandler paginationHandler;
     protected final Request           request;
 
 
-    public PaginationController( PaginationBuilder paginationBuilder, Request request ) {
-        this.paginationBuilder = paginationBuilder;
+    public PaginationController( PaginationHandler paginationHandler, Request request ) {
+        this.paginationHandler = paginationHandler;
         this.request           = request;
     }
 
 
     @GetMapping( path = "/paginations/project" )
     public ResponseEntity< Map< String, Object > > project()
-            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
-        Pagination pagination = paginationBuilder.getResult( request, ProjectView.class, "project_pagination" );
+            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
+        Pagination pagination = paginationHandler.getResult( request, ProjectView.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 
 
     @GetMapping( path = "/paginations/developer" )
     public ResponseEntity< Map< String, Object > > developer()
-            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
-        Pagination pagination = paginationBuilder.getResult( request, DeveloperView.class, "developer_pagination" );
+            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
+        Pagination pagination = paginationHandler.getResult( request, DeveloperView.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 
 
     @GetMapping( path = "/paginations/secret" )
     public ResponseEntity< Map< String, Object > > secret()
-            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator {
-        Pagination pagination = paginationBuilder.getResult( request, SecretView.class, "secret_pagination" );
+            throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
+        Pagination pagination = paginationHandler.getResult( request, SecretView.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 }

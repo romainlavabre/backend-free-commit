@@ -1,20 +1,19 @@
 package com.free.commit.configuration.startup;
 
-import com.free.commit.api.environment.Environment;
-import com.free.commit.api.security.PasswordEncoder;
-import com.free.commit.api.security.User;
-import com.free.commit.api.security.UserRepository;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.security.Role;
 import com.free.commit.entity.Developer;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.romainlavabre.environment.Environment;
+import org.romainlavabre.security.PasswordEncoder;
+import org.romainlavabre.security.User;
+import org.romainlavabre.security.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>

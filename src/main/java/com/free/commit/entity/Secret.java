@@ -1,13 +1,13 @@
 package com.free.commit.entity;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.encrypt.EncryptField;
-import com.free.commit.exception.HttpUnprocessableEntityException;
+import jakarta.persistence.*;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
+import org.romainlavabre.exception.HttpUnprocessableEntityException;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

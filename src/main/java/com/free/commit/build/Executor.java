@@ -1,27 +1,30 @@
 package com.free.commit.build;
 
-import com.free.commit.api.mail.MailSender;
 import com.free.commit.build.exception.BuildException;
 import com.free.commit.build.exception.SpecFileNotFoundException;
 import com.free.commit.build.exception.SpecFileNotReadableException;
 import com.free.commit.build.parser.SpecFile;
 import com.free.commit.build.parser.Step;
+import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
-import com.free.commit.exception.HttpInternalServerErrorException;
-import com.free.commit.exception.HttpNotFoundException;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.romainlavabre.environment.Environment;
+import org.romainlavabre.exception.HttpInternalServerErrorException;
+import org.romainlavabre.exception.HttpNotFoundException;
+import org.romainlavabre.mail.MailSender;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,6 +53,7 @@ public class Executor {
     protected final ProjectRepository projectRepository;
     protected final EntityManager     entityManager;
     protected final MailSender        mailSender;
+    protected final Environment       environment;
 
 
     public Executor(
@@ -57,12 +61,14 @@ public class Executor {
             SecretRepository secretRepository,
             ProjectRepository projectRepository,
             EntityManager entityManager,
-            MailSender mailSender ) {
+            MailSender mailSender,
+            Environment environment ) {
         this.buildRepository   = buildRepository;
         this.secretRepository  = secretRepository;
         this.projectRepository = projectRepository;
         this.entityManager     = entityManager;
         this.mailSender        = mailSender;
+        this.environment       = environment;
     }
 
 
@@ -294,11 +300,12 @@ public class Executor {
     protected SpecFile getSpecFile()
             throws BuildException {
         Path path = Path.of( "/ci/repository/" + project.getName() + "/" + project.getSpecFilePath().replaceFirst( "/", "" ) );
-
+        
         if ( Files.exists( path ) ) {
-            Yaml yaml = new Yaml( new Constructor( SpecFile.class ) );
+            Yaml yaml = new Yaml( new Constructor( new LoaderOptions() ) );
+
             try {
-                return yaml.load( Files.readString( path ) );
+                return yaml.loadAs( Files.readString( path ), SpecFile.class );
             } catch ( IOException e ) {
                 throw new SpecFileNotReadableException();
             }
@@ -409,6 +416,7 @@ public class Executor {
 
 
             mailSender.send(
+                    environment.getEnv( Variable.MAIL_FROM ),
                     initiator.getEmail(),
                     "[" + project.getName().toUpperCase() + "] Build Failure (#" + build.getId() + ")",
                     "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")\r\r\r\r" + build.getOutput()

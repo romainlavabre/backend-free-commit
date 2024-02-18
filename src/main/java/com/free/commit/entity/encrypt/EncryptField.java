@@ -1,9 +1,10 @@
 package com.free.commit.entity.encrypt;
 
-import com.free.commit.api.environment.Environment;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
-import com.free.commit.exception.HttpInternalServerErrorException;
+import jakarta.persistence.AttributeConverter;
+import org.romainlavabre.environment.Environment;
+import org.romainlavabre.exception.HttpInternalServerErrorException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
@@ -11,7 +12,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.AttributeConverter;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -62,7 +62,7 @@ public class EncryptField implements AttributeConverter< String, String > {
         if ( data == null ) {
             return null;
         }
-        
+
         try {
             load();
         } catch ( NoSuchPaddingException | NoSuchAlgorithmException | NullPointerException e ) {

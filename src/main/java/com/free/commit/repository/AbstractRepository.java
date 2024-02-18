@@ -1,12 +1,12 @@
 package com.free.commit.repository;
 
-import com.free.commit.api.storage.data.StampManagedEntity;
-import com.free.commit.exception.HttpNotFoundException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import org.romainlavabre.database.StampManagedEntity;
+import org.romainlavabre.exception.HttpNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +97,7 @@ abstract public class AbstractRepository< T > {
 
             if ( i > 0 && letter.matches( "[A-Z]" ) ) {
                 message.append( "_" )
-                       .append( letter.toUpperCase() );
+                        .append( letter.toUpperCase() );
                 continue;
             }
 

@@ -1,13 +1,13 @@
 package com.free.commit.repository;
 
-import com.free.commit.api.security.User;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Developer;
-import com.free.commit.exception.HttpNotFoundException;
 import com.free.commit.repository.jpa.DeveloperJpa;
+import jakarta.persistence.EntityManager;
+import org.romainlavabre.exception.HttpNotFoundException;
+import org.romainlavabre.security.User;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.Optional;
 
 /**

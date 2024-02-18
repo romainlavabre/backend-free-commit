@@ -1,8 +1,5 @@
 package com.free.commit.module.project;
 
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
-import com.free.commit.api.token.TokenGenerator;
 import com.free.commit.entity.Project;
 import com.free.commit.parameter.ProjectParameter;
 import com.free.commit.repository.CredentialRepository;
@@ -10,6 +7,9 @@ import com.free.commit.repository.DeveloperRepository;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
 import com.free.commit.util.Cast;
+import org.romainlavabre.history.HistoryHandler;
+import org.romainlavabre.request.Request;
+import org.romainlavabre.tokengen.TokenGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service( "createProject" )
-public class Create implements com.free.commit.api.crud.Create< Project > {
+public class Create implements org.romainlavabre.crud.Create< Project > {
 
     protected final ProjectRepository    projectRepository;
     protected final HistoryHandler       historyHandler;

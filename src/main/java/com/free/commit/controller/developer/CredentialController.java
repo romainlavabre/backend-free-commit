@@ -1,9 +1,9 @@
 package com.free.commit.controller.developer;
 
-import com.free.commit.api.json.Encoder;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.Credential;
 import com.free.commit.repository.CredentialRepository;
+import org.romainlavabre.encoder.Encoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

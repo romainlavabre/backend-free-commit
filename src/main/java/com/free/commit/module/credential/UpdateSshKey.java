@@ -1,10 +1,10 @@
 package com.free.commit.module.credential;
 
-import com.free.commit.api.crud.Update;
-import com.free.commit.api.request.Request;
+import org.romainlavabre.crud.Update;
 import com.free.commit.entity.Credential;
 import com.free.commit.parameter.CredentialParameter;
 import com.free.commit.repository.CredentialRepository;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,20 +1,18 @@
 package com.free.commit.view;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.GroupType;
-import org.hibernate.annotations.Immutable;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
+import org.romainlavabre.pagination.annotation.ModeType;
+import org.romainlavabre.pagination.annotation.Pagination;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
+@Pagination( mode = ModeType.FILE, filePath = "sql/secret.sql" )
 @Entity
-@Table( name = "secret_pagination" )
-@Immutable
 public class SecretView {
 
     @Json( groups = {

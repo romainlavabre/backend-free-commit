@@ -1,12 +1,12 @@
 package com.free.commit.module.secret;
 
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
 import com.free.commit.entity.Secret;
 import com.free.commit.parameter.SecretParameter;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
 import com.free.commit.util.Cast;
+import org.romainlavabre.history.HistoryHandler;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service( "createSecret" )
-public class Create implements com.free.commit.api.crud.Create< Secret > {
+public class Create implements org.romainlavabre.crud.Create< Secret > {
 
     protected final SecretRepository  secretRepository;
     protected final HistoryHandler    historyHandler;
@@ -39,7 +39,7 @@ public class Create implements com.free.commit.api.crud.Create< Secret > {
         List< Object > projectsId = request.getParameters( SecretParameter.PROJECTS );
 
         secret.setName( name )
-              .setValue( value );
+                .setValue( value );
 
         if ( projectsId != null ) {
             for ( Object object : projectsId ) {

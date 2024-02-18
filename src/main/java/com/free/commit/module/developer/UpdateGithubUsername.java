@@ -1,12 +1,12 @@
 package com.free.commit.module.developer;
 
-import com.free.commit.api.crud.Update;
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
+import org.romainlavabre.crud.Update;
+import org.romainlavabre.history.HistoryHandler;
 import com.free.commit.entity.Developer;
 import com.free.commit.parameter.DeveloperParameter;
 import com.free.commit.property.DeveloperProperty;
 import com.free.commit.repository.DeveloperRepository;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,7 +34,7 @@ public class UpdateGithubUsername implements Update< Developer > {
         developer.setGithubUsername( githubUsername );
 
         historyHandler.update( developer, DeveloperProperty.GITHUB_USERNAME );
-        
+
         developerRepository.persist( developer );
     }
 }

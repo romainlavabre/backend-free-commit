@@ -1,7 +1,7 @@
 package com.free.commit.repository.jpa;
 
-import com.free.commit.api.security.User;
 import com.free.commit.entity.Developer;
+import org.romainlavabre.security.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,17 +1,17 @@
 package com.free.commit.module.project;
 
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
 import com.free.commit.repository.ProjectRepository;
+import org.romainlavabre.history.HistoryHandler;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service( "deleteProject" )
-public class Delete implements com.free.commit.api.crud.Delete< Project > {
+public class Delete implements org.romainlavabre.crud.Delete< Project > {
 
     protected final ProjectRepository projectRepository;
     protected final HistoryHandler    historyHandler;

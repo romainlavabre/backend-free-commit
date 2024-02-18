@@ -1,10 +1,9 @@
 package com.free.commit.repository;
 
 import com.free.commit.entity.Credential;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>

@@ -1,18 +1,18 @@
 package com.free.commit.entity;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
-import com.free.commit.api.json.annotation.JsonPut;
-import com.free.commit.api.json.annotation.Row;
-import com.free.commit.api.token.TokenGenerator;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.overwrite.OverwriteSignatureKey;
 import com.free.commit.configuration.json.put.PutLastBuild;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.encrypt.EncryptField;
-import com.free.commit.exception.HttpUnprocessableEntityException;
+import jakarta.persistence.*;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
+import org.romainlavabre.encoder.annotation.JsonPut;
+import org.romainlavabre.encoder.annotation.Row;
+import org.romainlavabre.exception.HttpUnprocessableEntityException;
+import org.romainlavabre.tokengen.TokenGenerator;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @ManyToOne( cascade = {CascadeType.PERSIST} )
+    @ManyToOne( cascade = { CascadeType.PERSIST } )
     @JoinColumn( name = "repository_credential_id" )
     private Credential repositoryCredential;
 
@@ -102,14 +102,14 @@ public class Project {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @ManyToMany( cascade = {CascadeType.PERSIST}, mappedBy = "projects" )
+    @ManyToMany( cascade = { CascadeType.PERSIST }, mappedBy = "projects" )
     private final List< Secret > secrets;
 
     @Json( groups = {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
-    @OneToMany( cascade = {CascadeType.PERSIST}, mappedBy = "project", orphanRemoval = true )
+    @OneToMany( cascade = { CascadeType.PERSIST }, mappedBy = "project", orphanRemoval = true )
     private final List< Build > builds;
 
     @Json( groups = {

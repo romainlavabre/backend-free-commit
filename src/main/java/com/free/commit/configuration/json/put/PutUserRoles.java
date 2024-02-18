@@ -1,7 +1,7 @@
 package com.free.commit.configuration.json.put;
 
-import com.free.commit.api.json.put.Put;
 import com.free.commit.entity.Developer;
+import org.romainlavabre.encoder.put.Put;
 import org.springframework.stereotype.Service;
 
 /**

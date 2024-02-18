@@ -1,6 +1,7 @@
 package com.free.commit.entity.converter;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
+
 import java.util.Base64;
 
 /**

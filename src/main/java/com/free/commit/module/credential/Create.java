@@ -1,17 +1,17 @@
 package com.free.commit.module.credential;
 
-import com.free.commit.api.history.HistoryHandler;
-import com.free.commit.api.request.Request;
+import org.romainlavabre.history.HistoryHandler;
 import com.free.commit.entity.Credential;
 import com.free.commit.parameter.CredentialParameter;
 import com.free.commit.repository.CredentialRepository;
+import org.romainlavabre.request.Request;
 import org.springframework.stereotype.Service;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service( "createCredential" )
-public class Create implements com.free.commit.api.crud.Create< Credential > {
+public class Create implements org.romainlavabre.crud.Create< Credential > {
 
     protected final CredentialRepository credentialRepository;
     protected final HistoryHandler       historyHandler;
@@ -31,7 +31,7 @@ public class Create implements com.free.commit.api.crud.Create< Credential > {
         String sshKey = ( String ) request.getParameter( CredentialParameter.SSH_KEY );
 
         credential.setName( name )
-                  .setSshKey( sshKey );
+                .setSshKey( sshKey );
 
         historyHandler.create( credential );
 

@@ -1,7 +1,7 @@
 package com.free.commit.repository;
 
-import com.free.commit.api.security.User;
 import com.free.commit.entity.Developer;
+import org.romainlavabre.security.User;
 
 import java.util.Optional;
 

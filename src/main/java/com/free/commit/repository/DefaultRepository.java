@@ -1,6 +1,7 @@
 package com.free.commit.repository;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
+
 import java.util.List;
 import java.util.Optional;
 

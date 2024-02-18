@@ -1,8 +1,5 @@
 package com.free.commit.controller.developer;
 
-import com.free.commit.api.json.Encoder;
-import com.free.commit.api.security.Security;
-import com.free.commit.api.security.UserRepository;
 import com.free.commit.build.BuildManager;
 import com.free.commit.build.Initiator;
 import com.free.commit.configuration.json.GroupType;
@@ -11,11 +8,14 @@ import com.free.commit.configuration.security.Role;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Developer;
 import com.free.commit.entity.Project;
-import com.free.commit.exception.HttpForbiddenException;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.CredentialRepository;
 import com.free.commit.repository.DeveloperRepository;
 import com.free.commit.repository.ProjectRepository;
+import org.romainlavabre.encoder.Encoder;
+import org.romainlavabre.exception.HttpForbiddenException;
+import org.romainlavabre.security.Security;
+import org.romainlavabre.security.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,11 +1,11 @@
 package com.free.commit.build;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.overwrite.ProjectNameExecuted;
 import com.free.commit.configuration.json.overwrite.ProjectNameQueued;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;

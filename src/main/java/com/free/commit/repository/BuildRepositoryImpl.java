@@ -3,9 +3,9 @@ package com.free.commit.repository;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Project;
 import com.free.commit.repository.jpa.BuildJpa;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 /**

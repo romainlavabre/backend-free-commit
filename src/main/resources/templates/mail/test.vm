@@ -1,8 +1,0 @@
-<html>
-<body>
-    ${name} Vous a envoyé un mail.
-<br>
-<br>
-Il est ${work}
-</body>
-</html>

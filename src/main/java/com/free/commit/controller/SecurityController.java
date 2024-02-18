@@ -1,13 +1,13 @@
 package com.free.commit.controller;
 
-import com.free.commit.api.environment.Environment;
-import com.free.commit.api.json.Encoder;
-import com.free.commit.api.request.Request;
-import com.free.commit.api.security.AuthenticationHandler;
-import com.free.commit.api.security.JwtTokenHandler;
-import com.free.commit.api.security.Security;
-import com.free.commit.api.security.UserRepository;
-import com.free.commit.configuration.environment.Variable;
+import org.romainlavabre.encoder.Encoder;
+import org.romainlavabre.environment.Environment;
+import org.romainlavabre.request.Request;
+import org.romainlavabre.security.AuthenticationHandler;
+import org.romainlavabre.security.JwtTokenHandler;
+import org.romainlavabre.security.Security;
+import org.romainlavabre.security.UserRepository;
+import org.romainlavabre.security.config.SecurityConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +61,7 @@ public class SecurityController {
         try {
             authentication = this.authenticationHandler.authenticate( this.request );
         } catch ( final Throwable e ) {
+            e.printStackTrace();
             message = e.getMessage();
         }
 
@@ -68,7 +69,7 @@ public class SecurityController {
             return ResponseEntity.ok().body( Map.of(
                     "access_token", this.jwtTokenHandler.createToken( this.userDetailsService.loadUserByUsername( ( String ) this.request.getParameter( "auth_username" ) ) ),
                     "token_type", "Bearer",
-                    "expire_in", Integer.valueOf( this.environment.getEnv( Variable.JWT_LIFE_TIME ) )
+                    "expire_in", SecurityConfigurer.get().getJwtLifeTime()
             ) );
         }
 

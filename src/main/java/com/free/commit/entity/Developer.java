@@ -1,16 +1,16 @@
 package com.free.commit.entity;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
-import com.free.commit.api.json.annotation.JsonPut;
-import com.free.commit.api.json.annotation.Row;
-import com.free.commit.api.security.User;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.configuration.json.overwrite.AscentUserToDeveloper;
 import com.free.commit.configuration.json.put.PutUserRoles;
 import com.free.commit.configuration.json.put.PutUserUsername;
+import jakarta.persistence.*;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
+import org.romainlavabre.encoder.annotation.JsonPut;
+import org.romainlavabre.encoder.annotation.Row;
+import org.romainlavabre.security.User;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

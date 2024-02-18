@@ -1,7 +1,7 @@
 package com.free.commit.configuration.json.overwrite;
 
-import com.free.commit.api.json.overwritter.Overwrite;
 import com.free.commit.build.BuildManager;
+import org.romainlavabre.encoder.overwritter.Overwrite;
 import org.springframework.stereotype.Service;
 
 @Service

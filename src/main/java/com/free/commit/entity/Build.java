@@ -1,11 +1,11 @@
 package com.free.commit.entity;
 
-import com.free.commit.api.json.annotation.Group;
-import com.free.commit.api.json.annotation.Json;
 import com.free.commit.configuration.json.GroupType;
 import com.free.commit.entity.converter.OutputConverter;
+import jakarta.persistence.*;
+import org.romainlavabre.encoder.annotation.Group;
+import org.romainlavabre.encoder.annotation.Json;
 
-import javax.persistence.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -56,7 +56,7 @@ public class Build {
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER )
     } )
-    @ManyToOne( cascade = {CascadeType.PERSIST} )
+    @ManyToOne( cascade = { CascadeType.PERSIST } )
     @JoinColumn( name = "project_id", nullable = false )
     private Project project;
 
