@@ -27,6 +27,7 @@ public class SecretController {
     protected final Update< Secret >   updateSecretName;
     protected final Update< Secret >   updateSecretValue;
     protected final Update< Secret >   updateSecretEscapeChar;
+    protected final Update< Secret >   updateSecretEnv;
     protected final Update< Secret >   updateSecretProjects;
     protected final Delete< Secret >   deleteSecret;
     protected final DataStorageHandler dataStorageHandler;
@@ -39,6 +40,7 @@ public class SecretController {
             Update< Secret > updateSecretName,
             Update< Secret > updateSecretValue,
             Update< Secret > updateSecretEscapeChar,
+            Update< Secret > updateSecretEnv,
             Update< Secret > updateSecretProjects,
             Delete< Secret > deleteSecret,
             DataStorageHandler dataStorageHandler,
@@ -48,6 +50,7 @@ public class SecretController {
         this.updateSecretName       = updateSecretName;
         this.updateSecretValue      = updateSecretValue;
         this.updateSecretEscapeChar = updateSecretEscapeChar;
+        this.updateSecretEnv        = updateSecretEnv;
         this.updateSecretProjects   = updateSecretProjects;
         this.deleteSecret           = deleteSecret;
         this.dataStorageHandler     = dataStorageHandler;
@@ -111,6 +114,19 @@ public class SecretController {
         Secret secret = secretRepository.findOrFail( id );
 
         updateSecretEscapeChar.update( request, secret );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/secrets/{id:[0-9]+}/env" )
+    public ResponseEntity< Map< String, Object > > updateEnv( @PathVariable( "id" ) long id ) {
+        Secret secret = secretRepository.findOrFail( id );
+
+        updateSecretEnv.update( request, secret );
 
         dataStorageHandler.save();
 

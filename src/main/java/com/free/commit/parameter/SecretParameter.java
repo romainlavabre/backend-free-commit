@@ -9,4 +9,5 @@ public interface SecretParameter {
     String VALUE       = PREFIX + "value";
     String ESCAPE_CHAR = PREFIX + "escape_char";
     String PROJECTS    = PREFIX + "projects_id";
+    String ENV         = PREFIX + "env";
 }

@@ -49,6 +49,12 @@ public class Secret {
             @Group( name = GroupType.ADMIN ),
             @Group( name = GroupType.DEVELOPER )
     } )
+    private String env;
+
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
     @ManyToMany( cascade = { CascadeType.PERSIST } )
     @JoinTable(
             name = "secret_project",
@@ -107,6 +113,18 @@ public class Secret {
 
     public Secret setEscapeChar( String escapeChar ) {
         this.escapeChar = escapeChar;
+
+        return this;
+    }
+
+
+    public String getEnv() {
+        return env;
+    }
+
+
+    public Secret setEnv( String env ) {
+        this.env = env;
 
         return this;
     }
