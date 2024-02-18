@@ -1,9 +1,9 @@
 package com.free.commit.controller.developer;
 
 import com.free.commit.configuration.json.GroupType;
-import com.free.commit.view.DeveloperView;
-import com.free.commit.view.ProjectView;
-import com.free.commit.view.SecretView;
+import com.free.commit.configuration.pagination.DeveloperPagination;
+import com.free.commit.configuration.pagination.ProjectPagination;
+import com.free.commit.configuration.pagination.SecretPagination;
 import org.romainlavabre.pagination.Pagination;
 import org.romainlavabre.pagination.PaginationHandler;
 import org.romainlavabre.pagination.exception.*;
@@ -35,7 +35,7 @@ public class PaginationController {
     @GetMapping( path = "/paginations/project" )
     public ResponseEntity< Map< String, Object > > project()
             throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
-        Pagination pagination = paginationHandler.getResult( request, ProjectView.class );
+        Pagination pagination = paginationHandler.getResult( request, ProjectPagination.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 
@@ -43,7 +43,7 @@ public class PaginationController {
     @GetMapping( path = "/paginations/developer" )
     public ResponseEntity< Map< String, Object > > developer()
             throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
-        Pagination pagination = paginationHandler.getResult( request, DeveloperView.class );
+        Pagination pagination = paginationHandler.getResult( request, DeveloperPagination.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 
@@ -51,7 +51,7 @@ public class PaginationController {
     @GetMapping( path = "/paginations/secret" )
     public ResponseEntity< Map< String, Object > > secret()
             throws NotSupportedKey, NotSupportedValue, NotSupportedOperator, FileError, NotSupportedDtoType {
-        Pagination pagination = paginationHandler.getResult( request, SecretView.class );
+        Pagination pagination = paginationHandler.getResult( request, SecretPagination.class );
         return ResponseEntity.ok( pagination.encode( GroupType.DEVELOPER ) );
     }
 }

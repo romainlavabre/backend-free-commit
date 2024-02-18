@@ -1,4 +1,4 @@
-package com.free.commit.view;
+package com.free.commit.configuration.pagination;
 
 import com.free.commit.configuration.json.GroupType;
 import jakarta.persistence.Entity;
@@ -11,32 +11,26 @@ import org.romainlavabre.pagination.annotation.Pagination;
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/developer.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "sql/secret.sql" )
 @Entity
-public class DeveloperView {
+public class SecretPagination {
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     @Id
-    private Long developer_id;
+    private Long secret_id;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String user_username;
+    private String secret_name;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String developer_email;
-
-    @Json( groups = {
-            @Group( name = GroupType.DEVELOPER ),
-            @Group( name = GroupType.ADMIN )
-    } )
-    private String user_role;
+    private String secret_scope;
 }

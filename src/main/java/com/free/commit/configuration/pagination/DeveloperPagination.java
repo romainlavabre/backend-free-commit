@@ -1,4 +1,4 @@
-package com.free.commit.view;
+package com.free.commit.configuration.pagination;
 
 import com.free.commit.configuration.json.GroupType;
 import jakarta.persistence.Entity;
@@ -8,43 +8,35 @@ import org.romainlavabre.encoder.annotation.Json;
 import org.romainlavabre.pagination.annotation.ModeType;
 import org.romainlavabre.pagination.annotation.Pagination;
 
-import java.time.ZonedDateTime;
-
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/project.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "sql/developer.sql" )
 @Entity
-public class ProjectView {
+public class DeveloperPagination {
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     @Id
-    private Long project_id;
+    private Long developer_id;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String project_name;
+    private String user_username;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private Integer build_last_exit_code;
+    private String developer_email;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String build_last_exit_message;
-
-    @Json( groups = {
-            @Group( name = GroupType.DEVELOPER ),
-            @Group( name = GroupType.ADMIN )
-    } )
-    private ZonedDateTime build_last_created_at;
+    private String user_role;
 }

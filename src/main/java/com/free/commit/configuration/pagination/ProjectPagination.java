@@ -1,4 +1,4 @@
-package com.free.commit.view;
+package com.free.commit.configuration.pagination;
 
 import com.free.commit.configuration.json.GroupType;
 import jakarta.persistence.Entity;
@@ -8,29 +8,43 @@ import org.romainlavabre.encoder.annotation.Json;
 import org.romainlavabre.pagination.annotation.ModeType;
 import org.romainlavabre.pagination.annotation.Pagination;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Pagination( mode = ModeType.FILE, filePath = "sql/secret.sql" )
+@Pagination( mode = ModeType.FILE, filePath = "sql/project.sql" )
 @Entity
-public class SecretView {
+public class ProjectPagination {
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     @Id
-    private Long secret_id;
+    private Long project_id;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String secret_name;
+    private String project_name;
 
     @Json( groups = {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
-    private String secret_scope;
+    private Integer build_last_exit_code;
+
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
+            @Group( name = GroupType.ADMIN )
+    } )
+    private String build_last_exit_message;
+
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
+            @Group( name = GroupType.ADMIN )
+    } )
+    private ZonedDateTime build_last_created_at;
 }

@@ -52,7 +52,7 @@ public class SecurityController {
     }
 
 
-    @PostMapping( path = "/auth" )
+    @PostMapping( path = "/auth/token" )
     public ResponseEntity< Object > authenticate() {
 
         Authentication authentication = null;
@@ -69,8 +69,12 @@ public class SecurityController {
             return ResponseEntity.ok().body( Map.of(
                     "access_token", this.jwtTokenHandler.createToken( this.userDetailsService.loadUserByUsername( ( String ) this.request.getParameter( "auth_username" ) ) ),
                     "token_type", "Bearer",
-                    "expire_in", SecurityConfigurer.get().getJwtLifeTime()
+                    "expires_in", SecurityConfigurer.get().getJwtLifeTime()
             ) );
+        }
+
+        if ( message == null ) {
+            message = "UNAUTHORIZED";
         }
 
         return ResponseEntity.status( HttpStatus.UNAUTHORIZED ).body( Map.of( "message", message ) );
