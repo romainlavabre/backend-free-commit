@@ -32,5 +32,11 @@ public class SecretPagination {
             @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
+    private String secret_env;
+
+    @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
+            @Group( name = GroupType.ADMIN )
+    } )
     private String secret_scope;
 }
