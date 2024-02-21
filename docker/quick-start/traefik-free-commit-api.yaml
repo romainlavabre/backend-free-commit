@@ -1,0 +1,34 @@
+http:
+    routers:
+        api:
+            rule: "PathPrefix(`/api`)"
+            middlewares:
+                - "replacepre"
+                - "cors"
+            entrypoints: "web"
+            tls: false
+            service: api
+    middlewares:
+        replacepre:
+            stripprefix:
+                prefixes: "/api"
+        cors:
+            headers:
+                customresponseheaders:
+                    Access-Control-Allow-Origin: "*"
+                    Access-Control-Allow-Methods:
+                        - "GET"
+                        - "POST"
+                        - "PATCH"
+                        - "PUT"
+                        - "DELETE"
+                        - "OPTION"
+                    Access-Control-Allow-Headers:
+                        - "Content-Type"
+                        - "Authorization"
+                    Access-Control-Allow-Credentials: false
+    services:
+        api:
+            loadBalancer:
+                servers:
+                    -   url: "http://localhost:8080"

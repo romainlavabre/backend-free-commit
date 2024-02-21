@@ -1,0 +1,12 @@
+http:
+    routers:
+        client:
+            rule: "PathPrefix(`/`)"
+            entrypoints: "web"
+            tls: false
+            service: client
+    services:
+        client:
+            loadBalancer:
+                servers:
+                    -   url: "http://localhost:3000"
