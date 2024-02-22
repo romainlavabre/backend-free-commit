@@ -1,10 +1,10 @@
-FROM openjdk:11.0.14 as compiler
+FROM openjdk:17-slim as compiler
 WORKDIR temp
 COPY . /temp/.
 RUN ./mvnw clean package -Dmaven.test.skip=true --no-transfer-progress
 RUN cp target/*-SNAPSHOT.jar app.jar
 
-FROM openjdk:11-jre
+FROM openjdk:17-slim
 COPY --from=compiler /temp/app.jar /app/app.jar
 
 RUN apt-get update \
