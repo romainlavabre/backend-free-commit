@@ -6,7 +6,6 @@ import jakarta.persistence.AttributeConverter;
 import org.romainlavabre.environment.Environment;
 import org.romainlavabre.exception.HttpInternalServerErrorException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.RequestScope;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -22,13 +21,11 @@ import java.util.Base64;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service
-@RequestScope
 public class EncryptField implements AttributeConverter< String, String > {
 
 
     protected final static String      ALGORITHM = "AES";
     protected final        Environment environment;
-    protected              Cipher      cipher;
     protected              Key         key;
 
 
@@ -50,9 +47,11 @@ public class EncryptField implements AttributeConverter< String, String > {
         }
 
         try {
+            Cipher cipher = Cipher.getInstance( ALGORITHM );
             cipher.init( Cipher.ENCRYPT_MODE, key );
             return Base64.getEncoder().encodeToString( cipher.doFinal( data.getBytes() ) );
-        } catch ( InvalidKeyException | BadPaddingException | IllegalBlockSizeException e ) {
+        } catch ( InvalidKeyException | BadPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                  NoSuchPaddingException e ) {
             e.printStackTrace();
             throw new HttpInternalServerErrorException( "An error occurred" );
         }
@@ -72,19 +71,17 @@ public class EncryptField implements AttributeConverter< String, String > {
         }
 
         try {
+            Cipher cipher = Cipher.getInstance( ALGORITHM );
             cipher.init( Cipher.DECRYPT_MODE, key );
             return new String( cipher.doFinal( Base64.getDecoder().decode( data ) ) );
-        } catch ( InvalidKeyException | BadPaddingException | IllegalBlockSizeException e ) {
+        } catch ( InvalidKeyException | BadPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                  NoSuchPaddingException e ) {
             throw new HttpInternalServerErrorException( "An error occurred" );
         }
     }
 
 
     private synchronized void load() throws NoSuchPaddingException, NoSuchAlgorithmException {
-        if ( cipher == null ) {
-            cipher = Cipher.getInstance( ALGORITHM );
-        }
-
         if ( key == null ) {
             key = new SecretKeySpec( environment.getEnv( Variable.ENCRYPTION_KEY ).getBytes(), ALGORITHM );
         }
