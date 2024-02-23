@@ -6,6 +6,7 @@ import jakarta.persistence.AttributeConverter;
 import org.romainlavabre.environment.Environment;
 import org.romainlavabre.exception.HttpInternalServerErrorException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -21,6 +22,7 @@ import java.util.Base64;
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
 @Service
+@RequestScope
 public class EncryptField implements AttributeConverter< String, String > {
 
 
@@ -78,7 +80,7 @@ public class EncryptField implements AttributeConverter< String, String > {
     }
 
 
-    private void load() throws NoSuchPaddingException, NoSuchAlgorithmException {
+    private synchronized void load() throws NoSuchPaddingException, NoSuchAlgorithmException {
         if ( cipher == null ) {
             cipher = Cipher.getInstance( ALGORITHM );
         }
