@@ -31,7 +31,7 @@ public class LogCompiler {
                 continue;
             }
 
-            if ( lineIn.startsWith( "Step @" ) ) {
+            if ( lineIn.startsWith( "Step @" ) && !lineIn.contains( "failed" ) ) {
                 currentLog.close();
                 currentLog.setSuccess( true );
 
