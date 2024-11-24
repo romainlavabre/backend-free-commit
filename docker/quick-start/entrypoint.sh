@@ -2,7 +2,7 @@
 
 traefik </dev/null &>/dev/null &
 cd /client/frontend-free-commit
-yarn start </dev/null &>/dev/null &
+npm run start </dev/null &>/dev/null &
 
 cd /app
 

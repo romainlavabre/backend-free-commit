@@ -1,7 +1,7 @@
 http:
     routers:
         api:
-            rule: "PathPrefix(`/api`)"
+            rule: "PathPrefix(`/api-free-commit`)"
             middlewares:
                 - "replacepre"
                 - "cors"
@@ -11,7 +11,7 @@ http:
     middlewares:
         replacepre:
             stripprefix:
-                prefixes: "/api"
+                prefixes: "/api-free-commit"
         cors:
             headers:
                 customresponseheaders:
