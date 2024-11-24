@@ -14,11 +14,7 @@ RUN apt-get install git -y
 RUN mkdir "/client" && cd /client && git clone https://github.com/romainlavabre/frontend-free-commit.git
 RUN apt-get install ca-certificates gnupg curl wget nodejs npm -y
 RUN npm install -g n && n 16.0.0
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt update \
-    && apt install yarn
-RUN cd /client/frontend-free-commit && yarn && touch .env && echo "REACT_APP_API_URL=http://localhost:9595" > .env
+RUN cd /client/frontend-free-commit && npm i && touch .env && echo "REACT_APP_API_URL=http://localhost:9595" > .env
 RUN wget https://github.com/traefik/traefik/releases/download/v2.11.0/traefik_v2.11.0_linux_amd64.tar.gz
 
 RUN apt-get install lsb-release mysql-server wget openjdk-17-jdk git -yq
