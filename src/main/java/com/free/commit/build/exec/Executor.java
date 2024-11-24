@@ -267,7 +267,7 @@ public class Executor {
         StringJoiner content = new StringJoiner( "\n" );
 
         content
-                .add( "#!/bin/sh" )
+                .add( "#!/bin/bash" )
                 .add( "assertLastCmdSuccess() {" )
                 .add( "if [ \"$?\" != \"0\" ]; then" )
                 .add( "echo \"$1\" && exit 2000" )
@@ -289,7 +289,7 @@ public class Executor {
                 content
                         .add( "" )
                         .add( "echo 'Step " + step.name + " ...'" )
-                        .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ) )
+                        .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ).split( " " )[ 0 ] )
                         .add( ". " + step.script.replaceFirst( "/", "" ) )
                         .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
             }
