@@ -289,8 +289,8 @@ public class Executor {
                 content
                         .add( "" )
                         .add( "echo 'Step " + step.name + " ...'" )
-                        .add( "chmod +x /app/" + step.script.replaceFirst( "/", "" ).split( " " )[ 0 ] )
-                        .add( ". " + step.script.replaceFirst( "/", "" ) )
+                        .add( "chmod +x /app/" + step.script.split( " " )[ 0 ] )
+                        .add( ". " + step.script )
                         .add( "assertLastCmdSuccess 'Step " + step.name + " failed'" );
             }
 
