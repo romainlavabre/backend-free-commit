@@ -37,12 +37,14 @@ public class Create implements org.romainlavabre.crud.Create< Secret > {
         String         name       = request.getParameter( SecretParameter.NAME, String.class );
         String         value      = request.getParameter( SecretParameter.VALUE, String.class );
         String         env        = request.getParameter( SecretParameter.ENV, String.class );
+        String         escapeChar = request.getParameter( SecretParameter.ESCAPE_CHAR, String.class );
         List< Object > projectsId = request.getParameters( SecretParameter.PROJECTS );
 
         secret
                 .setName( name )
                 .setValue( value )
-                .setEnv( env );
+                .setEnv( env )
+                .setEscapeChar( escapeChar );
 
         if ( projectsId != null ) {
             for ( Object object : projectsId ) {

@@ -9,6 +9,8 @@ import org.romainlavabre.security.PasswordEncoder;
 import org.romainlavabre.security.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
@@ -32,18 +34,23 @@ public class Create implements org.romainlavabre.crud.Create< Developer > {
 
     @Override
     public void create( Request request, Developer developer ) {
-        String username       = ( String ) request.getParameter( DeveloperParameter.USERNAME );
-        String password       = ( String ) request.getParameter( DeveloperParameter.PASSWORD );
-        String role           = request.getParameter( DeveloperParameter.ROLE, String.class );
-        String email          = ( String ) request.getParameter( DeveloperParameter.EMAIL );
-        String githubUsername = ( String ) request.getParameter( DeveloperParameter.GITHUB_USERNAME );
-        String gitlabUsername = ( String ) request.getParameter( DeveloperParameter.GITLAB_USERNAME );
+        String         username       = ( String ) request.getParameter( DeveloperParameter.USERNAME );
+        String         password       = ( String ) request.getParameter( DeveloperParameter.PASSWORD );
+        List< Object > roles          = request.getParameters( DeveloperParameter.ROLE );
+        String         email          = ( String ) request.getParameter( DeveloperParameter.EMAIL );
+        String         githubUsername = ( String ) request.getParameter( DeveloperParameter.GITHUB_USERNAME );
+        String         gitlabUsername = ( String ) request.getParameter( DeveloperParameter.GITLAB_USERNAME );
 
         User user = new User();
         user.setUsername( username );
         user.setPassword( passwordEncoder.encode( password ) );
         user.setEnabled( true );
-        user.addRole( role );
+
+        if ( roles != null ) {
+            for ( Object role : roles ) {
+                user.addRole( role.toString() );
+            }
+        }
 
         developer
                 .setGithubUsername( githubUsername )

@@ -13,4 +13,5 @@ public interface ProjectProperty {
     String DEVELOPERS                 = "developers";
     String ALLOW_CONCURRENT_EXECUTION = "allowConcurrentExecution";
     String REPOSITORY_CREDENTIAL      = "repositoryCredential";
+    String SECRETS                    = "secrets";
 }
