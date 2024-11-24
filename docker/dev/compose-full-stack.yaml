@@ -42,8 +42,8 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=api"
-            - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
-            - "traefik.http.middlewares.api-replace-prefix.stripprefix.prefixes=/api"
+            - "traefik.http.routers.api.rule=PathPrefix(`/api-free-commit`)"
+            - "traefik.http.middlewares.api-replace-prefix.stripprefix.prefixes=/api-free-commit"
             - "traefik.http.middlewares.api-cors-headers.headers.customresponseheaders.Access-Control-Allow-Origin=*"
             - "traefik.http.middlewares.api-cors-headers.headers.customresponseheaders.Access-Control-Allow-Methods=GET,POST,PATCH,PUT,DELETE,OPTIONS"
             - "traefik.http.middlewares.api-cors-headers.headers.customresponseheaders.Access-Control-Allow-Headers=Content-Type,Authorization"
