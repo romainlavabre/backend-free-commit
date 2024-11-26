@@ -157,6 +157,14 @@ public class Executor {
 
     public void kill() {
         if ( currentProcess != null ) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container stop " + imageId );
+                builder.redirectErrorStream( true );
+                builder.start().waitFor();
+            }catch ( IOException | InterruptedException ignored ){
+                ignored.printStackTrace();
+            }
+
             currentProcess.destroy();
 
             List< String > lines = new ArrayList<>();
@@ -342,7 +350,7 @@ public class Executor {
                 .add( "cd .." )
                 .add( "docker build -t " + imageName + " ." );
 
-        StringBuilder run = new StringBuilder( "docker run --user root" );
+        StringBuilder run = new StringBuilder( "docker run --name " + imageName + " --user root" );
 
         for ( Secret secret : project.getSecrets() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
@@ -359,6 +367,7 @@ public class Executor {
         run.append( imageName );
 
         stringJoiner.add( run.toString() );
+        stringJoiner.add( "docker container rm " + imageName );
         stringJoiner.add( "docker image rm " + imageName + " -f" );
 
         cmdline[ 2 ] = stringJoiner.toString();
