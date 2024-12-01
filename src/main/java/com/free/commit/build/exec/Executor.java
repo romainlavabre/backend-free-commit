@@ -51,6 +51,7 @@ public class Executor {
     private         String            imageId;
     private         String            requestBody;
     private         ZonedDateTime     launchedAt;
+    private         SpecFile          specFile;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
@@ -86,7 +87,6 @@ public class Executor {
 
         initRepository();
 
-        SpecFile specFile;
 
         try {
             specFile = getSpecFile();
@@ -158,10 +158,32 @@ public class Executor {
     public void kill() {
         if ( currentProcess != null ) {
             try {
-                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker container stop " + imageId );
+                String specFilePath = null;
+
+                for ( Step step : specFile.steps ) {
+                    if ( Objects.equals( step.name, "@cleanup" ) ) {
+                        specFilePath = step.script.replaceFirst( "/", "" );
+                    }
+                }
+
+                ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker exec " + imageId + " bash -c \"cd /app && . " + specFilePath + "\" && docker container stop " + imageId + " -s SIGKILL" );
                 builder.redirectErrorStream( true );
-                builder.start().waitFor();
-            }catch ( IOException | InterruptedException ignored ){
+                Process process = builder.start();
+                BufferedReader readerIn = new BufferedReader(
+                        new InputStreamReader( process.getInputStream() ) );
+
+
+                String lineIn;
+                while ( ( lineIn = readerIn.readLine() ) != null ) {
+                    if ( lineIn.equals( "null" ) ) {
+                        continue;
+                    }
+
+                    System.out.println( lineIn );
+                }
+
+                process.waitFor();
+            } catch ( IOException | InterruptedException ignored ) {
                 ignored.printStackTrace();
             }
 
@@ -287,6 +309,11 @@ public class Executor {
 
         for ( Step step : specFile.steps ) {
             project.addAvailableStep( step.name );
+
+            if ( Objects.equals( step.name, "@cleanup" ) ) {
+                continue;
+            }
+
 
             if ( ignoreSteps.contains( step.name ) ) {
                 content
