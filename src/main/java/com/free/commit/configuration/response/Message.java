@@ -20,4 +20,7 @@ public interface Message {
     String LAUNCH_BUILD_NOT_ALLOWED                    = "LAUNCH_BUILD_NOT_ALLOWED";
     String DEVELOPER_NOT_FOUND                         = "DEVELOPER_NOT_FOUND";
     String CONTAINER_NOT_FOUND                         = "CONTAINER_NOT_FOUND";
+    String EXECUTOR_NAME_REQUIRED                      = "EXECUTOR_NAME_REQUIRED";
+    String EXECUTOR_DRIVER_REQUIRED                    = "EXECUTOR_DRIVER_REQUIRED";
+    String EXECUTOR_DRIVER_INVALID                     = "EXECUTOR_DRIVER_INVALID";
 }
