@@ -1,6 +1,8 @@
 package com.free.commit.build;
 
 import com.free.commit.build.exec.Executor;
+import com.free.commit.build.exec.LocalExecutor;
+import com.free.commit.build.exec.OpenStackExecutor;
 import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
@@ -284,7 +286,14 @@ public class BuildManagerImpl implements BuildManager {
                     }
                 }
 
-                Executor executor = applicationContext.getBean( Executor.class );
+                Executor executor;
+
+                if ( queued.getProject().getExecutor().getDriver().equals( com.free.commit.entity.Executor.DRIVER_OPEN_STACK ) ) {
+                    executor = applicationContext.getBean( OpenStackExecutor.class );
+                } else {
+                    executor = applicationContext.getBean( LocalExecutor.class );
+
+                }
 
                 executeds.add( new Executed( queued.getProject(), queued.getBuild(), queued.getExecutorId(), executor, queued.getInitiator(), queued.getRequestBody() ) );
 

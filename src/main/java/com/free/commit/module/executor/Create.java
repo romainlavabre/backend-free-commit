@@ -36,7 +36,6 @@ public class Create implements org.romainlavabre.crud.Create< Executor > {
             executor
                     .addVariable( "FLAVOR_NAME", "" )
                     .addVariable( "IMAGE_NAME", "" )
-                    .addVariable( "KEY_NAME", "" )
                     .addVariable( "SECURITY_GROUP_NAME", "" )
                     .addVariable( "NETWORK_NAME", "" )
                     .addVariable( "VOLUME_ID", "" );
