@@ -2,10 +2,7 @@ package com.free.commit.module.project;
 
 import com.free.commit.entity.Project;
 import com.free.commit.parameter.ProjectParameter;
-import com.free.commit.repository.CredentialRepository;
-import com.free.commit.repository.DeveloperRepository;
-import com.free.commit.repository.ProjectRepository;
-import com.free.commit.repository.SecretRepository;
+import com.free.commit.repository.*;
 import com.free.commit.util.Cast;
 import org.romainlavabre.history.HistoryHandler;
 import org.romainlavabre.request.Request;
@@ -25,6 +22,7 @@ public class Create implements org.romainlavabre.crud.Create< Project > {
     protected final DeveloperRepository  developerRepository;
     protected final SecretRepository     secretRepository;
     protected final CredentialRepository credentialRepository;
+    protected final ExecutorRepository   executorRepository;
 
 
     public Create(
@@ -32,12 +30,14 @@ public class Create implements org.romainlavabre.crud.Create< Project > {
             HistoryHandler historyHandler,
             DeveloperRepository developerRepository,
             SecretRepository secretRepository,
-            CredentialRepository credentialRepository ) {
+            CredentialRepository credentialRepository,
+            ExecutorRepository executorRepository ) {
         this.projectRepository    = projectRepository;
         this.historyHandler       = historyHandler;
         this.developerRepository  = developerRepository;
         this.secretRepository     = secretRepository;
         this.credentialRepository = credentialRepository;
+        this.executorRepository   = executorRepository;
     }
 
 
@@ -53,6 +53,7 @@ public class Create implements org.romainlavabre.crud.Create< Project > {
         List< Object > developersId             = request.getParameters( ProjectParameter.DEVELOPERS );
         List< Object > secretsId                = request.getParameters( ProjectParameter.SECRETS );
         Long           repositoryCredentialId   = Cast.getLong( request.getParameter( ProjectParameter.REPOSITORY_CREDENTIAL ) );
+        Long           executorId               = request.getParameter( ProjectParameter.EXECUTOR, Long.class );
 
         project.setName( name )
                 .setDescription( description )
@@ -61,7 +62,8 @@ public class Create implements org.romainlavabre.crud.Create< Project > {
                 .setSpecFilePath( specFilePath )
                 .setKeepNumberBuild( keepNumberBuild )
                 .setAllowConcurrentExecution( allowConcurrentExecution )
-                .setSignatureKey( TokenGenerator.generate( 32 ) );
+                .setSignatureKey( TokenGenerator.generate( 32 ) )
+                .setExecutor( executorRepository.findOrFail( executorId ) );
 
         if ( repositoryCredentialId != null ) {
             project.setRepositoryCredential( credentialRepository.findOrFail( repositoryCredentialId ) );

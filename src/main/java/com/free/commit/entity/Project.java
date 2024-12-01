@@ -134,6 +134,13 @@ public class Project {
     )
     private final List< Developer > developers;
 
+    @Json( groups = {
+            @Group( name = GroupType.ADMIN ),
+            @Group( name = GroupType.DEVELOPER )
+    } )
+    @ManyToOne( cascade = { CascadeType.PERSIST } )
+    private Executor executor;
+
 
     public Project() {
         signatureKey   = TokenGenerator.generate( 32 );
@@ -366,5 +373,15 @@ public class Project {
         developers.remove( developer );
 
         return this;
+    }
+
+
+    public Executor getExecutor() {
+        return executor;
+    }
+
+
+    public void setExecutor( Executor executor ) {
+        this.executor = executor;
     }
 }

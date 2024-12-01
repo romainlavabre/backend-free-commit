@@ -15,6 +15,7 @@ public class Executor {
     public static final String DRIVER_OPEN_STACK  = "openStackDriver";
 
     @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     @Id
@@ -22,19 +23,23 @@ public class Executor {
     private long id;
 
     @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     private String name;
 
     @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     private String driver;
 
     @Json( groups = {
+            @Group( name = GroupType.DEVELOPER ),
             @Group( name = GroupType.ADMIN )
     } )
     @Convert( converter = JsonObjectColumnEncryptConverter.class )
+    @Column( columnDefinition = "TEXT" )
     private JsonObjectColumn< String, Object > variables;
 
 

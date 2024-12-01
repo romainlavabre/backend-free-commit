@@ -34,6 +34,7 @@ public class ProjectController {
     protected final Update< Project >  updateProjectRepositoryCredential;
     protected final Update< Project >  updateProjectSignatureKey;
     protected final Update< Project >  updateProjectSecrets;
+    protected final Update< Project >  updateProjectExecutor;
     protected final Delete< Project >  deleteProject;
     protected final DataStorageHandler dataStorageHandler;
     protected final Request            request;
@@ -53,6 +54,7 @@ public class ProjectController {
             Update< Project > updateProjectRepositoryCredential,
             Update< Project > updateProjectSignatureKey,
             Update< Project > updateProjectSecrets,
+            Update< Project > updateProjectExecutor,
             Delete< Project > deleteProject,
             DataStorageHandler dataStorageHandler,
             Request request,
@@ -69,6 +71,7 @@ public class ProjectController {
         this.updateProjectRepositoryCredential     = updateProjectRepositoryCredential;
         this.updateProjectSignatureKey             = updateProjectSignatureKey;
         this.updateProjectSecrets                  = updateProjectSecrets;
+        this.updateProjectExecutor                 = updateProjectExecutor;
         this.deleteProject                         = deleteProject;
         this.dataStorageHandler                    = dataStorageHandler;
         this.request                               = request;
@@ -235,6 +238,19 @@ public class ProjectController {
         Project project = projectRepository.findOrFail( id );
 
         updateProjectSecrets.update( request, project );
+
+        dataStorageHandler.save();
+
+        return ResponseEntity.ok( Encoder.encode( project, GroupType.ADMIN ) );
+    }
+
+
+    @Transactional
+    @PatchMapping( path = "/projects/{id:[0-9]+}/executor" )
+    public ResponseEntity< Map< String, Object > > updateExecutor( @PathVariable( "id" ) long id ) {
+        Project project = projectRepository.findOrFail( id );
+
+        updateProjectExecutor.update( request, project );
 
         dataStorageHandler.save();
 
