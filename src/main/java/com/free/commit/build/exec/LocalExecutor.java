@@ -13,6 +13,7 @@ import com.free.commit.entity.Build;
 import com.free.commit.entity.Log;
 import com.free.commit.entity.Project;
 import com.free.commit.entity.Secret;
+import com.free.commit.module.buildhistory.BuildHistoryBuilder;
 import com.free.commit.repository.BuildRepository;
 import com.free.commit.repository.ProjectRepository;
 import com.free.commit.repository.SecretRepository;
@@ -97,6 +98,7 @@ public class LocalExecutor implements Executor {
                     .setProject( this.project );
             active = false;
             entityManager.persist( build );
+            BuildHistoryBuilder.build( build, entityManager );
             launchEmail( build );
             return;
         } catch ( Throwable e ) {
@@ -107,6 +109,7 @@ public class LocalExecutor implements Executor {
                     .setProject( this.project );
             active = false;
             entityManager.persist( build );
+            BuildHistoryBuilder.build( build, entityManager );
             launchEmail( build );
             return;
         }
@@ -127,6 +130,7 @@ public class LocalExecutor implements Executor {
 
         launchContainer( directoryId );
         entityManager.persist( build );
+        BuildHistoryBuilder.build( build, entityManager );
 
         if ( project.getKeepNumberBuild() != null ) {
             List< Build > current = new ArrayList<>( this.project.getBuilds() );
