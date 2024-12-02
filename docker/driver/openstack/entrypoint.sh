@@ -1,5 +1,23 @@
 #!/bin/bash
 
+
+assertLastCmdSuccess() {
+    if [ "$?" != "0" ]; then
+        echo "$1" && exit 2000
+    fi
+}
+
+clean_up(){
+    LAST_EXIT_CODE="$?"
+
+    openstack server delete "$(printenv FREE_COMMIT_EXECUTOR_ID)"
+    openstack keypair delete "$(printenv FREE_COMMIT_EXECUTOR_ID)"
+
+    exit $LAST_EXIT_CODE
+}
+
+trap 'clean_up' EXIT
+
 echo "Step @preparing-server"
 
 ssh-keygen -f /root/server
@@ -52,10 +70,8 @@ if [ -z "$(printenv VOLUME_ID)" ]; then
     ssh ubuntu@"$IP" "cd /home/ubuntu && . install.sh"
 fi
 
-echo "Step @main"
-echo "coucou"
-
-echo "Step @deleting-server"
-openstack server delete "$(printenv FREE_COMMIT_EXECUTOR_ID)"
-openstack keypair delete "$(printenv FREE_COMMIT_EXECUTOR_ID)"
+echo "Step @run-main-task"
+scp /launch.sh ubuntu@"$IP":/home/ubuntu/launch.sh
+scp /main-entrypoint.sh ubuntu@"$IP":/home/ubuntu/entrypoint.sh
+ssh ubuntu@"$IP" "cd /home/ubuntu && . launch.sh"
 

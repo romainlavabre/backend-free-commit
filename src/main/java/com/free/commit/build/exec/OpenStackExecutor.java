@@ -115,11 +115,12 @@ public class OpenStackExecutor implements Executor {
             Files.createDirectory( buildSpace );
             Files.createFile( entrypoint );
             Files.write( entrypoint, getEntryPointContent( specFile, ignoreSteps ) );
+            writeLaunchContainerCommandLine( specFile, buildSpace );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
 
-        createDockerFile( specFile, buildSpace );
+        createDockerFile( buildSpace );
 
         launchContainer( directoryId );
         entityManager.persist( build );
@@ -240,16 +241,15 @@ public class OpenStackExecutor implements Executor {
     }
 
 
-    protected void createDockerFile( SpecFile specFile, Path buildSpace ) {
+    protected void createDockerFile( Path buildSpace ) {
         Path dockerFile = Path.of( buildSpace.toString() + "/Dockerfile" );
 
 
         StringJoiner content = new StringJoiner( "\n" );
         content
-                .add( "FROM " + specFile.from )
+                .add( "FROM romainlavabre/free-commit-open-stack-driver" )
                 .add( "COPY . ." )
                 .add( "COPY app/ app/" )
-                .add( "RUN chmod +x entrypoint.sh" )
                 .add( "ENTRYPOINT [\"./entrypoint.sh\"]" );
 
         try {
@@ -347,7 +347,7 @@ public class OpenStackExecutor implements Executor {
         cmdline[ 1 ] = "-c";
         StringJoiner stringJoiner = new StringJoiner( " && " );
 
-        String imageName = imageId = UUID.randomUUID().toString();
+        imageId = UUID.randomUUID().toString();
 
         stringJoiner.add( "cd /ci/build/" + buildSpaceId );
 
@@ -362,9 +362,10 @@ public class OpenStackExecutor implements Executor {
                 .add( "git fetch --all -q > /dev/null 2>&1" )
                 .add( "git checkout -q " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) + " > /dev/null" )
                 .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
-                .add( "cd .." );
+                .add( "cd .." )
+                .add( "docker build -t " + imageId + " ." );
 
-        StringBuilder run = new StringBuilder( "docker run --name " + imageName + " --user root" );
+        StringBuilder run = new StringBuilder( "docker run --name " + imageId + " --user root" );
 
         for ( Object key : project.getExecutor().getVariables().keySet() ) {
             run.append( " -e \"" + key.toString() + "=" + project.getExecutor().getVariables().get( key.toString() ) + "\"" );
@@ -374,11 +375,11 @@ public class OpenStackExecutor implements Executor {
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
 
-        run.append( "romainlavabre/free-commit-open-stack-driver" );
+        run.append( imageId );
 
         stringJoiner.add( run.toString() );
-        stringJoiner.add( "docker container rm " + imageName );
-        stringJoiner.add( "docker image rm " + imageName + " -f" );
+        stringJoiner.add( "docker container rm " + imageId );
+        stringJoiner.add( "docker image rm " + imageId );
 
         cmdline[ 2 ] = stringJoiner.toString();
 
@@ -386,15 +387,11 @@ public class OpenStackExecutor implements Executor {
     }
 
 
-    protected String[] getLaunchContainerCommandLine( String buildSpaceId ) {
-        String[] cmdline = new String[ 3 ];
-        cmdline[ 0 ] = "sh";
-        cmdline[ 1 ] = "-c";
+    protected void writeLaunchContainerCommandLine( SpecFile specFile, Path buildSpace ) throws IOException {
         StringJoiner stringJoiner = new StringJoiner( " && " );
 
-        String imageName = imageId = UUID.randomUUID().toString();
+        imageId = UUID.randomUUID().toString();
 
-        stringJoiner.add( "cd /ci/build/" + buildSpaceId );
 
         if ( project.getRepositoryCredential() != null ) {
             stringJoiner.add( "eval `ssh-agent`" )
@@ -407,9 +404,11 @@ public class OpenStackExecutor implements Executor {
                 .add( "git fetch --all -q > /dev/null 2>&1" )
                 .add( "git checkout -q " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) + " > /dev/null" )
                 .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
-                .add( "cd .." );
+                .add( "cd .." )
+                .add( "chmod +x ./entrypoint.sh" )
+                .add( "cp ./entrypoint.sh ./app/entrypoint.sh" );
 
-        StringBuilder run = new StringBuilder( "docker run --name " + imageName + " --user root" );
+        StringBuilder run = new StringBuilder( "docker run --name " + imageId + " --entrypoint /app/entrypoint.sh --user root" );
 
         for ( Secret secret : project.getSecrets() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
@@ -422,22 +421,18 @@ public class OpenStackExecutor implements Executor {
         run.append( " -e FREE_COMMIT_REQUEST_BODY='" + Base64.getEncoder().encodeToString( requestBody.getBytes() ) + "'" );
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
-
-        run.append( "romainlavabre/free-commit-open-stack-driver" );
+        run.append( " -v /home/ubuntu/app:/app " );
+        run.append( specFile.from );
 
         stringJoiner.add( run.toString() );
-        stringJoiner.add( "docker container rm " + imageName );
-        stringJoiner.add( "docker image rm " + imageName + " -f" );
+        stringJoiner.add( "docker container rm " + imageId );
 
-        cmdline[ 2 ] = stringJoiner.toString();
-
-        return cmdline;
+        Files.write( Path.of( buildSpace.toString() + "/launch.sh" ), stringJoiner.toString().getBytes() );
     }
 
 
     protected void initRepository() {
         try {
-
             final String[] cmdline = getInitRepositoryCommandLines( project );
 
             ProcessBuilder builder = new ProcessBuilder( cmdline );
@@ -484,8 +479,6 @@ public class OpenStackExecutor implements Executor {
 
     protected void launchEmail( Build build ) {
         if ( build.getExitCode() != 0 && initiator.getEmail() != null ) {
-
-
             mailSender.send(
                     environment.getEnv( Variable.MAIL_FROM ),
                     initiator.getEmail(),
