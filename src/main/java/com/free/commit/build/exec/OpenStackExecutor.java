@@ -425,7 +425,6 @@ public class OpenStackExecutor implements Executor {
         run.append( specFile.from );
 
         stringJoiner.add( run.toString() );
-        stringJoiner.add( "docker container rm " + imageId );
 
         Files.write( Path.of( buildSpace.toString() + "/launch.sh" ), stringJoiner.toString().getBytes() );
 
