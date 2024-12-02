@@ -408,7 +408,7 @@ public class OpenStackExecutor implements Executor {
                 .add( "chmod +x ./entrypoint.sh" )
                 .add( "cp ./entrypoint.sh ./app/entrypoint.sh" );
 
-        StringBuilder run = new StringBuilder( "docker run --name " + imageId + " --entrypoint /app/entrypoint.sh --user root" );
+        StringBuilder run = new StringBuilder( "docker run --name main --entrypoint /app/entrypoint.sh --user root" );
 
         for ( Secret secret : project.getSecrets() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
@@ -428,6 +428,20 @@ public class OpenStackExecutor implements Executor {
         stringJoiner.add( "docker container rm " + imageId );
 
         Files.write( Path.of( buildSpace.toString() + "/launch.sh" ), stringJoiner.toString().getBytes() );
+
+        String specFilePath = null;
+
+        for ( Step step : specFile.steps ) {
+            if ( Objects.equals( step.name, "@cleanup" ) ) {
+                specFilePath = step.script.replaceFirst( "/", "" );
+            }
+        }
+
+        if ( specFilePath != null ) {
+            String fileContent = "#!/bin/bash\nssh -o ConnectTimeout=10 ubuntu@\"$1\" 'docker exec main bash -c \"cd /app && . " + specFilePath + "\"'";
+
+            Files.write( Path.of( buildSpace.toString() + "/remote-cleanup.sh" ), fileContent.getBytes() );
+        }
     }
 
 

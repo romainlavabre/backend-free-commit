@@ -56,6 +56,8 @@ while [ true ]; do
     sleep 5
 done
 
+echo "$IP" > ip.txt
+
 ssh -q ubuntu@"$IP" exit
 
 while [ "$?" != "0" ]; do
