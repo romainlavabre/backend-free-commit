@@ -288,7 +288,8 @@ public class BuildManagerImpl implements BuildManager {
 
                 Executor executor;
 
-                if ( queued.getProject().getExecutor().getDriver().equals( com.free.commit.entity.Executor.DRIVER_OPEN_STACK ) ) {
+                if ( queued.getProject().getExecutor() != null
+                        && queued.getProject().getExecutor().getDriver().equals( com.free.commit.entity.Executor.DRIVER_OPEN_STACK ) ) {
                     executor = applicationContext.getBean( OpenStackExecutor.class );
                 } else {
                     executor = applicationContext.getBean( LocalExecutor.class );

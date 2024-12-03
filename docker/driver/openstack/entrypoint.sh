@@ -75,5 +75,6 @@ fi
 echo "Step @run-main-task"
 scp /launch.sh ubuntu@"$IP":/home/ubuntu/launch.sh
 scp /main-entrypoint.sh ubuntu@"$IP":/home/ubuntu/entrypoint.sh
+scp /main-Dockerfile ubuntu@"$IP":/home/ubuntu/Dockerfile
 ssh ubuntu@"$IP" "cd /home/ubuntu && . launch.sh"
 

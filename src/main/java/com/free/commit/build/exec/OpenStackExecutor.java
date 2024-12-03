@@ -295,7 +295,8 @@ public class OpenStackExecutor implements Executor {
                 .add( "echo \"$1\" && exit 2000" )
                 .add( "fi" )
                 .add( "}" )
-                .add( "cd /app" );
+                .add( "cd /app" )
+                .add( "git config --global --add safe.directory /app" );
 
         project.getAvailableSteps().clear();
 
@@ -410,9 +411,9 @@ public class OpenStackExecutor implements Executor {
                 .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
                 .add( "cd .." )
                 .add( "chmod +x ./entrypoint.sh" )
-                .add( "cp ./entrypoint.sh ./app/entrypoint.sh" );
+                .add( "docker build -t main ." );
 
-        StringBuilder run = new StringBuilder( "docker run --name main --entrypoint /app/entrypoint.sh --user root" );
+        StringBuilder run = new StringBuilder( "docker run --name main --user root" );
 
         for ( Secret secret : project.getSecrets() ) {
             run.append( " -e \"" + secret.getName() + "=" + escapeSecret( secret ) + "\"" );
@@ -425,8 +426,7 @@ public class OpenStackExecutor implements Executor {
         run.append( " -e FREE_COMMIT_REQUEST_BODY='" + Base64.getEncoder().encodeToString( requestBody.getBytes() ) + "'" );
 
         run.append( " -v /var/run/docker.sock:/var/run/docker.sock " );
-        run.append( " -v /home/ubuntu/app:/app " );
-        run.append( specFile.from );
+        run.append( "main" );
 
         stringJoiner.add( run.toString() );
 
@@ -444,6 +444,20 @@ public class OpenStackExecutor implements Executor {
             String fileContent = "#!/bin/bash\nssh -o ConnectTimeout=10 ubuntu@\"$1\" 'docker exec main bash -c \"cd /app && . " + specFilePath + "\"'";
 
             Files.write( Path.of( buildSpace.toString() + "/remote-cleanup.sh" ), fileContent.getBytes() );
+        }
+
+        StringJoiner content = new StringJoiner( "\n" );
+        content
+                .add( "FROM " + specFile.from )
+                .add( "ADD app/ app/" )
+                .add( "ADD entrypoint.sh entrypoint.sh" )
+                .add( "RUN chmod +x entrypoint.sh" )
+                .add( "ENTRYPOINT [\"./entrypoint.sh\"]" );
+
+        try {
+            Files.write( Path.of( buildSpace.toString() + "/main-Dockerfile" ), content.toString().getBytes() );
+        } catch ( IOException e ) {
+            e.printStackTrace();
         }
     }
 
