@@ -368,6 +368,7 @@ public class OpenStackExecutor implements Executor {
                 .add( "git checkout -q " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) + " > /dev/null" )
                 .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
                 .add( "cd .." )
+                .add( "docker login --username=\"" + project.getExecutor().getVariables().get( "DOCKER_HUB_USERNAME" ) + "\" --password=\"" + project.getExecutor().getVariables().get( "DOCKER_HUB_PASSWORD" ) + "\" > /dev/null" )
                 .add( "docker build -t " + imageId + " ." );
 
         StringBuilder run = new StringBuilder( "docker run --name " + imageId + " --user root" );
@@ -411,6 +412,7 @@ public class OpenStackExecutor implements Executor {
                 .add( "git pull --ff-only origin " + ( project.getBranch().equals( "*" ) ? "master" : project.getBranch() ) )
                 .add( "cd .." )
                 .add( "chmod +x ./entrypoint.sh" )
+                .add( "docker login --username=\"" + project.getExecutor().getVariables().get( "DOCKER_HUB_USERNAME" ) + "\" --password=\"" + project.getExecutor().getVariables().get( "DOCKER_HUB_PASSWORD" ) + "\" > /dev/null" )
                 .add( "docker build -t main ." );
 
         StringBuilder run = new StringBuilder( "docker run --name main --user root" );
