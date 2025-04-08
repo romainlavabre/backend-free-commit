@@ -244,7 +244,10 @@ public class LocalExecutor implements Executor {
             }
 
 
-            build.addLog( new Log( "abort" ).addLine( "[WARNING] Container killed" ) ).addOutputLine( "[WARNING] Container killed" );
+            Log log = new Log( "abort" ).addLine( "[WARNING] Container killed" ).setSuccess( false );
+            log.close();
+
+            build.addLog( log ).addOutputLine( "[WARNING] Container killed" );
         }
 
         active = false;

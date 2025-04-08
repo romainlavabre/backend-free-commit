@@ -161,9 +161,8 @@ public class OpenStackExecutor implements Executor {
             try {
                 ProcessBuilder builder = new ProcessBuilder( "sh", "-c", "docker exec " + imageId + " bash -c \". cleanup.sh\" && docker container stop " + imageId + " -s SIGKILL" );
                 builder.redirectErrorStream( true );
-                Process process = builder.start();
-                BufferedReader readerIn = new BufferedReader(
-                        new InputStreamReader( process.getInputStream() ) );
+                Process        process  = builder.start();
+                BufferedReader readerIn = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
 
 
                 String lineIn;
@@ -172,7 +171,7 @@ public class OpenStackExecutor implements Executor {
                         continue;
                     }
 
-                    System.out.println( lineIn );
+                    System.out.println( "Kill result : " + lineIn );
                 }
 
                 process.waitFor();
@@ -233,7 +232,10 @@ public class OpenStackExecutor implements Executor {
             }
 
 
-            build.addLog( new Log( "abort" ).addLine( "[WARNING] Container killed" ) ).addOutputLine( "[WARNING] Container killed" );
+            Log log = new Log( "abort" ).addLine( "[WARNING] Container killed" ).setSuccess( false );
+            log.close();
+
+            build.addLog( log ).addOutputLine( "[WARNING] Container killed" );
         }
 
         active = false;
@@ -511,7 +513,7 @@ public class OpenStackExecutor implements Executor {
 
 
     protected void launchEmail( Build build ) {
-        if ( build.getExitCode() != 0 && initiator.getEmail() != null ) {
+        if ( build.getExitCode() != 0 && initiator.getEmail() != null && !initiator.getEmail().isBlank() ) {
             mailSender.send(
                     environment.getEnv( Variable.MAIL_FROM ),
                     initiator.getEmail(),
