@@ -18,7 +18,7 @@ public class BuildHistoryBuilder {
         long duration = 0;
 
         for ( Log log : build.getLogs() ) {
-            duration += log.getClosedAt().toEpochSecond() - log.getStartAt().toEpochSecond();
+            duration += ( log.getClosedAt() != null ? log.getClosedAt().toEpochSecond() : ZonedDateTime.now().toEpochSecond() ) - log.getStartAt().toEpochSecond();
         }
 
         buildHistory

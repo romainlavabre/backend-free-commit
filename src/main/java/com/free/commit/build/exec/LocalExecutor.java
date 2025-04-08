@@ -455,9 +455,7 @@ public class LocalExecutor implements Executor {
 
 
     protected void launchEmail( Build build ) {
-        if ( build.getExitCode() != 0 && initiator.getEmail() != null ) {
-
-
+        if ( build.getExitCode() != 0 && initiator.getEmail() != null && !initiator.getEmail().isBlank() ) {
             mailSender.send(
                     environment.getEnv( Variable.MAIL_FROM ),
                     initiator.getEmail(),
