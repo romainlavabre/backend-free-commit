@@ -149,13 +149,13 @@ public class SecretController {
 
     @Transactional
     @DeleteMapping( path = "/secrets/{id:[0-9]+}" )
-    public ResponseEntity< Map< String, Object > > delete( @PathVariable( "id" ) long id ) {
+    public ResponseEntity< Void > delete( @PathVariable( "id" ) long id ) {
         Secret secret = secretRepository.findOrFail( id );
 
         deleteSecret.delete( request, secret );
 
         dataStorageHandler.save();
 
-        return ResponseEntity.ok( Encoder.encode( secret, GroupType.ADMIN ) );
+        return ResponseEntity.noContent().build();
     }
 }
