@@ -2,7 +2,6 @@ package com.free.commit.controller.admin;
 
 import com.free.commit.configuration.environment.Variable;
 import org.romainlavabre.environment.Environment;
-import org.romainlavabre.mail.MailSender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +16,10 @@ import java.util.Map;
 @RestController( "AdminConfigurationController" )
 public class ConfigurationController {
 
-    protected final MailSender  mailSender;
     protected final Environment environment;
 
 
-    public ConfigurationController( MailSender mailSender, Environment environment ) {
-        this.mailSender  = mailSender;
+    public ConfigurationController( Environment environment ) {
         this.environment = environment;
     }
 
@@ -44,10 +41,6 @@ public class ConfigurationController {
 
     @PostMapping( path = "/mail/test/{recipient}" )
     public ResponseEntity< Void > testMail( @PathVariable( "recipient" ) String recipient ) {
-        mailSender.send( environment.getEnv( Variable.MAIL_FROM ), recipient, "Free Commit - Test", "Test success" );
-
-        return ResponseEntity
-                .status( HttpStatus.CREATED )
-                .build();
+        return ResponseEntity.status( HttpStatus.CREATED ).build();
     }
 }

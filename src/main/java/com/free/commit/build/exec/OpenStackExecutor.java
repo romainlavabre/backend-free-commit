@@ -7,7 +7,6 @@ import com.free.commit.build.exception.SpecFileNotFoundException;
 import com.free.commit.build.exception.SpecFileNotReadableException;
 import com.free.commit.build.parser.SpecFile;
 import com.free.commit.build.parser.Step;
-import com.free.commit.configuration.environment.Variable;
 import com.free.commit.configuration.response.Message;
 import com.free.commit.entity.Build;
 import com.free.commit.entity.Log;
@@ -22,7 +21,6 @@ import jakarta.transaction.Transactional;
 import org.romainlavabre.environment.Environment;
 import org.romainlavabre.exception.HttpInternalServerErrorException;
 import org.romainlavabre.exception.HttpNotFoundException;
-import org.romainlavabre.mail.MailSender;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -53,7 +51,6 @@ public class OpenStackExecutor implements Executor {
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
     protected final EntityManager     entityManager;
-    protected final MailSender        mailSender;
     protected final Environment       environment;
 
 
@@ -62,13 +59,11 @@ public class OpenStackExecutor implements Executor {
             SecretRepository secretRepository,
             ProjectRepository projectRepository,
             EntityManager entityManager,
-            MailSender mailSender,
             Environment environment ) {
         this.buildRepository   = buildRepository;
         this.secretRepository  = secretRepository;
         this.projectRepository = projectRepository;
         this.entityManager     = entityManager;
-        this.mailSender        = mailSender;
         this.environment       = environment;
     }
 
@@ -95,7 +90,6 @@ public class OpenStackExecutor implements Executor {
             active = false;
             entityManager.persist( build );
             BuildHistoryBuilder.build( build, entityManager );
-            launchEmail( build );
             return;
         } catch ( Throwable e ) {
             build
@@ -106,7 +100,6 @@ public class OpenStackExecutor implements Executor {
             active = false;
             entityManager.persist( build );
             BuildHistoryBuilder.build( build, entityManager );
-            launchEmail( build );
             return;
         }
 
@@ -139,8 +132,6 @@ public class OpenStackExecutor implements Executor {
                 this.project.addBuild( current.get( i ) );
             }
         }
-
-        launchEmail( build );
 
         active = false;
     }
@@ -509,18 +500,6 @@ public class OpenStackExecutor implements Executor {
         cmdline[ 2 ] = stringJoiner.toString();
 
         return cmdline;
-    }
-
-
-    protected void launchEmail( Build build ) {
-        if ( build.getExitCode() != 0 && initiator.getEmail() != null && !initiator.getEmail().isBlank() ) {
-            mailSender.send(
-                    environment.getEnv( Variable.MAIL_FROM ),
-                    initiator.getEmail(),
-                    "[" + project.getName().toUpperCase() + "] Build Failure (#" + build.getId() + ")",
-                    "Build #" + build.getId() + " failure. (project " + project.getName().toUpperCase() + ")\r\r\r\r" + build.getOutput()
-            );
-        }
     }
 
 

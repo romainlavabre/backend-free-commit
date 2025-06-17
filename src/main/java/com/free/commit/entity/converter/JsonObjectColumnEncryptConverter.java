@@ -2,13 +2,13 @@ package com.free.commit.entity.converter;
 
 import com.free.commit.entity.encrypt.EncryptField;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import org.json.JSONObject;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Romain Lavabre <romainlavabre98@gmail.com>
  */
-@Service
+@Converter( autoApply = true )
 public class JsonObjectColumnEncryptConverter implements AttributeConverter< JsonObjectColumn< String, Object >, String > {
     protected final EncryptField encryptField;
 

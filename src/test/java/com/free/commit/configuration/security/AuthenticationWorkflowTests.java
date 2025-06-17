@@ -1,7 +1,6 @@
 package com.free.commit.configuration.security;
 
 import ch.vorburger.exec.ManagedProcessException;
-import com.free.commit.configuration.mail.MailConfig;
 import com.free.commit.database.DatabaseProvider;
 import com.free.commit.util.Cast;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
@@ -24,11 +22,7 @@ import java.util.Map;
 @AutoConfigureWebTestClient
 @ActiveProfiles( { "test" } )
 @DirtiesContext( classMode = DirtiesContext.ClassMode.BEFORE_CLASS )
-public class AuthenticationWorkflow {
-
-    @MockBean
-    protected MailConfig mailConfig;
-
+public class AuthenticationWorkflowTests {
     @Autowired
     private WebTestClient webTestClient;
 
