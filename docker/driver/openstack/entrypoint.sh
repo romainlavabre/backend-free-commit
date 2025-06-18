@@ -65,6 +65,16 @@ while [ "$?" != "0" ]; do
     ssh -q ubuntu@"$IP" exit
 done
 
+if [ -f "/client.ovpn" ]; then
+    echo "Step @connect-to-openvpn"
+
+    scp /client.ovpn ubuntu@"$IP":/home/ubuntu/client.ovpn
+    scp /client-used ubuntu@"$IP":/home/ubuntu/client-used
+    scp /connect-to-vpn.sh ubuntu@"$IP":/home/ubuntu/connect-to-vpn.sh
+    ssh ubuntu@"$IP" "cd /home/ubuntu && . connect-to-vpn.sh"
+fi
+
+
 if [ -z "$(printenv VOLUME_ID)" ]; then
     echo "Step @docker-installation"
 
@@ -76,5 +86,6 @@ echo "Step @run-main-task"
 scp /launch.sh ubuntu@"$IP":/home/ubuntu/launch.sh
 scp /main-entrypoint.sh ubuntu@"$IP":/home/ubuntu/entrypoint.sh
 scp /main-Dockerfile ubuntu@"$IP":/home/ubuntu/Dockerfile
+
 ssh ubuntu@"$IP" "cd /home/ubuntu && ulimit -s 1000000 && . launch.sh"
 

@@ -253,6 +253,18 @@ public class BuildManagerImpl implements BuildManager {
     }
 
 
+    @Override
+    public List< String > getOpenVpnClientUsed() {
+        List< String > result = new ArrayList<>();
+
+        for ( BuildManager.Executed executed : executeds ) {
+            result.add( executed.getExecutor().getOpenVpnClient() );
+        }
+
+        return result;
+    }
+
+
     protected void process() {
         CronTrigger cronTrigger = new CronTrigger( "*/5 * * * * *" );
         Integer maxParallelExecutor =

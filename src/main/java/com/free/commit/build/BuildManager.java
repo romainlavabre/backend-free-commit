@@ -48,6 +48,9 @@ public interface BuildManager {
     void killQueued( String executorId );
 
 
+    List< String > getOpenVpnClientUsed();
+
+
     class Executed {
         @Json( groups = {
                 @Group( key = "project_name", overwrite = ProjectNameExecuted.class, onlyId = false )

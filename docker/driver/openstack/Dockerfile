@@ -7,6 +7,7 @@ RUN mkdir /root/.ssh && echo "Host *\n\tStrictHostKeyChecking no" > /root/.ssh/c
 ADD entrypoint.sh /entrypoint.sh
 ADD cleanup.sh /cleanup.sh
 ADD install.sh /install.sh
+ADD connect-to-vpn.sh /connect-to-vpn.sh
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]

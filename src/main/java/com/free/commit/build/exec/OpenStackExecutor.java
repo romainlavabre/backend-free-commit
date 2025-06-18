@@ -1,5 +1,6 @@
 package com.free.commit.build.exec;
 
+import com.free.commit.build.BuildManager;
 import com.free.commit.build.ExitMessageMapper;
 import com.free.commit.build.Initiator;
 import com.free.commit.build.exception.BuildException;
@@ -34,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service( "OpenStackExecutor" )
 @Scope( "prototype" )
@@ -47,11 +49,13 @@ public class OpenStackExecutor implements Executor {
     private         String            requestBody;
     private         ZonedDateTime     launchedAt;
     private         SpecFile          specFile;
+    private         String            openVpnClient;
     protected final BuildRepository   buildRepository;
     protected final SecretRepository  secretRepository;
     protected final ProjectRepository projectRepository;
     protected final EntityManager     entityManager;
     protected final Environment       environment;
+    protected final BuildManager      buildManager;
 
 
     public OpenStackExecutor(
@@ -59,12 +63,14 @@ public class OpenStackExecutor implements Executor {
             SecretRepository secretRepository,
             ProjectRepository projectRepository,
             EntityManager entityManager,
-            Environment environment ) {
+            Environment environment,
+            BuildManager buildManager ) {
         this.buildRepository   = buildRepository;
         this.secretRepository  = secretRepository;
         this.projectRepository = projectRepository;
         this.entityManager     = entityManager;
         this.environment       = environment;
+        this.buildManager      = buildManager;
     }
 
 
@@ -110,6 +116,7 @@ public class OpenStackExecutor implements Executor {
         try {
             Files.createDirectory( buildSpace );
             Files.createFile( entrypoint );
+            copyOpenVpnClient( directoryId );
             Files.write( entrypoint, getEntryPointContent( specFile, ignoreSteps ) );
             writeLaunchContainerCommandLine( specFile, buildSpace );
         } catch ( IOException e ) {
@@ -147,6 +154,7 @@ public class OpenStackExecutor implements Executor {
     }
 
 
+    @Override
     public void kill() {
         if ( currentProcess != null ) {
             try {
@@ -230,6 +238,12 @@ public class OpenStackExecutor implements Executor {
         }
 
         active = false;
+    }
+
+
+    @Override
+    public String getOpenVpnClient() {
+        return openVpnClient;
     }
 
 
@@ -500,6 +514,51 @@ public class OpenStackExecutor implements Executor {
         cmdline[ 2 ] = stringJoiner.toString();
 
         return cmdline;
+    }
+
+
+    protected void copyOpenVpnClient( String directoryId ) throws IOException {
+        Path ovpnDir = Path.of( "/ovpn" );
+
+        if ( !Files.isDirectory( ovpnDir ) ) {
+            return;
+        }
+
+        Stream< Path > files = null;
+
+        try {
+            files = Files.list( ovpnDir );
+
+            boolean        containOvpnClient = false;
+            List< String > available         = new ArrayList<>();
+
+            for ( Path file : files.toList() ) {
+                if ( file.toString().contains( ".ovpn" ) ) {
+                    containOvpnClient = true;
+                    available.add( file.toString() );
+                }
+            }
+
+            if ( !containOvpnClient ) {
+                return;
+            }
+
+            List< String > openVpnClientUsed = buildManager.getOpenVpnClientUsed();
+
+            for ( String client : available ) {
+                if ( !openVpnClientUsed.contains( client ) ) {
+                    openVpnClient = client;
+
+                    Files.copy( Path.of( client ), Path.of( "/ci/build/" + directoryId + "/client.ovpn" ) );
+                    Files.writeString( Path.of( "/ci/build/" + directoryId + "/client-used" ), client );
+                    return;
+                }
+            }
+        } finally {
+            if ( files != null ) {
+                files.close();
+            }
+        }
     }
 
 

@@ -250,6 +250,12 @@ public class LocalExecutor implements Executor {
     }
 
 
+    @Override
+    public String getOpenVpnClient() {
+        return null;
+    }
+
+
     protected void createDockerFile( SpecFile specFile, Path buildSpace ) {
         Path dockerFile = Path.of( buildSpace.toString() + "/Dockerfile" );
 
