@@ -38,4 +38,5 @@ RUN apt update \
 COPY --from=compiler /temp/app.jar /app/app.jar
 
 WORKDIR app
-ENTRYPOINT ["java","-jar","/app/app.jar","--spring.profiles.active=local"]
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=local"]
