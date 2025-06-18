@@ -4,6 +4,10 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 for ((i = 0 ; i < $1 ; i++)); do
+    if [ -f "$i.ovpn" ]; then
+        continue
+    fi
+
 	unsanitized_client="$i"
     client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
     while [[ -z "$client" || -e /etc/openvpn/server/easy-rsa/pki/issued/"$client".crt ]]; do
