@@ -313,6 +313,13 @@ public class BuildManagerImpl implements BuildManager {
                 executorService.execute( () -> executor.execute( queued.getProject(), queued.getBuild(), queued.getInitiator(), queued.getRequestBody(), queued.getIgnoreSteps() ) );
 
                 queuedIterator.remove();
+
+                try {
+                    // Avoid concurrent ovpn locking
+                    Thread.sleep( 250 );
+                } catch ( InterruptedException e ) {
+                    e.printStackTrace();
+                }
             }
         }, cronTrigger );
     }

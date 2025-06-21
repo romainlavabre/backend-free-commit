@@ -82,6 +82,11 @@ public class OpenStackExecutor implements Executor {
         this.initiator   = initiator;
         this.requestBody = requestBody;
 
+        try {
+            lockOpenVpnClient();
+        } catch ( IOException ignored ) {
+        }
+
 
         initRepository();
 
@@ -518,6 +523,16 @@ public class OpenStackExecutor implements Executor {
 
 
     protected void copyOpenVpnClient( String directoryId ) throws IOException {
+        if ( openVpnClient == null ) {
+            return;
+        }
+
+        Files.copy( Path.of( openVpnClient ), Path.of( "/ci/build/" + directoryId + "/client.ovpn" ) );
+        Files.writeString( Path.of( "/ci/build/" + directoryId + "/client-used" ), openVpnClient );
+    }
+
+
+    protected void lockOpenVpnClient() throws IOException {
         Path ovpnDir = Path.of( "/ovpn" );
 
         if ( !Files.isDirectory( ovpnDir ) ) {
@@ -548,9 +563,6 @@ public class OpenStackExecutor implements Executor {
             for ( String client : available ) {
                 if ( !openVpnClientUsed.contains( client ) ) {
                     openVpnClient = client;
-
-                    Files.copy( Path.of( client ), Path.of( "/ci/build/" + directoryId + "/client.ovpn" ) );
-                    Files.writeString( Path.of( "/ci/build/" + directoryId + "/client-used" ), client );
                     return;
                 }
             }
